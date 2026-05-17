@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-
 <html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registro Magazzino</title>
-<link href="[https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap](https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap)" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-deep: #0a0f1e;
@@ -18,6 +17,7 @@
     --accent-violet: #a78bfa;
     --accent-rose: #f87171;
     --accent-amber: #fbbf24;
+    --accent-green: #4ade80;
     --text-primary: #e8edf8;
     --text-secondary: #8899bb;
     --text-muted: #445577;
@@ -27,704 +27,242 @@
     --radius-md: 13px;
     --radius-sm: 9px;
   }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Sora', sans-serif;
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 55% at 15% 0%, rgba(248,113,113,0.09) 0%, transparent 60%),
+      radial-gradient(ellipse 55% 45% at 85% 100%, rgba(79,142,247,0.10) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 35% at 50% 50%, rgba(56,232,200,0.04) 0%, transparent 50%);
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(79,142,247,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,142,247,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+  .page {
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    min-height: 100vh;
+    padding: 20px 20px 80px;
+    max-width: 1600px; margin: 0 auto;
+  }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-font-family: 'Sora', sans-serif;
-background: var(--bg-deep);
-color: var(--text-primary);
-min-height: 100vh;
-overflow-x: hidden;
+/* SYNC STATUS */
+.sync-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 14px; border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
+  margin-bottom: 14px; font-size: 0.74rem; color: var(--text-muted);
+  transition: all 0.3s ease;
 }
+.sync-bar.syncing { border-color: rgba(251,191,36,0.35); background: rgba(251,191,36,0.05); color: var(--accent-amber); }
+.sync-bar.synced  { border-color: rgba(74,222,128,0.3);  background: rgba(74,222,128,0.05);  color: var(--accent-green); }
+.sync-bar.error   { border-color: rgba(248,113,113,0.35); background: rgba(248,113,113,0.05); color: var(--accent-rose); }
+.sync-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.sync-dot.pulse { animation: syncPulse 1.2s ease-in-out infinite; }
+@keyframes syncPulse { 0%,100%{opacity:1}50%{opacity:0.3} }
 
-body::before {
-content: '';
-position: fixed;
-inset: 0;
-background:
-radial-gradient(ellipse 70% 55% at 15% 0%, rgba(248,113,113,0.09) 0%, transparent 60%),
-radial-gradient(ellipse 55% 45% at 85% 100%, rgba(79,142,247,0.10) 0%, transparent 55%),
-radial-gradient(ellipse 40% 35% at 50% 50%, rgba(56,232,200,0.04) 0%, transparent 50%);
-pointer-events: none;
-z-index: 0;
+/* ACTIVE DAY BANNER */
+.active-day-banner {
+  display: none; align-items: center; gap: 12px;
+  padding: 10px 18px; border-radius: var(--radius-md);
+  background: rgba(167,139,250,0.10); border: 1px solid rgba(167,139,250,0.35);
+  margin-bottom: 16px; animation: cardIn 0.3s ease;
 }
-
-body::after {
-content: '';
-position: fixed;
-inset: 0;
-background-image:
-linear-gradient(rgba(79,142,247,0.025) 1px, transparent 1px),
-linear-gradient(90deg, rgba(79,142,247,0.025) 1px, transparent 1px);
-background-size: 40px 40px;
-pointer-events: none;
-z-index: 0;
+.active-day-banner.visible { display: flex; }
+.adb-icon { font-size: 1rem; }
+.adb-text { flex: 1; font-size: 0.82rem; color: var(--accent-violet); font-weight: 600; }
+.adb-date { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--text-secondary); }
+.adb-back {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 13px; border-radius: var(--radius-sm);
+  border: 1px solid rgba(56,232,200,0.4); background: rgba(56,232,200,0.08);
+  color: var(--accent-cyan); font-family: 'Sora', sans-serif;
+  font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.18s;
 }
-
-.page {
-position: relative;
-z-index: 1;
-display: flex;
-flex-direction: column;
-min-height: 100vh;
-padding: 20px 20px 80px;
-max-width: 1600px;
-margin: 0 auto;
-}
+.adb-back:hover { background: rgba(56,232,200,0.18); }
 
 /* HEADER */
 .header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-gap: 20px;
-margin-bottom: 24px;
-flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 20px; margin-bottom: 24px; flex-wrap: wrap;
 }
-
 .header-left h1 {
-font-size: clamp(1.4rem, 3vw, 2rem);
-font-weight: 700;
-letter-spacing: -0.03em;
-background: linear-gradient(135deg, #e8edf8 0%, var(--accent-cyan) 100%);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
-line-height: 1.1;
+  font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #e8edf8 0%, var(--accent-cyan) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  line-height: 1.1;
 }
-
-.header-left p {
-color: var(--text-secondary);
-font-size: 0.82rem;
-margin-top: 5px;
-font-weight: 300;
-}
-
+.header-left p { color: var(--text-secondary); font-size: 0.82rem; margin-top: 5px; font-weight: 300; }
 .clock-card {
-background: var(--glass-bg);
-border: 1px solid var(--glass-border);
-border-radius: var(--radius-md);
-padding: 12px 20px;
-text-align: right;
-backdrop-filter: blur(16px);
-box-shadow: var(--shadow-glass);
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md); padding: 12px 20px; text-align: right;
+  backdrop-filter: blur(16px); box-shadow: var(--shadow-glass);
 }
-
 .clock-time {
-font-family: 'JetBrains Mono', monospace;
-font-size: clamp(1.4rem, 2.5vw, 2rem);
-font-weight: 500;
-color: var(--accent-cyan);
-letter-spacing: 0.04em;
-text-shadow: 0 0 20px rgba(56,232,200,0.3);
+  font-family: 'JetBrains Mono', monospace; font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 500; color: var(--accent-cyan); letter-spacing: 0.04em;
+  text-shadow: 0 0 20px rgba(56,232,200,0.3);
 }
-
-.clock-date {
-font-size: 0.75rem;
-color: var(--text-secondary);
-margin-top: 3px;
-letter-spacing: 0.06em;
-text-transform: uppercase;
-}
+.clock-date { font-size: 0.75rem; color: var(--text-secondary); margin-top: 3px; letter-spacing: 0.06em; text-transform: uppercase; }
 
 /* MAIN LAYOUT */
 .main-layout {
-display: grid;
-grid-template-columns: 1fr 1fr;
-grid-template-rows: auto auto;
-gap: 20px;
-flex: 1;
-align-items: start;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px; flex: 1; align-items: start;
 }
-
-/* Columns take top row, day selector spans bottom-left */
-.column-left {
-grid-column: 1;
-grid-row: 1;
-display: flex;
-flex-direction: column;
-gap: 16px;
-}
-
-.column-right {
-grid-column: 2;
-grid-row: 1 / 3;
-display: flex;
-flex-direction: column;
-gap: 16px;
-border-left: 1px solid rgba(248,113,113,0.10);
-padding-left: 20px;
-}
-
-/* DAY SELECTOR PANEL */
-.day-selector-panel {
-grid-column: 1;
-grid-row: 2;
-background: var(--glass-bg);
-border: 1px solid var(--glass-border);
-border-radius: var(--radius-lg);
-backdrop-filter: blur(20px);
-box-shadow: var(--shadow-glass);
-overflow: hidden;
-}
-
-.day-selector-header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 14px 18px;
-border-bottom: 1px solid rgba(255,255,255,0.06);
-gap: 12px;
-flex-wrap: wrap;
-}
-
-.day-selector-title {
-display: flex;
-align-items: center;
-gap: 10px;
-font-size: 0.82rem;
-font-weight: 700;
-letter-spacing: 0.08em;
-text-transform: uppercase;
-color: var(--accent-violet);
-}
-
-.day-selector-title svg { opacity: 0.8; }
-
-.day-nav {
-display: flex;
-align-items: center;
-gap: 8px;
-}
-
-.day-nav-btn {
-width: 28px; height: 28px;
-border-radius: 7px;
-border: 1px solid var(--glass-border);
-background: rgba(255,255,255,0.03);
-color: var(--text-secondary);
-cursor: pointer;
-display: flex; align-items: center; justify-content: center;
-font-size: 0.8rem;
-transition: all 0.18s;
-}
-.day-nav-btn:hover { background: rgba(167,139,250,0.12); color: var(--accent-violet); border-color: rgba(167,139,250,0.35); }
-.day-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-.day-nav-current {
-font-family: 'JetBrains Mono', monospace;
-font-size: 0.72rem;
-color: var(--accent-violet);
-background: rgba(167,139,250,0.10);
-border: 1px solid rgba(167,139,250,0.25);
-border-radius: 20px;
-padding: 3px 11px;
-white-space: nowrap;
-min-width: 110px;
-text-align: center;
-}
-
-.day-selector-body {
-padding: 16px 18px 18px;
-min-height: 80px;
-}
-
-.ds-empty {
-text-align: center;
-color: var(--text-muted);
-font-size: 0.78rem;
-padding: 16px 0;
-letter-spacing: 0.04em;
-}
-
-.ds-summary {
-display: flex;
-gap: 8px;
-margin-bottom: 14px;
-flex-wrap: wrap;
-}
-
-.ds-badge {
-font-family: 'JetBrains Mono', monospace;
-font-size: 0.68rem;
-padding: 3px 10px;
-border-radius: 20px;
-font-weight: 600;
-}
-.ds-badge-truck { background: rgba(79,142,247,0.15); color: var(--accent-blue); border: 1px solid rgba(79,142,247,0.3); }
-.ds-badge-resi  { background: rgba(248,113,113,0.12); color: var(--accent-rose); border: 1px solid rgba(248,113,113,0.25); }
-
-.ds-entries { display: flex; flex-direction: column; gap: 6px; }
-
-.ds-entry {
-display: flex;
-align-items: center;
-gap: 10px;
-padding: 9px 12px;
-border-radius: var(--radius-sm);
-border: 1px solid rgba(255,255,255,0.06);
-background: rgba(255,255,255,0.02);
-cursor: pointer;
-transition: all 0.18s;
-font-size: 0.8rem;
-position: relative;
-}
-.ds-entry:hover { background: rgba(167,139,250,0.07); border-color: rgba(167,139,250,0.3); }
-.ds-entry.is-today-entry:hover { border-color: rgba(56,232,200,0.3); }
-
-.ds-entry-type {
-font-family: 'JetBrains Mono', monospace;
-font-size: 0.62rem;
-padding: 2px 7px;
-border-radius: 4px;
-font-weight: 700;
-flex-shrink: 0;
-}
-.ds-type-truck { background: rgba(79,142,247,0.18); color: var(--accent-blue); }
-.ds-type-resi  { background: rgba(248,113,113,0.15); color: var(--accent-rose); }
-
-.ds-entry-time {
-font-family: 'JetBrains Mono', monospace;
-font-size: 0.72rem;
-color: var(--accent-cyan);
-flex-shrink: 0;
-min-width: 42px;
-}
-
-.ds-entry-firma {
-flex: 1;
-font-weight: 500;
-color: var(--text-primary);
-overflow: hidden;
-text-overflow: ellipsis;
-white-space: nowrap;
-}
-
-.ds-entry-qty {
-font-family: 'JetBrains Mono', monospace;
-font-size: 0.68rem;
-color: var(--text-secondary);
-flex-shrink: 0;
-}
-
-.ds-entry-sig {
-font-size: 0.68rem;
-color: var(--text-muted);
-flex-shrink: 0;
-}
-
-.ds-entry-edit-hint {
-font-size: 0.60rem;
-color: var(--accent-violet);
-opacity: 0;
-transition: opacity 0.18s;
-flex-shrink: 0;
-letter-spacing: 0.04em;
-}
-.ds-entry:hover .ds-entry-edit-hint { opacity: 0.8; }
-
-/* TODAY INDICATOR */
-.today-indicator {
-display: inline-flex;
-align-items: center;
-gap: 5px;
-font-size: 0.62rem;
-color: var(--accent-cyan);
-background: rgba(56,232,200,0.08);
-border: 1px solid rgba(56,232,200,0.2);
-border-radius: 20px;
-padding: 2px 8px;
-font-weight: 600;
-letter-spacing: 0.05em;
-}
+.column-left { grid-column: 1; display: flex; flex-direction: column; gap: 16px; }
+.column-right { grid-column: 2; display: flex; flex-direction: column; gap: 16px; border-left: 1px solid rgba(248,113,113,0.10); padding-left: 20px; }
 
 /* COLUMNS */
 .col-header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-gap: 10px;
-padding-bottom: 14px;
-border-bottom: 1px solid rgba(255,255,255,0.06);
-margin-bottom: 4px;
-flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px; padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 4px; flex-wrap: wrap;
 }
-
-.col-title {
-display: flex;
-align-items: center;
-gap: 10px;
-font-size: 0.85rem;
-font-weight: 700;
-letter-spacing: 0.09em;
-text-transform: uppercase;
-}
-
+.col-title { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
 .col-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 .dot-blue { background: var(--accent-blue); box-shadow: 0 0 10px var(--accent-blue); }
 .dot-rose { background: var(--accent-rose); box-shadow: 0 0 10px var(--accent-rose); }
-
-.col-count {
-font-family: 'JetBrains Mono', monospace;
-font-size: 0.72rem;
-color: var(--text-muted);
-background: rgba(255,255,255,0.04);
-border: 1px solid var(--glass-border);
-border-radius: 20px;
-padding: 2px 9px;
-}
+.col-count { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-muted); background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2px 9px; }
 
 /* ADD BUTTON */
 .btn-add {
-display: flex;
-align-items: center;
-gap: 7px;
-padding: 8px 15px;
-border-radius: var(--radius-sm);
-border: 1px solid rgba(79,142,247,0.35);
-background: rgba(79,142,247,0.10);
-color: var(--accent-blue);
-font-family: 'Sora', sans-serif;
-font-size: 0.78rem;
-font-weight: 600;
-cursor: pointer;
-transition: all 0.2s ease;
-letter-spacing: 0.03em;
-white-space: nowrap;
+  display: flex; align-items: center; gap: 7px; padding: 8px 15px;
+  border-radius: var(--radius-sm); border: 1px solid rgba(79,142,247,0.35);
+  background: rgba(79,142,247,0.10); color: var(--accent-blue);
+  font-family: 'Sora', sans-serif; font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s ease; letter-spacing: 0.03em; white-space: nowrap;
 }
-.btn-add:hover {
-background: rgba(79,142,247,0.20);
-border-color: rgba(79,142,247,0.65);
-box-shadow: 0 0 18px rgba(79,142,247,0.18);
-transform: translateY(-1px);
-}
-.btn-add-rose {
-border-color: rgba(248,113,113,0.35);
-background: rgba(248,113,113,0.09);
-color: var(--accent-rose);
-}
-.btn-add-rose:hover {
-background: rgba(248,113,113,0.18);
-border-color: rgba(248,113,113,0.65);
-box-shadow: 0 0 18px rgba(248,113,113,0.18);
-}
+.btn-add:hover { background: rgba(79,142,247,0.20); border-color: rgba(79,142,247,0.65); box-shadow: 0 0 18px rgba(79,142,247,0.18); transform: translateY(-1px); }
+.btn-add-rose { border-color: rgba(248,113,113,0.35); background: rgba(248,113,113,0.09); color: var(--accent-rose); }
+.btn-add-rose:hover { background: rgba(248,113,113,0.18); border-color: rgba(248,113,113,0.65); box-shadow: 0 0 18px rgba(248,113,113,0.18); }
 
-/* CARDS LIST — spacing between cards */
-.cards-list {
-display: flex;
-flex-direction: column;
-gap: 12px;
-}
+/* CARDS LIST */
+.cards-list { display: flex; flex-direction: column; gap: 12px; }
 
 /* CARD */
 .card {
-background: var(--glass-bg);
-border: 1px solid var(--glass-border);
-border-radius: var(--radius-lg);
-backdrop-filter: blur(20px);
-box-shadow: var(--shadow-glass);
-overflow: hidden;
-transition: box-shadow 0.25s ease, border-color 0.25s ease;
-animation: cardIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg); backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-glass); overflow: hidden;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+  animation: cardIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
 }
-
-@keyframes cardIn {
-from { opacity: 0; transform: translateY(12px) scale(0.98); }
-to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
+@keyframes cardIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 .card:hover { box-shadow: var(--shadow-hover); border-color: rgba(255,255,255,0.15); }
-
-/* COMPACT STATE */
 .card.is-compact { cursor: pointer; }
 .card.is-compact:hover { border-color: rgba(79,142,247,0.4); }
 .card.is-compact.resi-card:hover { border-color: rgba(248,113,113,0.4); }
 
-.card-compact-view {
-display: none;
-padding: 11px 16px;
-gap: 9px;
-align-items: center;
-flex-wrap: wrap;
-}
-
+/* COMPACT VIEW */
+.card-compact-view { display: none; padding: 11px 16px; gap: 0; flex-direction: column; }
 .card.is-compact .card-compact-view { display: flex; }
-.card.is-compact .card-header,
-.card.is-compact .card-body { display: none; }
+.card.is-compact .card-header, .card.is-compact .card-body { display: none; }
 
-.compact-badge {
-font-family: 'JetBrains Mono', monospace;
-font-size: 0.63rem;
-padding: 2px 8px;
-border-radius: 20px;
-font-weight: 700;
-flex-shrink: 0;
-}
+.compact-top { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.compact-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; padding: 2px 8px; border-radius: 20px; font-weight: 700; flex-shrink: 0; }
 .compact-badge-blue { background: rgba(79,142,247,0.15); color: var(--accent-blue); border: 1px solid rgba(79,142,247,0.3); }
 .compact-badge-rose { background: rgba(248,113,113,0.12); color: var(--accent-rose); border: 1px solid rgba(248,113,113,0.25); }
-
-.compact-time {
-font-family: 'JetBrains Mono', monospace;
-font-size: 0.68rem;
-color: var(--accent-cyan);
-flex-shrink: 0;
+.compact-time { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--accent-cyan); flex-shrink: 0; }
+.compact-firma { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.compact-pills { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; }
+.compact-pill { font-size: 0.66rem; padding: 2px 7px; border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
+.compact-sig { font-size: 0.70rem; color: var(--text-muted); flex-shrink: 0; }
+.compact-expand-hint { font-size: 0.61rem; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-left: auto; flex-shrink: 0; opacity: 0.6; }
+.compact-desc {
+  margin-top: 6px; padding-top: 6px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  font-size: 0.77rem; color: var(--text-secondary);
+  line-height: 1.45; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-
-.compact-firma {
-font-size: 0.83rem;
-font-weight: 600;
-color: var(--text-primary);
-flex: 1;
-min-width: 0;
-overflow: hidden;
-text-overflow: ellipsis;
-white-space: nowrap;
-}
-
-.compact-pills {
-display: flex;
-gap: 5px;
-flex-shrink: 0;
-flex-wrap: wrap;
-}
-
-.compact-pill {
-font-size: 0.66rem;
-padding: 2px 7px;
-border-radius: 20px;
-background: rgba(255,255,255,0.05);
-border: 1px solid rgba(255,255,255,0.08);
-color: var(--text-secondary);
-font-family: 'JetBrains Mono', monospace;
-}
-
-.compact-sig {
-font-size: 0.70rem;
-color: var(--text-muted);
-flex-shrink: 0;
-}
-
-.compact-expand-hint {
-font-size: 0.61rem;
-color: var(--text-muted);
-letter-spacing: 0.06em;
-text-transform: uppercase;
-margin-left: auto;
-flex-shrink: 0;
-opacity: 0.6;
-}
+.compact-desc:empty { display: none; }
+.compact-meta { display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
+.compact-meta-pill { font-size: 0.64rem; padding: 1px 7px; border-radius: 20px; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+.meta-prog { background: rgba(79,142,247,0.12); color: var(--accent-blue); border: 1px solid rgba(79,142,247,0.25); }
+.meta-nonprog { background: rgba(248,113,113,0.10); color: var(--accent-rose); border: 1px solid rgba(248,113,113,0.22); }
+.meta-unknown { background: rgba(251,191,36,0.10); color: var(--accent-amber); border: 1px solid rgba(251,191,36,0.22); }
+.meta-auth { background: rgba(74,222,128,0.10); color: var(--accent-green); border: 1px solid rgba(74,222,128,0.22); }
+.meta-noauth { background: rgba(248,113,113,0.10); color: var(--accent-rose); border: 1px solid rgba(248,113,113,0.22); }
 
 /* EDITING STATE */
-.card.is-editing {
-border-color: rgba(251,191,36,0.4) !important;
-box-shadow: 0 0 0 3px rgba(251,191,36,0.07), var(--shadow-hover);
-}
-
-/* CONFIRM BAR */
+.card.is-editing { border-color: rgba(251,191,36,0.4) !important; box-shadow: 0 0 0 3px rgba(251,191,36,0.07), var(--shadow-hover); }
 .confirm-bar {
-display: none;
-align-items: center;
-justify-content: flex-end;
-gap: 10px;
-padding: 10px 16px;
-border-top: 1px solid rgba(251,191,36,0.15);
-background: rgba(251,191,36,0.04);
+  display: none; align-items: center; justify-content: flex-end; gap: 10px;
+  padding: 10px 16px; border-top: 1px solid rgba(251,191,36,0.15); background: rgba(251,191,36,0.04);
 }
 .card.is-editing .confirm-bar { display: flex; }
-
 .btn-confirm {
-display: flex;
-align-items: center;
-gap: 6px;
-padding: 7px 16px;
-border-radius: var(--radius-sm);
-border: 1px solid rgba(56,232,200,0.4);
-background: rgba(56,232,200,0.10);
-color: var(--accent-cyan);
-font-family: 'Sora', sans-serif;
-font-size: 0.78rem;
-font-weight: 600;
-cursor: pointer;
-transition: all 0.2s ease;
+  display: flex; align-items: center; gap: 6px; padding: 7px 16px;
+  border-radius: var(--radius-sm); border: 1px solid rgba(56,232,200,0.4);
+  background: rgba(56,232,200,0.10); color: var(--accent-cyan);
+  font-family: 'Sora', sans-serif; font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s ease;
 }
-.btn-confirm:hover {
-background: rgba(56,232,200,0.20);
-border-color: rgba(56,232,200,0.65);
-box-shadow: 0 0 14px rgba(56,232,200,0.18);
-}
-
+.btn-confirm:hover { background: rgba(56,232,200,0.20); border-color: rgba(56,232,200,0.65); box-shadow: 0 0 14px rgba(56,232,200,0.18); }
 .btn-cancel-edit {
-display: flex;
-align-items: center;
-gap: 6px;
-padding: 7px 14px;
-border-radius: var(--radius-sm);
-border: 1px solid rgba(255,255,255,0.08);
-background: rgba(255,255,255,0.04);
-color: var(--text-secondary);
-font-family: 'Sora', sans-serif;
-font-size: 0.78rem;
-font-weight: 600;
-cursor: pointer;
-transition: all 0.2s ease;
+  display: flex; align-items: center; gap: 6px; padding: 7px 14px;
+  border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04); color: var(--text-secondary);
+  font-family: 'Sora', sans-serif; font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s ease;
 }
 .btn-cancel-edit:hover { background: rgba(255,255,255,0.09); color: var(--text-primary); }
-
-.editing-label {
-font-size: 0.72rem;
-color: var(--accent-amber);
-letter-spacing: 0.05em;
-font-weight: 600;
-flex: 1;
-}
+.editing-label { font-size: 0.72rem; color: var(--accent-amber); letter-spacing: 0.05em; font-weight: 600; flex: 1; }
 
 /* CARD HEADER & BODY */
-.card-header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 12px 16px 10px;
-border-bottom: 1px solid rgba(255,255,255,0.055);
-gap: 8px;
-}
-
-.card-number {
-font-family: 'JetBrains Mono', monospace;
-font-size: 0.69rem;
-color: var(--text-muted);
-background: rgba(255,255,255,0.04);
-border: 1px solid var(--glass-border);
-border-radius: 20px;
-padding: 2px 9px;
-flex-shrink: 0;
-}
-
-.card-timestamp {
-font-family: 'JetBrains Mono', monospace;
-font-size: 0.69rem;
-color: var(--accent-cyan);
-opacity: 0.65;
-flex: 1;
-text-align: right;
-margin-right: 6px;
-}
-
-.btn-icon {
-width: 28px; height: 28px;
-border-radius: 7px;
-border: 1px solid var(--glass-border);
-background: rgba(255,255,255,0.03);
-color: var(--text-secondary);
-cursor: pointer;
-display: flex; align-items: center; justify-content: center;
-font-size: 0.8rem;
-transition: all 0.18s;
-flex-shrink: 0;
-}
+.card-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 10px; border-bottom: 1px solid rgba(255,255,255,0.055); gap: 8px; }
+.card-number { font-family: 'JetBrains Mono', monospace; font-size: 0.69rem; color: var(--text-muted); background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2px 9px; flex-shrink: 0; }
+.card-timestamp { font-family: 'JetBrains Mono', monospace; font-size: 0.69rem; color: var(--accent-cyan); opacity: 0.65; flex: 1; text-align: right; margin-right: 6px; }
+.btn-icon { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; transition: all 0.18s; flex-shrink: 0; }
 .btn-icon:hover { background: rgba(255,255,255,0.09); color: var(--text-primary); }
 .btn-icon.delete:hover { background: rgba(248,113,113,0.14); color: var(--accent-rose); border-color: rgba(248,113,113,0.35); }
-
-.card-body {
-padding: 14px 16px 16px;
-display: flex;
-flex-direction: column;
-gap: 12px;
-}
-
+.card-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 12px; }
 .field { display: flex; flex-direction: column; gap: 5px; }
-
-label {
-font-size: 0.69rem;
-font-weight: 600;
-letter-spacing: 0.08em;
-text-transform: uppercase;
-color: var(--text-muted);
-}
-
-input[type="text"], textarea, select {
-background: rgba(255,255,255,0.045);
-border: 1px solid rgba(255,255,255,0.08);
-border-radius: var(--radius-sm);
-color: var(--text-primary);
-font-family: 'Sora', sans-serif;
-font-size: 0.84rem;
-padding: 9px 12px;
-outline: none;
-transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-width: 100%;
-}
+label { font-size: 0.69rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+input[type="text"], textarea, select { background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); color: var(--text-primary); font-family: 'Sora', sans-serif; font-size: 0.84rem; padding: 9px 12px; outline: none; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s; width: 100%; }
 textarea { resize: vertical; min-height: 58px; }
-input:focus, textarea:focus, select:focus {
-border-color: rgba(79,142,247,0.5);
-background: rgba(79,142,247,0.055);
-box-shadow: 0 0 0 3px rgba(79,142,247,0.10);
-}
-
-@keyframes fieldPulse {
-0%   { border-color: rgba(255,255,255,0.08); box-shadow: none; }
-50%  { border-color: rgba(251,191,36,0.55); box-shadow: 0 0 0 3px rgba(251,191,36,0.10); }
-100% { border-color: rgba(255,255,255,0.08); box-shadow: none; }
-}
-input.field-required-pulse {
-animation: fieldPulse 2.4s ease-in-out infinite;
-border-color: rgba(251,191,36,0.35);
-}
-input.field-required-pulse:focus {
-animation: none;
-border-color: rgba(79,142,247,0.5);
-background: rgba(79,142,247,0.055);
-box-shadow: 0 0 0 3px rgba(79,142,247,0.10);
-}
+input:focus, textarea:focus, select:focus { border-color: rgba(79,142,247,0.5); background: rgba(79,142,247,0.055); box-shadow: 0 0 0 3px rgba(79,142,247,0.10); }
+@keyframes fieldPulse { 0% { border-color: rgba(255,255,255,0.08); box-shadow: none; } 50% { border-color: rgba(251,191,36,0.55); box-shadow: 0 0 0 3px rgba(251,191,36,0.10); } 100% { border-color: rgba(255,255,255,0.08); box-shadow: none; } }
+input.field-required-pulse { animation: fieldPulse 2.4s ease-in-out infinite; border-color: rgba(251,191,36,0.35); }
+input.field-required-pulse:focus { animation: none; border-color: rgba(79,142,247,0.5); background: rgba(79,142,247,0.055); box-shadow: 0 0 0 3px rgba(79,142,247,0.10); }
 
 /* RADIO PILLS */
 .radio-group { display: flex; flex-wrap: wrap; gap: 6px; }
-.radio-pill {
-display: flex; align-items: center; gap: 6px;
-cursor: pointer; user-select: none;
-font-size: 0.78rem; font-weight: 600;
-padding: 6px 13px; border-radius: 50px;
-border: 1.5px solid var(--glass-border);
-background: rgba(255,255,255,0.03);
-color: var(--text-secondary);
-transition: all 0.2s ease; white-space: nowrap;
-}
+.radio-pill { display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; font-size: 0.78rem; font-weight: 600; padding: 6px 13px; border-radius: 50px; border: 1.5px solid var(--glass-border); background: rgba(255,255,255,0.03); color: var(--text-secondary); transition: all 0.2s ease; white-space: nowrap; }
 .radio-pill input[type="radio"] { display: none; }
 .radio-pill:hover { background: rgba(255,255,255,0.07); color: var(--text-primary); }
-.radio-dot {
-width: 7px; height: 7px; border-radius: 50%;
-border: 1.5px solid currentColor; flex-shrink: 0;
-transition: all 0.18s; opacity: 0.5;
-}
+.radio-dot { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid currentColor; flex-shrink: 0; transition: all 0.18s; opacity: 0.5; }
 .radio-pill.opt-yes:has(input:checked) { border-color: rgba(79,142,247,0.55); background: rgba(79,142,247,0.10); color: var(--accent-blue); }
 .radio-pill.opt-yes input:checked ~ .radio-dot { background: var(--accent-blue); border-color: var(--accent-blue); opacity: 1; }
 .radio-pill.opt-no:has(input:checked) { border-color: rgba(248,113,113,0.55); background: rgba(248,113,113,0.10); color: var(--accent-rose); }
 .radio-pill.opt-no input:checked ~ .radio-dot { background: var(--accent-rose); border-color: var(--accent-rose); opacity: 1; }
 .radio-pill.opt-unknown:has(input:checked) { border-color: rgba(251,191,36,0.45); background: rgba(251,191,36,0.08); color: var(--accent-amber); }
 .radio-pill.opt-unknown input:checked ~ .radio-dot { background: var(--accent-amber); border-color: var(--accent-amber); opacity: 1; }
-.radio-pill.opt-auth:has(input:checked) { border-color: rgba(167,139,250,0.55); background: rgba(167,139,250,0.10); color: var(--accent-violet); }
-.radio-pill.opt-auth input:checked ~ .radio-dot { background: var(--accent-violet); border-color: var(--accent-violet); opacity: 1; }
+.radio-pill.opt-auth:has(input:checked) { border-color: rgba(74,222,128,0.55); background: rgba(74,222,128,0.10); color: var(--accent-green); }
+.radio-pill.opt-auth input:checked ~ .radio-dot { background: var(--accent-green); border-color: var(--accent-green); opacity: 1; }
 .radio-pill.opt-noauth:has(input:checked) { border-color: rgba(248,113,113,0.55); background: rgba(248,113,113,0.10); color: var(--accent-rose); }
 .radio-pill.opt-noauth input:checked ~ .radio-dot { background: var(--accent-rose); border-color: var(--accent-rose); opacity: 1; }
 
 /* NUMBER INPUTS */
-input[type="number"] {
-background: rgba(255,255,255,0.045);
-border: 1px solid rgba(255,255,255,0.08);
-border-radius: var(--radius-sm);
-color: var(--text-primary);
-font-family: 'JetBrains Mono', monospace;
-font-size: 0.9rem;
-padding: 9px 12px;
-outline: none;
-transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-width: 100%;
--moz-appearance: textfield;
-}
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+input[type="number"] { background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; padding: 9px 12px; outline: none; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s; width: 100%; -moz-appearance: textfield; }
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
 input[type="number"]:focus { border-color: rgba(56,232,200,0.45); background: rgba(56,232,200,0.04); box-shadow: 0 0 0 3px rgba(56,232,200,0.08); }
-
 .qty-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 2px; }
 .qty-block { display: flex; flex-direction: column; gap: 5px; }
 .qty-block label { font-size: 0.67rem; color: var(--text-muted); letter-spacing: 0.07em; text-transform: uppercase; font-weight: 600; }
@@ -732,23 +270,10 @@ input[type="number"]:focus { border-color: rgba(56,232,200,0.45); background: rg
 
 /* CHECKBOXES */
 .check-group { display: flex; flex-wrap: wrap; gap: 6px; }
-.check-label {
-display: flex; align-items: center; gap: 7px;
-cursor: pointer; user-select: none;
-font-size: 0.78rem; color: var(--text-secondary);
-padding: 6px 13px; border-radius: var(--radius-sm);
-border: 1px solid var(--glass-border);
-background: rgba(255,255,255,0.03);
-transition: all 0.18s; font-weight: 500;
-}
+.check-label { display: flex; align-items: center; gap: 7px; cursor: pointer; user-select: none; font-size: 0.78rem; color: var(--text-secondary); padding: 6px 13px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03); transition: all 0.18s; font-weight: 500; }
 .check-label:hover { background: rgba(255,255,255,0.07); color: var(--text-primary); }
 .check-label input[type="checkbox"] { display: none; }
-.check-box {
-width: 16px; height: 16px; border-radius: 4px;
-border: 1.5px solid var(--text-muted);
-display: flex; align-items: center; justify-content: center;
-transition: all 0.18s; flex-shrink: 0; font-size: 0.65rem;
-}
+.check-box { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--text-muted); display: flex; align-items: center; justify-content: center; transition: all 0.18s; flex-shrink: 0; font-size: 0.65rem; }
 .check-label.bancal input:checked ~ .check-box { background: var(--accent-cyan); border-color: var(--accent-cyan); box-shadow: 0 0 8px rgba(56,232,200,0.4); }
 
 /* SIGNATURE */
@@ -757,122 +282,126 @@ transition: all 0.18s; flex-shrink: 0; font-size: 0.65rem;
 .signature-wrap input { padding-right: 32px; }
 
 /* EMPTY STATE */
-.empty-state {
-text-align: center; padding: 28px 16px;
-color: var(--text-muted); font-size: 0.8rem;
-border: 1px dashed rgba(255,255,255,0.06);
-border-radius: var(--radius-lg);
-letter-spacing: 0.04em; line-height: 1.6;
-}
+.empty-state { text-align: center; padding: 28px 16px; color: var(--text-muted); font-size: 0.8rem; border: 1px dashed rgba(255,255,255,0.06); border-radius: var(--radius-lg); letter-spacing: 0.04em; line-height: 1.6; }
 .empty-state .emoji { font-size: 1.6rem; display: block; margin-bottom: 8px; }
 
 /* TOAST */
-.toast {
-position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-background: rgba(30,40,65,0.95);
-border: 1px solid var(--glass-border);
-border-radius: var(--radius-md);
-padding: 10px 18px; font-size: 0.8rem; color: var(--text-primary);
-box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-backdrop-filter: blur(20px); z-index: 999;
-animation: toastIn 0.28s ease; max-width: 280px; text-align: center;
-}
+.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(30,40,65,0.95); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 10px 18px; font-size: 0.8rem; color: var(--text-primary); box-shadow: 0 12px 40px rgba(0,0,0,0.5); backdrop-filter: blur(20px); z-index: 999; animation: toastIn 0.28s ease; max-width: 280px; text-align: center; }
 @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(14px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 .toast.fade-out { animation: toastOut 0.28s ease forwards; }
 @keyframes toastOut { to { opacity: 0; transform: translateX(-50%) translateY(8px); } }
 
-/* FAB – bottom RIGHT */
+/* FAB BUTTONS */
 .fab-cal {
-position: fixed; bottom: 28px; right: 28px;
-width: 52px; height: 52px; border-radius: 50%;
-background: rgba(79,142,247,0.18);
-border: 1.5px solid rgba(79,142,247,0.45);
-color: var(--accent-blue); cursor: pointer;
-display: flex; align-items: center; justify-content: center;
-box-shadow: 0 8px 28px rgba(79,142,247,0.2);
-transition: all 0.22s ease; z-index: 100;
-backdrop-filter: blur(12px);
+  position: fixed; bottom: 28px; right: 28px;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(79,142,247,0.18); border: 1.5px solid rgba(79,142,247,0.45);
+  color: var(--accent-blue); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 28px rgba(79,142,247,0.2);
+  transition: all 0.22s ease; z-index: 100; backdrop-filter: blur(12px);
 }
-.fab-cal:hover {
-background: rgba(79,142,247,0.28); border-color: rgba(79,142,247,0.7);
-box-shadow: 0 12px 36px rgba(79,142,247,0.3);
-transform: translateY(-2px) scale(1.05);
+.fab-cal:hover { background: rgba(79,142,247,0.28); border-color: rgba(79,142,247,0.7); box-shadow: 0 12px 36px rgba(79,142,247,0.3); transform: translateY(-2px) scale(1.05); }
+.fab-day {
+  position: fixed; bottom: 28px; left: 28px;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: rgba(167,139,250,0.15); border: 1.5px solid rgba(167,139,250,0.45);
+  color: var(--accent-violet); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 28px rgba(167,139,250,0.2);
+  transition: all 0.22s ease; z-index: 100; backdrop-filter: blur(12px);
 }
+.fab-day:hover { background: rgba(167,139,250,0.28); border-color: rgba(167,139,250,0.7); box-shadow: 0 12px 36px rgba(167,139,250,0.3); transform: translateY(-2px) scale(1.05); }
+.fab-day.is-active { background: rgba(167,139,250,0.30); border-color: rgba(167,139,250,0.8); box-shadow: 0 0 0 4px rgba(167,139,250,0.15), 0 12px 36px rgba(167,139,250,0.3); }
 
-/* MODAL – slides from RIGHT */
-.modal-overlay {
-position: fixed; inset: 0;
-background: rgba(5,8,20,0.75);
-backdrop-filter: blur(8px);
-z-index: 500; display: none;
-align-items: center; justify-content: flex-end;
-padding: 20px; animation: fadeIn 0.2s ease;
-}
+/* MODAL BASE */
+.modal-overlay { position: fixed; inset: 0; background: rgba(5,8,20,0.75); backdrop-filter: blur(8px); z-index: 500; display: none; align-items: center; justify-content: flex-end; padding: 20px; animation: fadeIn 0.2s ease; }
 .modal-overlay.open { display: flex; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-.modal {
-background: #0e1628;
-border: 1px solid rgba(255,255,255,0.12);
-border-radius: 22px; width: 100%; max-width: 480px;
-max-height: 92vh; overflow: hidden;
-display: flex; flex-direction: column;
-box-shadow: 0 32px 80px rgba(0,0,0,0.6);
-animation: modalIn 0.28s cubic-bezier(0.34,1.4,0.64,1);
-}
+.modal { background: #0e1628; border: 1px solid rgba(255,255,255,0.12); border-radius: 22px; width: 100%; max-width: 480px; max-height: 92vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 32px 80px rgba(0,0,0,0.6); animation: modalIn 0.28s cubic-bezier(0.34,1.4,0.64,1); }
 @keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateX(20px); } to { opacity: 1; transform: scale(1) translateX(0); } }
-
-.modal-header {
-display: flex; align-items: center; justify-content: space-between;
-padding: 18px 22px 16px;
-border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0;
-}
-.modal-title {
-display: flex; align-items: center; gap: 10px;
-font-size: 0.92rem; font-weight: 700;
-letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent-blue);
-}
-.modal-close {
-width: 30px; height: 30px; border-radius: 8px;
-border: 1px solid var(--glass-border); background: rgba(255,255,255,0.04);
-color: var(--text-secondary); cursor: pointer;
-display: flex; align-items: center; justify-content: center; transition: all 0.18s;
-}
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; }
+.modal-title { display: flex; align-items: center; gap: 10px; font-size: 0.92rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent-blue); }
+.modal-close { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.04); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.18s; }
 .modal-close:hover { background: rgba(248,113,113,0.14); color: var(--accent-rose); border-color: rgba(248,113,113,0.35); }
+.modal-body { overflow-y: auto; padding: 20px 22px 24px; flex: 1; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
 
-.modal-body {
-overflow-y: auto; padding: 20px 22px 24px; flex: 1;
-scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent;
-}
+/* DAY PICKER MODAL (left) */
+.modal-overlay-left { justify-content: flex-start; }
+.modal-left { animation: modalInLeft 0.28s cubic-bezier(0.34,1.4,0.64,1); }
+@keyframes modalInLeft { from { opacity: 0; transform: scale(0.95) translateX(-20px); } to { opacity: 1; transform: scale(1) translateX(0); } }
+.modal-title-violet { color: var(--accent-violet); }
 
-/* STATS */
-.stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
-.stat-card {
-background: var(--glass-bg); border: 1px solid var(--glass-border);
-border-radius: var(--radius-md); padding: 14px 16px; text-align: center;
+/* DAY PICKER CONTENT */
+.dp-today-btn {
+  width: 100%; padding: 12px 16px; border-radius: var(--radius-md);
+  border: 1px solid rgba(56,232,200,0.35); background: rgba(56,232,200,0.08);
+  color: var(--accent-cyan); font-family: 'Sora', sans-serif; font-size: 0.85rem;
+  font-weight: 600; cursor: pointer; text-align: left;
+  display: flex; align-items: center; gap: 10px; transition: all 0.18s; margin-bottom: 14px;
 }
+.dp-today-btn:hover { background: rgba(56,232,200,0.15); border-color: rgba(56,232,200,0.6); }
+.dp-today-btn.active-day-btn { background: rgba(56,232,200,0.20); border-color: rgba(56,232,200,0.7); box-shadow: 0 0 0 3px rgba(56,232,200,0.08); }
+
+/* STATS MODAL */
+.stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 14px 16px; text-align: center; }
 .stat-val { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 500; line-height: 1; margin-bottom: 5px; }
 .stat-label { font-size: 0.69rem; color: var(--text-muted); letter-spacing: 0.07em; text-transform: uppercase; font-weight: 600; }
 
-/* CHART */
-.chart-section { margin-bottom: 24px; }
-.chart-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
-.week-bars { display: flex; align-items: flex-end; gap: 8px; height: 90px; }
-.week-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
-.week-bar { width: 100%; border-radius: 6px 6px 0 0; background: rgba(79,142,247,0.25); border: 1px solid rgba(79,142,247,0.4); transition: height 0.4s cubic-bezier(0.34,1.2,0.64,1); min-height: 3px; }
-.week-bar.today-bar { background: rgba(56,232,200,0.25); border-color: rgba(56,232,200,0.5); box-shadow: 0 0 12px rgba(56,232,200,0.15); }
-.week-bar-count { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--text-secondary); }
-.week-bar-day { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+/* MONTH TABS */
+.month-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
+.month-tab { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 600; padding: 4px 11px; border-radius: 20px; cursor: pointer; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03); color: var(--text-muted); transition: all 0.18s; }
+.month-tab:hover { color: var(--text-secondary); background: rgba(255,255,255,0.06); }
+.month-tab.active { background: rgba(79,142,247,0.15); border-color: rgba(79,142,247,0.4); color: var(--accent-blue); }
 
-/* DAY LIST (modal) */
+/* CHART */
+.chart-section { margin-bottom: 20px; }
+.chart-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+.week-bars { display: flex; align-items: flex-end; gap: 6px; height: 90px; }
+.week-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+.bar-stack { width: 100%; display: flex; flex-direction: column; border-radius: 6px 6px 0 0; overflow: hidden; transition: height 0.4s cubic-bezier(0.34,1.2,0.64,1); min-height: 3px; }
+.bar-truck { background: rgba(79,142,247,0.30); border-top: 1px solid rgba(79,142,247,0.5); flex-shrink: 0; }
+.bar-resi  { background: rgba(248,113,113,0.25); border-top: 1px solid rgba(248,113,113,0.4); flex-shrink: 0; }
+.week-bar-count { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--text-secondary); }
+.week-bar-day { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+.today-bar-day { color: var(--accent-cyan) !important; }
+
+/* MONTH HEATMAP */
+.month-heatmap { margin-bottom: 20px; }
+.heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.heatmap-day-label { font-size: 0.58rem; color: var(--text-muted); text-align: center; padding: 2px 0; letter-spacing: 0.05em; text-transform: uppercase; }
+.heatmap-cell { aspect-ratio: 1; border-radius: 4px; cursor: default; transition: all 0.18s; position: relative; }
+.heatmap-cell.has-data { cursor: pointer; }
+.heatmap-cell.has-data:hover { transform: scale(1.15); z-index: 2; }
+.heatmap-cell.empty-cell { background: transparent; }
+.heatmap-cell.no-data { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); }
+.heatmap-cell.level-1 { background: rgba(79,142,247,0.15); border: 1px solid rgba(79,142,247,0.25); }
+.heatmap-cell.level-2 { background: rgba(79,142,247,0.28); border: 1px solid rgba(79,142,247,0.4); }
+.heatmap-cell.level-3 { background: rgba(79,142,247,0.45); border: 1px solid rgba(79,142,247,0.6); }
+.heatmap-cell.level-4 { background: rgba(56,232,200,0.45); border: 1px solid rgba(56,232,200,0.6); box-shadow: 0 0 8px rgba(56,232,200,0.2); }
+.heatmap-cell.is-today-cell { box-shadow: 0 0 0 2px var(--accent-cyan); }
+.heatmap-date-num { position: absolute; bottom: 2px; right: 3px; font-family: 'JetBrains Mono', monospace; font-size: 0.52rem; color: rgba(255,255,255,0.35); line-height: 1; }
+
+/* MONTH SUMMARY */
+.month-summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.month-stat-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); font-size: 0.78rem; }
+.month-stat-icon { font-size: 0.9rem; flex-shrink: 0; }
+.month-stat-label { flex: 1; color: var(--text-secondary); }
+.month-stat-val { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; font-weight: 600; color: var(--text-primary); }
+
+/* TOP SUPPLIERS */
+.top-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+.top-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius-sm); background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.05); }
+.top-rank { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); width: 18px; flex-shrink: 0; }
+.top-name { flex: 1; font-size: 0.8rem; font-weight: 600; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.top-bar-wrap { width: 60px; height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; flex-shrink: 0; }
+.top-bar-fill { height: 100%; border-radius: 3px; background: var(--accent-blue); }
+.top-count { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--text-secondary); flex-shrink: 0; min-width: 30px; text-align: right; }
+
+/* DAY SECTIONS */
 .day-section { margin-bottom: 10px; }
-.day-header {
-display: flex; align-items: center; justify-content: space-between;
-padding: 10px 14px;
-border-radius: var(--radius-md) var(--radius-md) 0 0;
-background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border);
-cursor: pointer; user-select: none; transition: background 0.18s;
-}
+.day-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: var(--radius-md) var(--radius-md) 0 0; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); cursor: pointer; user-select: none; transition: background 0.18s; }
 .day-header:hover { background: rgba(255,255,255,0.07); }
 .day-header-left { display: flex; align-items: center; gap: 10px; }
 .day-date-label { font-weight: 700; font-size: 0.85rem; }
@@ -885,38 +414,41 @@ cursor: pointer; user-select: none; transition: background 0.18s;
 .day-header.open .day-chevron { transform: rotate(180deg); }
 .day-entries { border: 1px solid var(--glass-border); border-top: none; border-radius: 0 0 var(--radius-md) var(--radius-md); overflow: hidden; display: none; }
 .day-entries.open { display: block; }
-.entry-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.8rem; }
+.entry-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.8rem; flex-wrap: wrap; }
 .entry-row:last-child { border-bottom: none; }
 .entry-type { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; padding: 2px 7px; border-radius: 4px; flex-shrink: 0; font-weight: 600; }
 .entry-time { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-cyan); flex-shrink: 0; min-width: 42px; }
-.entry-firma { color: var(--text-primary); flex: 1; }
+.entry-firma { color: var(--text-primary); flex: 1; font-weight: 600; }
 .entry-sig { color: var(--text-muted); font-size: 0.72rem; }
 .entry-qty { color: var(--text-secondary); font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; }
+.entry-note { width: 100%; font-size: 0.73rem; color: var(--text-muted); padding-left: 0; line-height: 1.4; font-style: italic; }
+.entry-meta { display: flex; gap: 5px; flex-wrap: wrap; }
 .no-history { text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 0.82rem; letter-spacing: 0.04em; }
 
-/* RESPONSIVE */
+/* NAV BUTTONS in picker */
+.day-nav-btn {
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-sm); border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.04); color: var(--text-secondary);
+  cursor: pointer; transition: all 0.18s;
+}
+.day-nav-btn:hover:not(:disabled) { background: rgba(255,255,255,0.09); color: var(--text-primary); }
+.day-nav-btn:disabled { opacity: 0.3; cursor: default; }
+
 @media (max-width: 900px) {
-.main-layout { grid-template-columns: 1fr; grid-template-rows: auto; }
-.column-left  { grid-column: 1; grid-row: 1; }
-.column-right { grid-column: 1; grid-row: 2; border-left: none; padding-left: 0; }
-.day-selector-panel { grid-column: 1; grid-row: 3; }
-.modal { max-width: 100%; }
+  .main-layout { grid-template-columns: 1fr; }
+  .column-left { grid-column: 1; grid-row: 1; }
+  .column-right { grid-column: 1; grid-row: 2; border-left: none; padding-left: 0; }
+  .modal { max-width: 100%; }
 }
 @media (max-width: 500px) {
-.page { padding: 14px 12px 50px; }
-.header { flex-direction: column; }
-.clock-card { text-align: left; width: 100%; }
-}
-@media print {
-body::before, body::after { display: none; }
-.btn-add, .btn-icon { display: none !important; }
-.card { border: 1px solid #ccc; background: white; color: black; }
+  .page { padding: 14px 12px 50px; }
+  .header { flex-direction: column; }
+  .clock-card { text-align: left; width: 100%; }
 }
 </style>
-
 </head>
 <body>
-
 <div class="page">
   <div class="header">
     <div class="header-left">
@@ -929,8 +461,24 @@ body::before, body::after { display: none; }
     </div>
   </div>
 
+  <!-- Sync status bar -->
+  <div class="sync-bar" id="sync-bar">
+    <span class="sync-dot" id="sync-dot"></span>
+    <span id="sync-text">Connessione a Supabase…</span>
+  </div>
+
+  <!-- Active Day Banner -->
+  <div class="active-day-banner" id="active-day-banner">
+    <span class="adb-icon">📅</span>
+    <span class="adb-text">Stai visualizzando:</span>
+    <span class="adb-date" id="adb-date-label">–</span>
+    <button class="adb-back" onclick="returnToToday()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 8 8 12 12 16"/><line x1="16" y1="12" x2="8" y2="12"/></svg>
+      Torna ad oggi
+    </button>
+  </div>
+
   <div class="main-layout">
-    <!-- LEFT: CAMION -->
     <div class="column-left">
       <div class="col-header">
         <div class="col-title">
@@ -946,7 +494,6 @@ body::before, body::after { display: none; }
       <div class="cards-list" id="trucks-list"></div>
     </div>
 
-    <!-- RIGHT: RESI -->
     <div class="column-right">
       <div class="col-header">
         <div class="col-title">
@@ -961,38 +508,36 @@ body::before, body::after { display: none; }
       </div>
       <div class="cards-list" id="resi-list"></div>
     </div>
-
-    <!-- DAY SELECTOR PANEL – bottom left -->
-    <div class="day-selector-panel">
-      <div class="day-selector-header">
-        <div class="day-selector-title">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          Visualizza giorno
-        </div>
-        <div class="day-nav">
-          <button class="day-nav-btn" id="ds-prev" onclick="dsNavigate(-1)" title="Giorno precedente">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-          </button>
-          <span class="day-nav-current" id="ds-label">Oggi</span>
-          <button class="day-nav-btn" id="ds-next" onclick="dsNavigate(1)" title="Giorno successivo" disabled>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
-        </div>
-      </div>
-      <div class="day-selector-body" id="ds-body">
-        <div class="ds-empty">Nessun dato storico ancora.<br>Le registrazioni appariranno qui.</div>
-      </div>
-    </div>
-
   </div>
 </div>
 
-<!-- FAB – bottom right -->
+<!-- FAB right: stats -->
 <button class="fab-cal" onclick="openCalendar()" title="Storico e statistiche">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
 </button>
 
-<!-- Modal – right side panel -->
+<!-- FAB left: day picker -->
+<button class="fab-day" id="fab-day-btn" onclick="openDayPicker()" title="Seleziona giorno">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
+</button>
+
+<!-- Day Picker Modal (left) -->
+<div class="modal-overlay modal-overlay-left" id="dayPickerModal" onclick="if(event.target===this)closeDayPicker()">
+  <div class="modal modal-left" style="max-width:360px;">
+    <div class="modal-header">
+      <div class="modal-title modal-title-violet">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Seleziona Giorno
+      </div>
+      <button class="modal-close" onclick="closeDayPicker()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="dayPickerBody"></div>
+  </div>
+</div>
+
+<!-- Stats Modal (right) -->
 <div class="modal-overlay" id="calModal" onclick="if(event.target===this)closeCalendar()">
   <div class="modal">
     <div class="modal-header">
@@ -1009,15 +554,148 @@ body::before, body::after { display: none; }
 </div>
 
 <script>
+// ─── SUPABASE CONFIG ─────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://wvqopsvqmemkxhllajqb.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_8-Zs8sEHZtFnQr4lE_W5Eg_kEhMiEGf';
+
+const sbHeaders = {
+  'Content-Type': 'application/json',
+  'apikey': SUPABASE_KEY,
+  'Authorization': `Bearer ${SUPABASE_KEY}`,
+  'Prefer': 'return=minimal'
+};
+
+async function sbGet(table, params = '') {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+    headers: { ...sbHeaders, 'Prefer': 'return=representation' }
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+async function sbUpsert(table, data) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: { ...sbHeaders, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error(await res.text());
+}
+
+async function sbDelete(table, id) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+    headers: sbHeaders
+  });
+  if (!res.ok) throw new Error(await res.text());
+}
+
+// Convert flat DB row → app object
+function dbToTruck(row) {
+  return {
+    id: row.id,
+    ts: row.ts || '',
+    firma: row.firma || '',
+    programat: row.programat || '',
+    bancal: !!row.bancal,
+    nrBancale: row.nr_bancale || '',
+    cutii: !!row.cutii,
+    nrCutii: row.nr_cutii || '',
+    comentariu: row.comentariu || '',
+    semnatura: row.semnatura || '',
+    arrivalTime: row.arrival_time || '',
+    collapsed: !!row.collapsed,
+    editing: false,
+    dateKey: row.date_key
+  };
+}
+function truckToDb(t, dateKey) {
+  return {
+    id: t.id,
+    date_key: dateKey || t.dateKey || todayKey(),
+    ts: t.ts || '',
+    firma: t.firma || '',
+    programat: t.programat || '',
+    bancal: !!t.bancal,
+    nr_bancale: t.nrBancale || '',
+    cutii: !!t.cutii,
+    nr_cutii: t.nrCutii || '',
+    comentariu: t.comentariu || '',
+    semnatura: t.semnatura || '',
+    arrival_time: t.arrivalTime || '',
+    collapsed: !!t.collapsed
+  };
+}
+
+function dbToResi(row) {
+  return {
+    id: row.id,
+    ts: row.ts || '',
+    descriere: row.descriere || '',
+    autorizat: row.autorizat || '',
+    bancal: !!row.bancal,
+    nrBancale: row.nr_bancale || '',
+    cutii: !!row.cutii,
+    nrCutii: row.nr_cutii || '',
+    comentariu: row.comentariu || '',
+    semnatura: row.semnatura || '',
+    collapsed: !!row.collapsed,
+    editing: false,
+    dateKey: row.date_key
+  };
+}
+function resiToDb(r, dateKey) {
+  return {
+    id: r.id,
+    date_key: dateKey || r.dateKey || todayKey(),
+    ts: r.ts || '',
+    descriere: r.descriere || '',
+    autorizat: r.autorizat || '',
+    bancal: !!r.bancal,
+    nr_bancale: r.nrBancale || '',
+    cutii: !!r.cutii,
+    nr_cutii: r.nrCutii || '',
+    comentariu: r.comentariu || '',
+    semnatura: r.semnatura || '',
+    collapsed: !!r.collapsed
+  };
+}
+
+// ─── SYNC STATUS ─────────────────────────────────────────────────────────────
+function setSyncStatus(state, msg) {
+  const bar = document.getElementById('sync-bar');
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-text');
+  bar.className = 'sync-bar ' + state;
+  dot.className = 'sync-dot' + (state === 'syncing' ? ' pulse' : '');
+  txt.textContent = msg;
+}
+
+// Debounced save
+let saveTimer = null;
+function scheduleDbSave(type, obj, dKey) {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    setSyncStatus('syncing', 'Salvataggio in corso…');
+    try {
+      if (type === 'truck') await sbUpsert('trucks', truckToDb(obj, dKey));
+      else await sbUpsert('resi', resiToDb(obj, dKey));
+      setSyncStatus('synced', 'Salvato su Supabase ✓');
+    } catch(e) {
+      setSyncStatus('error', 'Errore salvataggio: ' + e.message);
+      console.error(e);
+    }
+  }, 600);
+}
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
 let trucks = [];
-let resis = [];
+let resis  = [];
 let truckCount = 0;
-let resiCount = 0;
+let resiCount  = 0;
+let activeDay = null; // null = today
 
-// DAY SELECTOR STATE
-let dsOffset = 0; // 0 = today, -1 = yesterday, etc.
-
-// CLOCK
+// ─── CLOCK ───────────────────────────────────────────────────────────────────
 function updateClock() {
   const now = new Date();
   const gi = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'][now.getDay()];
@@ -1035,40 +713,100 @@ function nowStamp() {
 
 function toast(msg) {
   const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
+  t.className = 'toast'; t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(() => { t.classList.add('fade-out'); setTimeout(() => t.remove(), 280); }, 2400);
 }
 
 function updateCounts() {
   const tc = trucks.length, rc = resis.length;
-  document.getElementById('count-trucks').textContent = tc === 0 ? 'nessuna registrazione' : tc === 1 ? '1 registrazione' : `${tc} registrazioni`;
-  document.getElementById('count-resi').textContent   = rc === 0 ? 'nessuna registrazione' : rc === 1 ? '1 registrazione' : `${rc} registrazioni`;
+  document.getElementById('count-trucks').textContent = tc === 0 ? 'nessuna' : tc === 1 ? '1 registrazione' : `${tc} registrazioni`;
+  document.getElementById('count-resi').textContent   = rc === 0 ? 'nessuna' : rc === 1 ? '1 registrazione' : `${rc} registrazioni`;
 }
 
-// COMPACT / EXPAND LOGIC
-function isTruckComplete(t) {
-  return !!(t.firma && t.firma.trim() && t.semnatura && t.semnatura.trim());
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-function isResiComplete(r) {
-  return !!(r.descriere && r.descriere.trim() && r.semnatura && r.semnatura.trim());
+
+function formatKeyLabel(k) {
+  const d = new Date(k + 'T12:00:00');
+  const days = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+  const months = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
+
+// ─── LOAD DAY FROM SUPABASE ───────────────────────────────────────────────────
+async function loadDay(key) {
+  setSyncStatus('syncing', 'Caricamento…');
+  try {
+    const [tRows, rRows] = await Promise.all([
+      sbGet('trucks', `date_key=eq.${key}&order=created_at.asc`),
+      sbGet('resi',   `date_key=eq.${key}&order=created_at.asc`)
+    ]);
+    trucks = tRows.map(dbToTruck);
+    resis  = rRows.map(dbToResi);
+    truckCount = trucks.length;
+    resiCount  = resis.length;
+    renderAll();
+    setSyncStatus('synced', `Caricato: ${formatKeyLabel(key)} ✓`);
+  } catch(e) {
+    setSyncStatus('error', 'Errore caricamento: ' + e.message);
+    console.error(e);
+  }
+}
+
+// ─── ACTIVE DAY SWITCHING ──────────────────────────────────────────────────────
+async function switchToDay(key) {
+  if (key === null || key === todayKey()) { returnToToday(); return; }
+  activeDay = key;
+  await loadDay(key);
+  updateBanner();
+  updateFabDay();
+  closeDayPicker();
+  toast('📅 ' + formatKeyLabel(key));
+}
+
+async function returnToToday() {
+  activeDay = null;
+  await loadDay(todayKey());
+  updateBanner();
+  updateFabDay();
+  closeDayPicker();
+}
+
+function updateBanner() {
+  const banner = document.getElementById('active-day-banner');
+  const label  = document.getElementById('adb-date-label');
+  if (activeDay) { banner.classList.add('visible'); label.textContent = formatKeyLabel(activeDay); }
+  else banner.classList.remove('visible');
+}
+function updateFabDay() {
+  const fab = document.getElementById('fab-day-btn');
+  if (activeDay) fab.classList.add('is-active');
+  else fab.classList.remove('is-active');
+}
+
+function renderAll() { renderTrucks(); renderResis(); updateCounts(); }
+
+// ─── COMPACT/EXPAND LOGIC ─────────────────────────────────────────────────────
+function isTruckComplete(t) { return !!(t.firma && t.firma.trim() && t.semnatura && t.semnatura.trim()); }
+function isResiComplete(r)  { return !!(r.descriere && r.descriere.trim() && r.semnatura && r.semnatura.trim()); }
 
 function maybeCollapseCard(id, type) {
   if (type === 'truck') {
     const t = trucks.find(x => x.id === id);
     if (t && isTruckComplete(t) && !t.collapsed) {
       t.collapsed = true; t.editing = false;
-      renderTrucks(); saveHistory();
-      toast('✅ Card ridotto – clicca per modificare');
+      scheduleDbSave('truck', t, activeDay || todayKey());
+      renderTrucks(); toast('✅ Card ridotto - clicca per modificare');
     }
   } else {
     const r = resis.find(x => x.id === id);
     if (r && isResiComplete(r) && !r.collapsed) {
       r.collapsed = true; r.editing = false;
-      renderResis(); saveHistory();
-      toast('✅ Card ridotto – clicca per modificare');
+      scheduleDbSave('resi', r, activeDay || todayKey());
+      renderResis(); toast('✅ Card ridotto - clicca per modificare');
     }
   }
 }
@@ -1086,18 +824,10 @@ function expandCard(id, type) {
 function confirmEdit(id, type) {
   if (type === 'truck') {
     const t = trucks.find(x => x.id === id);
-    if (t) {
-      t.editing = false;
-      if (isTruckComplete(t)) t.collapsed = true;
-      renderTrucks(); saveHistory(); toast('💾 Modifiche salvate');
-    }
+    if (t) { t.editing = false; if (isTruckComplete(t)) t.collapsed = true; renderTrucks(); scheduleDbSave('truck', t, activeDay || todayKey()); toast('💾 Modifiche salvate'); }
   } else {
     const r = resis.find(x => x.id === id);
-    if (r) {
-      r.editing = false;
-      if (isResiComplete(r)) r.collapsed = true;
-      renderResis(); saveHistory(); toast('💾 Modifiche salvate');
-    }
+    if (r) { r.editing = false; if (isResiComplete(r)) r.collapsed = true; renderResis(); scheduleDbSave('resi', r, activeDay || todayKey()); toast('💾 Modifiche salvate'); }
   }
 }
 
@@ -1111,29 +841,43 @@ function cancelEdit(id, type) {
   }
 }
 
-// TRUCKS
-function addTruck(data) {
+// ─── TRUCKS ──────────────────────────────────────────────────────────────────
+async function addTruck() {
   truckCount++;
   const id = 'truck-' + Date.now() + '-' + truckCount;
-  const ts = nowStamp();
-  const entry = data || { id, ts, firma:'', programat:'', bancal:false, nrBancale:'', cutii:false, nrCutii:'', comentariu:'', semnatura:'', arrivalTime:'', collapsed:false, editing:false };
-  if (!data) entry.id = id;
+  const dKey = activeDay || todayKey();
+  const entry = { id, ts: nowStamp(), firma:'', programat:'', bancal:false, nrBancale:'', cutii:false, nrCutii:'', comentariu:'', semnatura:'', arrivalTime:'', collapsed:false, editing:false, dateKey: dKey };
   trucks.push(entry);
-  renderTrucks(); updateCounts(); saveHistory();
-  if (!data) toast('🚛 Nuova registrazione aggiunta');
+  renderTrucks(); updateCounts();
+  setSyncStatus('syncing', 'Salvataggio in corso…');
+  try {
+    await sbUpsert('trucks', truckToDb(entry, dKey));
+    setSyncStatus('synced', 'Salvato su Supabase ✓');
+    toast('🚛 Nuova registrazione aggiunta');
+  } catch(e) {
+    setSyncStatus('error', 'Errore: ' + e.message);
+  }
 }
 
-function removeTruck(id) {
+async function removeTruck(id) {
   if (!confirm('Eliminare questa registrazione?')) return;
   trucks = trucks.filter(t => t.id !== id);
-  renderTrucks(); updateCounts(); saveHistory(); toast('🗑️ Eliminato');
+  renderTrucks(); updateCounts();
+  setSyncStatus('syncing', 'Eliminazione…');
+  try {
+    await sbDelete('trucks', id);
+    setSyncStatus('synced', 'Eliminato ✓');
+    toast('🗑️ Eliminato');
+  } catch(e) {
+    setSyncStatus('error', 'Errore: ' + e.message);
+  }
 }
 
 function renderTrucks() {
   const list = document.getElementById('trucks-list');
   list.innerHTML = '';
   if (trucks.length === 0) {
-    list.innerHTML = `<div class="empty-state"><span class="emoji">🚛</span>Nessun camion registrato oggi.<br>Clicca "Aggiungi camion" per iniziare.</div>`;
+    list.innerHTML = `<div class="empty-state"><span class="emoji">🚛</span>Nessun camion registrato.<br>Clicca "Aggiungi camion" per iniziare.</div>`;
     return;
   }
   trucks.forEach((t, i) => {
@@ -1144,21 +888,23 @@ function renderTrucks() {
     const qty = [
       t.bancal && t.nrBancale ? `${t.nrBancale} bancali` : t.bancal ? 'bancali' : '',
       t.cutii && t.nrCutii ? `${t.nrCutii} colli` : t.cutii ? 'colli' : ''
-    ].filter(Boolean).join(', ');
+    ].filter(Boolean).join(' · ');
 
-    const progLabel = t.programat === 'programmato' ? '✓ Prog.' : t.programat === 'non_programmato' ? '✗ Non prog.' : '';
+    const progLabel = t.programat === 'programmato' ? '✓ Prog.' : t.programat === 'non_programmato' ? '✗ Non prog.' : t.programat === 'sconosciuto' ? '? Sconosciuto' : '';
+    const progClass = t.programat === 'programmato' ? 'meta-prog' : t.programat === 'non_programmato' ? 'meta-nonprog' : 'meta-unknown';
 
     card.innerHTML = `
       <div class="card-compact-view" onclick="expandCard('${t.id}','truck')">
-        <span class="compact-badge compact-badge-blue">CAM #${String(i+1).padStart(2,'0')}</span>
-        <span class="compact-time">${t.arrivalTime || (t.ts ? t.ts.split(' ')[1] : '–') || '–'}</span>
-        <span class="compact-firma">${t.firma || 'Azienda sconosciuta'}</span>
-        <div class="compact-pills">
-          ${qty ? `<span class="compact-pill">${qty}</span>` : ''}
-          ${progLabel ? `<span class="compact-pill">${progLabel}</span>` : ''}
+        <div class="compact-top">
+          <span class="compact-badge compact-badge-blue">CAM #${String(i+1).padStart(2,'0')}</span>
+          <span class="compact-time">${t.arrivalTime || (t.ts ? t.ts.split(' ')[1] : '–') || '–'}</span>
+          <span class="compact-firma">${t.firma || 'Azienda sconosciuta'}</span>
+          <div class="compact-pills">${qty ? `<span class="compact-pill">${qty}</span>` : ''}</div>
+          ${t.semnatura ? `<span class="compact-sig">✍ ${t.semnatura}</span>` : ''}
+          <span class="compact-expand-hint">✎ modifica</span>
         </div>
-        ${t.semnatura ? `<span class="compact-sig">✍ ${t.semnatura}</span>` : ''}
-        <span class="compact-expand-hint">✎ modifica</span>
+        ${progLabel ? `<div class="compact-meta"><span class="compact-meta-pill ${progClass}">${progLabel}</span></div>` : ''}
+        ${t.comentariu ? `<div class="compact-desc">${t.comentariu}</div>` : ''}
       </div>
       <div class="card-header">
         <span class="card-number">CAM #${String(i+1).padStart(2,'0')}</span>
@@ -1245,28 +991,42 @@ function updateTruck(id, field, val) {
     if (el) el.classList.toggle('hidden', !val);
     if (!val) { t.nrCutii = ''; const inp = el && el.querySelector('input'); if(inp) inp.value = ''; }
   }
+  scheduleDbSave('truck', t, activeDay || todayKey());
   if (field === 'semnatura' && val.trim() && isTruckComplete(t)) {
     setTimeout(() => maybeCollapseCard(id, 'truck'), 900);
   }
-  saveHistory();
 }
 
-// RESI
-function addResi(data) {
+// ─── RESI ─────────────────────────────────────────────────────────────────────
+async function addResi() {
   resiCount++;
   const id = 'resi-' + Date.now() + '-' + resiCount;
-  const ts = nowStamp();
-  const entry = data || { id, ts, descriere:'', autorizat:'', bancal:false, nrBancale:'', cutii:false, nrCutii:'', comentariu:'', semnatura:'', collapsed:false, editing:false };
-  if (!data) entry.id = id;
+  const dKey = activeDay || todayKey();
+  const entry = { id, ts: nowStamp(), descriere:'', autorizat:'', bancal:false, nrBancale:'', cutii:false, nrCutii:'', comentariu:'', semnatura:'', collapsed:false, editing:false, dateKey: dKey };
   resis.push(entry);
-  renderResis(); updateCounts(); saveHistory();
-  if (!data) toast('📦 Reso aggiunto');
+  renderResis(); updateCounts();
+  setSyncStatus('syncing', 'Salvataggio in corso…');
+  try {
+    await sbUpsert('resi', resiToDb(entry, dKey));
+    setSyncStatus('synced', 'Salvato su Supabase ✓');
+    toast('📦 Reso aggiunto');
+  } catch(e) {
+    setSyncStatus('error', 'Errore: ' + e.message);
+  }
 }
 
-function removeResi(id) {
+async function removeResi(id) {
   if (!confirm('Eliminare questo reso?')) return;
   resis = resis.filter(r => r.id !== id);
-  renderResis(); updateCounts(); saveHistory(); toast('🗑️ Eliminato');
+  renderResis(); updateCounts();
+  setSyncStatus('syncing', 'Eliminazione…');
+  try {
+    await sbDelete('resi', id);
+    setSyncStatus('synced', 'Eliminato ✓');
+    toast('🗑️ Eliminato');
+  } catch(e) {
+    setSyncStatus('error', 'Errore: ' + e.message);
+  }
 }
 
 function renderResis() {
@@ -1285,20 +1045,23 @@ function renderResis() {
     const qty = [
       r.bancal && r.nrBancale ? `${r.nrBancale} bancali` : r.bancal ? 'bancali' : '',
       r.cutii && r.nrCutii ? `${r.nrCutii} colli` : r.cutii ? 'colli' : ''
-    ].filter(Boolean).join(', ');
-    const authLabel = r.autorizat === 'autorizzato' ? '✓ Autor.' : r.autorizat === 'non_autorizzato' ? '✗ Non autor.' : '';
+    ].filter(Boolean).join(' · ');
+
+    const authLabel = r.autorizat === 'autorizzato' ? '✓ Autorizzato' : r.autorizat === 'non_autorizzato' ? '✗ Non autor.' : r.autorizat === 'sconosciuto' ? '? Sconosciuto' : '';
+    const authClass = r.autorizat === 'autorizzato' ? 'meta-auth' : r.autorizat === 'non_autorizzato' ? 'meta-noauth' : 'meta-unknown';
 
     card.innerHTML = `
       <div class="card-compact-view" onclick="expandCard('${r.id}','resi')">
-        <span class="compact-badge compact-badge-rose">RESI #${String(i+1).padStart(2,'0')}</span>
-        <span class="compact-time" style="color:var(--accent-rose)">${r.ts ? r.ts.split(' ')[1] : '–'}</span>
-        <span class="compact-firma">${r.descriere || 'Senza descrizione'}</span>
-        <div class="compact-pills">
-          ${qty ? `<span class="compact-pill">${qty}</span>` : ''}
-          ${authLabel ? `<span class="compact-pill">${authLabel}</span>` : ''}
+        <div class="compact-top">
+          <span class="compact-badge compact-badge-rose">RESI #${String(i+1).padStart(2,'0')}</span>
+          <span class="compact-time" style="color:var(--accent-rose)">${r.ts ? r.ts.split(' ')[1] : '–'}</span>
+          <span class="compact-firma">${r.descriere || 'Senza descrizione'}</span>
+          <div class="compact-pills">${qty ? `<span class="compact-pill">${qty}</span>` : ''}</div>
+          ${r.semnatura ? `<span class="compact-sig">✍ ${r.semnatura}</span>` : ''}
+          <span class="compact-expand-hint">✎ modifica</span>
         </div>
-        ${r.semnatura ? `<span class="compact-sig">✍ ${r.semnatura}</span>` : ''}
-        <span class="compact-expand-hint">✎ modifica</span>
+        ${authLabel ? `<div class="compact-meta"><span class="compact-meta-pill ${authClass}">${authLabel}</span></div>` : ''}
+        ${r.comentariu ? `<div class="compact-desc">${r.comentariu}</div>` : ''}
       </div>
       <div class="card-header">
         <span class="card-number" style="color:var(--accent-rose);border-color:rgba(248,113,113,0.2);background:rgba(248,113,113,0.06)">RESI #${String(i+1).padStart(2,'0')}</span>
@@ -1381,245 +1144,295 @@ function updateResi(id, field, val) {
     if (el) el.classList.toggle('hidden', !val);
     if (!val) { r.nrCutii = ''; const inp = el && el.querySelector('input'); if(inp) inp.value = ''; }
   }
+  scheduleDbSave('resi', r, activeDay || todayKey());
   if (field === 'semnatura' && val.trim() && isResiComplete(r)) {
     setTimeout(() => maybeCollapseCard(id, 'resi'), 900);
   }
-  saveHistory();
 }
 
-updateCounts();
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+(async function init() {
+  await loadDay(todayKey());
+})();
 
-// HISTORY
-const HIST_KEY = 'registru_history';
+// ─── DAY PICKER MODAL ─────────────────────────────────────────────────────────
+let dpYear = new Date().getFullYear();
+let dpMonth = new Date().getMonth();
 
-function todayKey() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+async function openDayPicker() {
+  document.getElementById('dayPickerBody').innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted)">⏳ Caricamento…</div>';
+  document.getElementById('dayPickerModal').classList.add('open');
+  await buildAndShowDayPicker();
 }
+function closeDayPicker() { document.getElementById('dayPickerModal').classList.remove('open'); }
 
-function keyFromOffset(offset) {
-  const d = new Date();
-  d.setDate(d.getDate() + offset);
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-
-function saveHistory() {
+async function buildAndShowDayPicker() {
+  // Fetch all distinct date_keys from DB
+  let allDates = {};
   try {
-    const raw = localStorage.getItem(HIST_KEY);
-    const hist = raw ? JSON.parse(raw) : {};
-    hist[todayKey()] = { trucks: trucks.map(t=>({...t})), resis: resis.map(r=>({...r})) };
-    localStorage.setItem(HIST_KEY, JSON.stringify(hist));
-  } catch(e) {}
-  renderDaySelector();
+    const [tRows, rRows] = await Promise.all([
+      sbGet('trucks', 'select=date_key'),
+      sbGet('resi',   'select=date_key')
+    ]);
+    tRows.forEach(r => { const k = r.date_key; if(!allDates[k]) allDates[k]={t:0,r:0}; allDates[k].t++; });
+    rRows.forEach(r => { const k = r.date_key; if(!allDates[k]) allDates[k]={t:0,r:0}; allDates[k].r++; });
+  } catch(e) { console.error(e); }
+  document.getElementById('dayPickerBody').innerHTML = buildDayPickerHTML(allDates);
 }
 
-function loadHistory() {
-  try {
-    const raw = localStorage.getItem(HIST_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch(e) { return {}; }
+function buildDayPickerHTML(allDates) {
+  const tk = todayKey();
+  const isCurrentlyToday = activeDay === null;
+  const now = new Date();
+  const todayY = now.getFullYear(), todayM = now.getMonth(), todayD = now.getDate();
+
+  if (dpYear > todayY || (dpYear === todayY && dpMonth > todayM)) { dpYear = todayY; dpMonth = todayM; }
+
+  const monthNames = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  const dayNamesShort = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+
+  const firstDay = new Date(dpYear, dpMonth, 1);
+  const daysInMonth = new Date(dpYear, dpMonth + 1, 0).getDate();
+  let startWd = firstDay.getDay() - 1;
+  if (startWd < 0) startWd = 6;
+
+  const canGoNext = !(dpYear === todayY && dpMonth === todayM);
+
+  let html = `
+  <button class="dp-today-btn ${isCurrentlyToday ? 'active-day-btn' : ''}" onclick="switchToDay(null)">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+    <span style="flex:1">Oggi — ${formatKeyLabel(tk)}</span>
+    ${isCurrentlyToday ? `<span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--accent-cyan);background:rgba(56,232,200,0.08);border:1px solid rgba(56,232,200,0.2);border-radius:20px;padding:2px 7px;">● Attivo</span>` : ''}
+  </button>
+
+  <div style="font-size:0.69rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin:14px 0 10px;">Seleziona giorno</div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;">
+    <button class="day-nav-btn" onclick="dpNavigate(-1)" style="width:32px;height:32px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--accent-violet);font-weight:600;flex:1;text-align:center;">${monthNames[dpMonth]} ${dpYear}</span>
+    <button class="day-nav-btn" onclick="dpNavigate(1)" ${canGoNext?'':'disabled'} style="width:32px;height:32px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:14px;">
+    ${dayNamesShort.map(d=>`<div style="text-align:center;font-size:0.58rem;color:var(--text-muted);padding:3px 0;letter-spacing:0.05em;text-transform:uppercase;font-weight:600;">${d}</div>`).join('')}
+    ${Array(startWd).fill('<div></div>').join('')}
+    ${Array.from({length:daysInMonth},(_,i)=>{
+      const day = i+1;
+      const k = `${dpYear}-${String(dpMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      const isToday = dpYear===todayY && dpMonth===todayM && day===todayD;
+      const isFuture = k > tk;
+      const isSelected = activeDay === k || (isToday && activeDay === null);
+      const info = allDates[k] || null;
+      const hasData = !!(info && (info.t + info.r > 0));
+
+      let bg = 'rgba(255,255,255,0.03)', border = '1px solid rgba(255,255,255,0.06)', color = 'var(--text-muted)', cursor = 'pointer', shadow = '';
+      if (isFuture) { bg='transparent'; border='1px solid transparent'; color='rgba(255,255,255,0.08)'; cursor='default'; }
+      else if (isSelected) { bg='rgba(167,139,250,0.22)'; border='1px solid rgba(167,139,250,0.6)'; color='var(--accent-violet)'; shadow='0 0 0 2px rgba(167,139,250,0.15)'; }
+      else if (isToday) { bg='rgba(56,232,200,0.10)'; border='1px solid rgba(56,232,200,0.4)'; color='var(--accent-cyan)'; }
+      else if (hasData) { bg='rgba(79,142,247,0.12)'; border='1px solid rgba(79,142,247,0.3)'; color='var(--accent-blue)'; }
+      else { color='var(--text-secondary)'; }
+
+      const onclick = isFuture ? '' : `onclick="switchToDay('${k}')"`;
+      return `<div ${onclick} style="aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:${bg};border:${border};color:${color};cursor:${cursor};transition:all 0.15s;box-shadow:${shadow};font-weight:${isToday||isSelected?'700':'500'};font-size:0.78rem;position:relative;">
+        ${day}
+        ${hasData ? `<div style="display:flex;gap:1px;">${info.t?`<span style="width:4px;height:4px;border-radius:50%;background:var(--accent-blue);display:inline-block"></span>`:''}${info.r?`<span style="width:4px;height:4px;border-radius:50%;background:var(--accent-rose);display:inline-block"></span>`:''}</div>` : ''}
+      </div>`;
+    }).join('')}
+  </div>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:0.63rem;color:var(--text-muted);padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);">
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent-blue);display:inline-block"></span>Camion</span>
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent-rose);display:inline-block"></span>Resi</span>
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent-violet);display:inline-block"></span>Selezionato</span>
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent-cyan);display:inline-block"></span>Oggi</span>
+  </div>`;
+
+  return html;
 }
 
-// ─── DAY SELECTOR ───────────────────────────────────────────────────────────
-function dsNavigate(dir) {
-  const hist = loadHistory();
-  const keys = Object.keys(hist).sort();
-  if (keys.length === 0) return;
-  const minKey = keys[0];
-  const newOffset = dsOffset + dir;
-  const testKey = keyFromOffset(newOffset);
-  if (testKey < minKey) return; 
-  if (newOffset > 0) return;    
-  dsOffset = newOffset;
-  renderDaySelector();
+async function dpNavigate(dir) {
+  dpMonth += dir;
+  if (dpMonth < 0) { dpMonth = 11; dpYear--; }
+  if (dpMonth > 11) { dpMonth = 0; dpYear++; }
+  await buildAndShowDayPicker();
 }
 
-function renderDaySelector() {
-  const hist = loadHistory();
-  const keys = Object.keys(hist).sort();
-  const targetKey = keyFromOffset(dsOffset);
+// ─── STATS MODAL ─────────────────────────────────────────────────────────────
+let activeStatsMonth = null;
 
-  const prevBtn = document.getElementById('ds-prev');
-  const nextBtn = document.getElementById('ds-next');
-  nextBtn.disabled = dsOffset >= 0;
-  
-  if (keys.length === 0) { prevBtn.disabled = true; }
-  else {
-    const prevKey = keyFromOffset(dsOffset - 1);
-    prevBtn.disabled = prevKey < keys[0];
-  }
-
-  const labelEl = document.getElementById('ds-label');
-  if (dsOffset === 0) {
-    labelEl.innerHTML = `<span style="color:var(--accent-cyan)">Oggi</span>`;
-  } else if (dsOffset === -1) {
-    labelEl.textContent = 'Ieri';
-  } else {
-    const d = new Date(targetKey + 'T12:00:00');
-    const months = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
-    labelEl.textContent = `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-  }
-
-  const body = document.getElementById('ds-body');
-
-  let dayData;
-  if (dsOffset === 0) {
-    dayData = { trucks, resis };
-  } else {
-    dayData = hist[targetKey] || null;
-  }
-
-  if (!dayData || (dayData.trucks.length === 0 && dayData.resis.length === 0)) {
-    body.innerHTML = `<div class="ds-empty">Nessuna registrazione per questo giorno.</div>`;
-    return;
-  }
-
-  const ts = dayData.trucks || [];
-  const rs = dayData.resis || [];
-  const isToday = dsOffset === 0;
-
-  let html = `<div class="ds-summary">`;
-  if (ts.length) html += `<span class="ds-badge ds-badge-truck">🚛 ${ts.length} camion</span>`;
-  if (rs.length) html += `<span class="ds-badge ds-badge-resi">↩ ${rs.length} resi</span>`;
-  if (isToday) html += `<span class="today-indicator">● Live</span>`;
-  html += `</div><div class="ds-entries">`;
-
-  const allEntries = [
-    ...ts.map(t => ({ ...t, _type: 'truck' })),
-    ...rs.map(r => ({ ...r, _type: 'resi' }))
-  ].sort((a, b) => {
-    const ta = a.arrivalTime || (a.ts ? a.ts.split(' ')[1] : '') || '';
-    const tb = b.arrivalTime || (b.ts ? b.ts.split(' ')[1] : '') || '';
-    return ta.localeCompare(tb);
-  });
-
-  allEntries.forEach(e => {
-    const isTruck = e._type === 'truck';
-    const timeStr = isTruck ? (e.arrivalTime || (e.ts ? e.ts.split(' ')[1] : '–')) : (e.ts ? e.ts.split(' ')[1] : '–');
-    const label = isTruck ? (e.firma || '<em style="opacity:.4">Azienda sconosciuta</em>') : (e.descriere || '<em style="opacity:.4">Senza descrizione</em>');
-    const qty = [
-      e.bancal && e.nrBancale ? `${e.nrBancale} bancali` : '',
-      e.cutii && e.nrCutii ? `${e.nrCutii} colli` : ''
-    ].filter(Boolean).join(', ');
-
-    const editAction = isToday
-      ? `onclick="expandCard('${e.id}','${isTruck?'truck':'resi'}');document.getElementById('${e.id}').scrollIntoView({behavior:'smooth',block:'center'})"`
-      : '';
-    const editHint = isToday ? `<span class="ds-entry-edit-hint">✎ modifica</span>` : '';
-
-    html += `<div class="ds-entry ${isToday?'is-today-entry':''}" ${editAction}>
-      <span class="ds-entry-type ${isTruck?'ds-type-truck':'ds-type-resi'}">${isTruck?'CAM':'RESI'}</span>
-      <span class="ds-entry-time" style="${!isTruck?'color:var(--accent-rose)':''}">${timeStr || '–'}</span>
-      <span class="ds-entry-firma">${label}</span>
-      ${qty ? `<span class="ds-entry-qty">${qty}</span>` : ''}
-      ${e.semnatura ? `<span class="ds-entry-sig">✍ ${e.semnatura}</span>` : ''}
-      ${editHint}
-    </div>`;
-  });
-
-  html += `</div>`;
-  body.innerHTML = html;
-}
-
-// Init day selector
-renderDaySelector();
-
-// CALENDAR MODAL
-function openCalendar() {
-  saveHistory();
-  document.getElementById('calBody').innerHTML = buildCalendarHTML(loadHistory());
+async function openCalendar() {
+  document.getElementById('calBody').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">⏳ Caricamento statistiche…</div>';
   document.getElementById('calModal').classList.add('open');
+  await buildStats();
 }
-function closeCalendar() {
-  document.getElementById('calModal').classList.remove('open');
-}
+function closeCalendar() { document.getElementById('calModal').classList.remove('open'); }
 function toggleDay(idx) {
   document.getElementById('dh-'+idx).classList.toggle('open');
   document.getElementById('de-'+idx).classList.toggle('open');
 }
 
-let busiestKey = '', busiestCount = 0;
+async function switchStatsMonth(m) {
+  activeStatsMonth = m;
+  await buildStats();
+}
 
-function buildCalendarHTML(hist) {
-  const keys = Object.keys(hist).sort((a,b) => b.localeCompare(a));
-  if (keys.length === 0) return `<div class="no-history">📭 Nessuno storico salvato ancora.<br>Aggiungi registrazioni e appariranno qui.</div>`;
-
-  let totalTrucks = 0, totalResis = 0;
-  busiestKey = ''; busiestCount = 0;
-  keys.forEach(k => {
-    const tc = (hist[k].trucks||[]).length;
-    totalTrucks += tc; totalResis += (hist[k].resis||[]).length;
-    if (tc > busiestCount) { busiestCount = tc; busiestKey = k; }
-  });
-  const avg = keys.length ? (totalTrucks/keys.length).toFixed(1) : 0;
-
-  const statsHTML = `<div class="stats-grid">
-    <div class="stat-card"><div class="stat-val" style="color:var(--accent-blue)">${totalTrucks}</div><div class="stat-label">Ingressi camion</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--accent-rose)">${totalResis}</div><div class="stat-label">Resi totali</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--accent-amber)">${avg}</div><div class="stat-label">Media / giorno</div></div>
-  </div>`;
-
-  const dayNames = ['Do','Lu','Ma','Me','Gi','Ve','Sa'];
-  const today = new Date();
-  const weekDays = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(today); d.setDate(today.getDate()-i);
-    const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    weekDays.push({ k, day: dayNames[d.getDay()], count: hist[k] ? (hist[k].trucks||[]).length : 0, isToday: i === 0 });
+async function buildStats() {
+  setSyncStatus('syncing', 'Caricamento statistiche…');
+  let hist = {};
+  try {
+    const [tRows, rRows] = await Promise.all([
+      sbGet('trucks', 'select=*&order=date_key.asc,created_at.asc'),
+      sbGet('resi',   'select=*&order=date_key.asc,created_at.asc')
+    ]);
+    tRows.forEach(r => { const k=r.date_key; if(!hist[k]) hist[k]={trucks:[],resis:[]}; hist[k].trucks.push(dbToTruck(r)); });
+    rRows.forEach(r => { const k=r.date_key; if(!hist[k]) hist[k]={trucks:[],resis:[]}; hist[k].resis.push(dbToResi(r)); });
+    setSyncStatus('synced', 'Statistiche caricate ✓');
+  } catch(e) {
+    setSyncStatus('error', 'Errore: ' + e.message);
+    document.getElementById('calBody').innerHTML = `<div class="no-history">❌ Errore caricamento: ${e.message}</div>`;
+    return;
   }
-  const maxW = Math.max(...weekDays.map(d=>d.count), 1);
+  const tk = todayKey();
+  const allKeys = Object.keys(hist).sort((a,b) => b.localeCompare(a));
+  if (allKeys.length === 0) { document.getElementById('calBody').innerHTML = '<div class="no-history">📭 Nessuno storico salvato ancora.</div>'; return; }
+  const months = {};
+  allKeys.forEach(k => { const m=k.slice(0,7); months[m]=(months[m]||0)+1; });
+  const monthKeys = Object.keys(months).sort((a,b)=>b.localeCompare(a));
+  if (!activeStatsMonth || !months[activeStatsMonth]) activeStatsMonth = monthKeys[0];
+  document.getElementById('calBody').innerHTML = buildCalendarHTML(hist, allKeys, monthKeys, tk);
+}
 
-  const weekHTML = `<div class="chart-section"><div class="chart-title">Camion — ultimi 7 giorni</div><div class="week-bars"> ${weekDays.map(d=>`<div class="week-bar-wrap">
-    <div class="week-bar-count">${d.count>0?d.count:''}</div>
-    <div class="week-bar ${d.isToday?'today-bar':''}" style="height:${Math.max(d.count/maxW*70,d.count>0?8:3)}px"></div>
-    <div class="week-bar-day" style="${d.isToday?'color:var(--accent-cyan)':''}">${d.day}</div>
-    </div>`).join('')}
-  </div></div>`;
+function buildCalendarHTML(hist, allKeys, monthKeys, tk) {
+  const monthNames = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  const monthNamesFull = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 
-  const dayLabels = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
-  const monthLabel = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
-  const todK = todayKey();
+  let totalTrucks=0, totalResis=0, totalBancali=0, totalColli=0;
+  const supplierCount = {};
+  allKeys.forEach(k => {
+    const ts=hist[k].trucks||[], rs=hist[k].resis||[];
+    totalTrucks+=ts.length; totalResis+=rs.length;
+    ts.forEach(t => {
+      if(t.nrBancale) totalBancali+=parseInt(t.nrBancale)||0;
+      if(t.nrCutii)   totalColli+=parseInt(t.nrCutii)||0;
+      if(t.firma&&t.firma.trim()) supplierCount[t.firma.trim()]=(supplierCount[t.firma.trim()]||0)+1;
+    });
+    rs.forEach(r => {
+      if(r.nrBancale) totalBancali+=parseInt(r.nrBancale)||0;
+      if(r.nrCutii)   totalColli+=parseInt(r.nrCutii)||0;
+    });
+  });
+  const avgPerDay = allKeys.length ? (totalTrucks/allKeys.length).toFixed(1) : 0;
+  let busiestKey='', busiestCount=0;
+  allKeys.forEach(k => { const c=(hist[k].trucks||[]).length+(hist[k].resis||[]).length; if(c>busiestCount){busiestCount=c;busiestKey=k;} });
+  const topSuppliers = Object.entries(supplierCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxSup = topSuppliers.length ? topSuppliers[0][1] : 1;
 
-  const daysHTML = keys.map((k,idx) => {
-    const { trucks:ts=[], resis:rs=[] } = hist[k];
-    const d = new Date(k+'T12:00:00');
-    const dateLabel = `${dayLabels[d.getDay()]}5, ${d.getDate()} ${monthLabel[d.getMonth()]} ${d.getFullYear()}`;
-    const isToday = k === todK, isBusiest = k === busiestKey && busiestCount > 0;
-
-    const sorted = [...ts].sort((a,b) => { if(!a.arrivalTime) return 1; if(!b.arrivalTime) return -1; return a.arrivalTime.localeCompare(b.arrivalTime); });
-    const rows = [
-      ...sorted.map(t => {
-        const qty = [t.bancal&&t.nrBancale?`${t.nrBancale} bancali`:t.bancal?'bancali':'', t.cutii&&t.nrCutii?`${t.nrCutii} colli`:t.cutii?'colli':''].filter(Boolean).join(', ');
-        return `<div class="entry-row"><span class="entry-type badge-truck">CAM</span><span class="entry-time">${t.arrivalTime||'–'}</span><span class="entry-firma">${t.firma||'<span style="opacity:.4">Azienda sconosciuta</span>'}</span>${qty?`<span class="entry-qty">${qty}</span>`:''}${t.semnatura?`<span class="entry-sig">✍ ${t.semnatura}</span>`:''}</div>`;
-      }),
-      ...rs.map(r => {
-        const qty = [r.bancal&&r.nrBancale?`${r.nrBancale} bancali`:r.bancal?'bancali':'', r.cutii&&r.nrCutii?`${r.nrCutii} colli`:r.cutii?'colli':''].filter(Boolean).join(', ');
-        const timeStr = r.ts ? (r.ts.split(' ')[1]||'–') : '–';
-        return `<div class="entry-row"><span class="entry-type badge-resi">RESI</span><span class="entry-time" style="color:var(--accent-rose)">${timeStr}</span><span class="entry-firma">${r.descriere||'<span style="opacity:.4">Senza descrizione</span>'}</span>${qty?`<span class="entry-qty">${qty}</span>`:''}${r.semnatura?`<span class="entry-sig">✍ ${r.semnatura}</span>`:''}</div>`;
-      })
-    ].join('');
-
-    return `<div class="day-section">
-      <div class="day-header ${isToday?'open':''}" id="dh-${idx}" onclick="toggleDay(${idx})">
-        <div class="day-header-left">
-          <span class="day-date-label" style="${isToday?'color:var(--accent-cyan)':''}">${dateLabel}</span>
-          <div class="day-badges">
-            ${ts.length?`<span class="day-badge badge-truck">🚛 ${ts.length}</span>`:''}
-            ${rs.length?`<span class="day-badge badge-resi">↩ ${rs.length}</span>`:''}
-            ${isBusiest?`<span class="day-badge badge-hot">🔥 Più trafficato</span>`:''}
-          </div>
-        </div>
-        <span class="day-chevron">▼</span>
-      </div>
-      <div class="day-entries ${isToday?'open':''}" id="de-${idx}">
-        ${rows||'<div class="entry-row" style="color:var(--text-muted);font-size:0.78rem">Nessuna registrazione completa</div>'}
-      </div>
-    </div>`;
+  const tabsHTML = monthKeys.map(m => {
+    const [yr,mo] = m.split('-');
+    return `<span class="month-tab ${m===activeStatsMonth?'active':''}" onclick="switchStatsMonth('${m}')">${monthNames[parseInt(mo)-1]} ${yr}</span>`;
   }).join('');
 
-  return statsHTML + weekHTML + daysHTML;
+  const mKeys = allKeys.filter(k => k.startsWith(activeStatsMonth));
+  const [mY, mM] = activeStatsMonth.split('-').map(Number);
+  let mTrucks=0, mResis=0, mBancali=0, mColli=0, mUnauth=0, mProg=0;
+  mKeys.forEach(k => {
+    const ts=hist[k].trucks||[], rs=hist[k].resis||[];
+    mTrucks+=ts.length; mResis+=rs.length;
+    ts.forEach(t => { if(t.nrBancale) mBancali+=parseInt(t.nrBancale)||0; if(t.nrCutii) mColli+=parseInt(t.nrCutii)||0; if(t.programat==='programmato') mProg++; });
+    rs.forEach(r => { if(r.nrBancale) mBancali+=parseInt(r.nrBancale)||0; if(r.nrCutii) mColli+=parseInt(r.nrCutii)||0; if(r.autorizat==='non_autorizzato') mUnauth++; });
+  });
+
+  const today = new Date();
+  const dayNames7 = ['Do','Lu','Ma','Me','Gi','Ve','Sa'];
+  const chartDays = [];
+  for(let i=6;i>=0;i--) {
+    const d=new Date(today); d.setDate(today.getDate()-i);
+    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    chartDays.push({k, day:dayNames7[d.getDay()], tc:(hist[k]?.trucks||[]).length, rc:(hist[k]?.resis||[]).length, isToday:i===0});
+  }
+  const maxC = Math.max(...chartDays.map(d=>d.tc+d.rc),1);
+
+  const weekHTML = `<div class="chart-section"><div class="chart-title">Attività ultimi 7 giorni</div><div class="week-bars">${chartDays.map(d=>{
+    const total=d.tc+d.rc; const h=Math.max(total/maxC*70,total>0?6:3);
+    const trH=total>0?Math.round(d.tc/total*h):0; const rH=h-trH;
+    return `<div class="week-bar-wrap"><div class="week-bar-count">${total>0?total:''}</div><div class="bar-stack" style="height:${h}px"><div class="bar-resi" style="height:${rH}px"></div><div class="bar-truck" style="height:${trH}px"></div></div><div class="week-bar-day ${d.isToday?'today-bar-day':''}">${d.day}</div></div>`;
+  }).join('')}</div><div style="display:flex;gap:12px;margin-top:8px;font-size:0.64rem;color:var(--text-muted)"><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:rgba(79,142,247,0.4);display:inline-block"></span>Camion</span><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:rgba(248,113,113,0.3);display:inline-block"></span>Resi</span></div></div>`;
+
+  const firstDay = new Date(mY, mM-1, 1);
+  const daysInMonth = new Date(mY, mM, 0).getDate();
+  const startWd = firstDay.getDay();
+  const heatHTML = buildHeatmap(hist, mY, mM, daysInMonth, startWd, tk);
+
+  const mAvg = mKeys.length ? (mTrucks/mKeys.length).toFixed(1) : '0';
+  const monthSummaryHTML = `<div class="month-summary-grid">
+    <div class="month-stat-row"><span class="month-stat-icon">🚛</span><span class="month-stat-label">Camion</span><span class="month-stat-val" style="color:var(--accent-blue)">${mTrucks}</span></div>
+    <div class="month-stat-row"><span class="month-stat-icon">↩️</span><span class="month-stat-label">Resi</span><span class="month-stat-val" style="color:var(--accent-rose)">${mResis}</span></div>
+    <div class="month-stat-row"><span class="month-stat-icon">📦</span><span class="month-stat-label">Bancali</span><span class="month-stat-val">${mBancali}</span></div>
+    <div class="month-stat-row"><span class="month-stat-icon">📫</span><span class="month-stat-label">Colli</span><span class="month-stat-val">${mColli}</span></div>
+    <div class="month-stat-row"><span class="month-stat-icon">✅</span><span class="month-stat-label">Programmati</span><span class="month-stat-val" style="color:var(--accent-green)">${mProg}</span></div>
+    <div class="month-stat-row"><span class="month-stat-icon">⚠️</span><span class="month-stat-label">Resi non aut.</span><span class="month-stat-val" style="color:var(--accent-rose)">${mUnauth}</span></div>
+    <div class="month-stat-row"><span class="month-stat-icon">📅</span><span class="month-stat-label">Giorni attivi</span><span class="month-stat-val">${mKeys.length}</span></div>
+    <div class="month-stat-row"><span class="month-stat-icon">📊</span><span class="month-stat-label">Media / giorno</span><span class="month-stat-val" style="color:var(--accent-amber)">${mAvg}</span></div>
+  </div>`;
+
+  const globalHTML = `<div class="stats-grid">
+    <div class="stat-card"><div class="stat-val" style="color:var(--accent-blue)">${totalTrucks}</div><div class="stat-label">Totale camion</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--accent-rose)">${totalResis}</div><div class="stat-label">Totale resi</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--accent-amber)">${avgPerDay}</div><div class="stat-label">Media cam/g</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--accent-cyan)">${totalBancali}</div><div class="stat-label">Bancali totali</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--accent-violet)">${totalColli}</div><div class="stat-label">Colli totali</div></div>
+    <div class="stat-card"><div class="stat-val" style="color:var(--accent-green)">${allKeys.length}</div><div class="stat-label">Giorni registrati</div></div>
+  </div>`;
+
+  const topHTML = topSuppliers.length ? `<div class="chart-section"><div class="chart-title" style="margin-bottom:10px">Top fornitori (tutti i tempi)</div><div class="top-list">${topSuppliers.map(([name,count],i)=>`<div class="top-item"><span class="top-rank">#${i+1}</span><span class="top-name">${name}</span><div class="top-bar-wrap"><div class="top-bar-fill" style="width:${Math.round(count/maxSup*100)}%"></div></div><span class="top-count">${count}×</span></div>`).join('')}</div></div>` : '';
+
+  const dayLabels = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+  const daysHTML = mKeys.map((k,idx) => {
+    const { trucks:ts=[], resis:rs=[] } = hist[k];
+    const d = new Date(k+'T12:00:00');
+    const dateLabel = `${dayLabels[d.getDay()]}, ${d.getDate()} ${monthNames[d.getMonth()]} ${d.getFullYear()}`;
+    const isToday = k === tk;
+    const isBusiest = k === busiestKey && busiestCount > 0;
+    const rows = [
+      ...ts.map(t => {
+        const qty=[t.bancal&&t.nrBancale?`${t.nrBancale} bancali`:t.bancal?'bancali':'', t.cutii&&t.nrCutii?`${t.nrCutii} colli`:t.cutii?'colli':''].filter(Boolean).join(' · ');
+        const progLabel=t.programat==='programmato'?'✓ Prog.':t.programat==='non_programmato'?'✗ Non prog.':'';
+        return `<div class="entry-row"><span class="entry-type badge-truck">CAM</span><span class="entry-time">${t.arrivalTime||'–'}</span><span class="entry-firma">${t.firma||'<span style="opacity:.4">Sconosciuta</span>'}</span>${qty?`<span class="entry-qty">${qty}</span>`:''}<div class="entry-meta">${progLabel?`<span style="font-size:0.62rem;padding:1px 6px;border-radius:20px;background:rgba(79,142,247,0.12);color:var(--accent-blue);border:1px solid rgba(79,142,247,0.25)">${progLabel}</span>`:''}</div>${t.semnatura?`<span class="entry-sig">✍ ${t.semnatura}</span>`:''}${t.comentariu?`<div class="entry-note">💬 ${t.comentariu}</div>`:''}</div>`;
+      }),
+      ...rs.map(r => {
+        const qty=[r.bancal&&r.nrBancale?`${r.nrBancale} bancali`:r.bancal?'bancali':'', r.cutii&&r.nrCutii?`${r.nrCutii} colli`:r.cutii?'colli':''].filter(Boolean).join(' · ');
+        const timeStr=r.ts?(r.ts.split(' ')[1]||'–'):'–';
+        const authLabel=r.autorizat==='autorizzato'?'✓ Autor.':r.autorizat==='non_autorizzato'?'✗ Non aut.':'';
+        const authColor=r.autorizat==='autorizzato'?'var(--accent-green)':'var(--accent-rose)';
+        return `<div class="entry-row"><span class="entry-type badge-resi">RESI</span><span class="entry-time" style="color:var(--accent-rose)">${timeStr}</span><span class="entry-firma">${r.descriere||'<span style="opacity:.4">Senza descrizione</span>'}</span>${qty?`<span class="entry-qty">${qty}</span>`:''} ${authLabel?`<div class="entry-meta"><span style="font-size:0.62rem;padding:1px 6px;border-radius:20px;background:rgba(74,222,128,0.08);color:${authColor};border:1px solid ${authColor}33">${authLabel}</span></div>`:''}${r.semnatura?`<span class="entry-sig">✍ ${r.semnatura}</span>`:''}${r.comentariu?`<div class="entry-note">💬 ${r.comentariu}</div>`:''}</div>`;
+      })
+    ].join('');
+    return `<div class="day-section"><div class="day-header ${isToday?'open':''}" id="dh-${idx}" onclick="toggleDay(${idx})"><div class="day-header-left"><span class="day-date-label" style="${isToday?'color:var(--accent-cyan)':''}">${dateLabel}</span><div class="day-badges">${ts.length?`<span class="day-badge badge-truck">🚛 ${ts.length}</span>`:''}${rs.length?`<span class="day-badge badge-resi">↩ ${rs.length}</span>`:''}${isBusiest?`<span class="day-badge badge-hot">🔥</span>`:''}</div></div><span class="day-chevron">▼</span></div><div class="day-entries ${isToday?'open':''}" id="de-${idx}">${rows||'<div class="entry-row" style="color:var(--text-muted);font-size:0.78rem">Nessuna registrazione</div>'}</div></div>`;
+  }).join('');
+
+  return `<div class="chart-title" style="margin-bottom:8px">Statistiche globali</div>${globalHTML}${weekHTML}${topHTML}<div class="chart-title" style="margin-bottom:8px;margin-top:4px">Vista mensile</div><div class="month-tabs">${tabsHTML}</div>${heatHTML}${monthSummaryHTML}<div class="chart-title" style="margin-bottom:10px">Registrazioni — ${monthNamesFull[mM-1]} ${mY}</div>${mKeys.length===0?'<div class="no-history">Nessuna registrazione per questo mese.</div>':daysHTML}`;
+}
+
+function buildHeatmap(hist, mY, mM, daysInMonth, startWd, tk) {
+  const dayNamesShort = ['Do','Lu','Ma','Me','Gi','Ve','Sa'];
+  let html = `<div class="month-heatmap"><div class="heatmap-grid">${dayNamesShort.map(d=>`<div class="heatmap-day-label">${d}</div>`).join('')}`;
+  for(let i=0;i<startWd;i++) html+=`<div class="heatmap-cell empty-cell"></div>`;
+  for(let day=1;day<=daysInMonth;day++) {
+    const k=`${mY}-${String(mM).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const d=hist[k]||null;
+    const total=d?((d.trucks||[]).length+(d.resis||[]).length):0;
+    const isToday=k===tk;
+    let lvl='no-data';
+    if(total===1) lvl='level-1'; else if(total<=3) lvl='level-2'; else if(total<=6) lvl='level-3'; else if(total>6) lvl='level-4';
+    html+=`<div class="heatmap-cell ${lvl} ${total>0?'has-data':''} ${isToday?'is-today-cell':''}" title="${k}: ${total} registrazioni"><span class="heatmap-date-num">${day}</span></div>`;
+  }
+  html+=`</div><div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:0.62rem;color:var(--text-muted)"><span>Attività:</span><div style="width:10px;height:10px;border-radius:2px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)"></div><span>0</span><div style="width:10px;height:10px;border-radius:2px;background:rgba(79,142,247,0.15)"></div><span>1</span><div style="width:10px;height:10px;border-radius:2px;background:rgba(79,142,247,0.30)"></div><span>2–3</span><div style="width:10px;height:10px;border-radius:2px;background:rgba(79,142,247,0.45)"></div><span>4–6</span><div style="width:10px;height:10px;border-radius:2px;background:rgba(56,232,200,0.45)"></div><span>7+</span></div></div>`;
+  return html;
 }
 </script>
-
 </body>
 </html>
