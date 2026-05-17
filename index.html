@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ro">
 <head>
 <meta charset="UTF-8">
@@ -43,8 +42,8 @@ content: '';
 position: fixed;
 inset: 0;
 background:
-radial-gradient(ellipse 70% 55% at 15% 0%, rgba(79,142,247,0.11) 0%, transparent 60%),
-radial-gradient(ellipse 55% 45% at 85% 100%, rgba(248,113,113,0.08) 0%, transparent 55%),
+radial-gradient(ellipse 70% 55% at 15% 0%, rgba(248,113,113,0.09) 0%, transparent 60%),
+radial-gradient(ellipse 55% 45% at 85% 100%, rgba(79,142,247,0.10) 0%, transparent 55%),
 radial-gradient(ellipse 40% 35% at 50% 50%, rgba(56,232,200,0.04) 0%, transparent 50%);
 pointer-events: none;
 z-index: 0;
@@ -146,12 +145,14 @@ gap: 12px;
 }
 
 .column-left {
-border-right: 1px solid rgba(79,142,247,0.10);
-padding-right: 20px;
+border-right: none;
+padding-right: 0;
+border-left: none;
 }
 
 .column-right {
-padding-left: 0;
+border-left: 1px solid rgba(248,113,113,0.10);
+padding-left: 20px;
 }
 
 /* ── COLUMN HEADER ── */
@@ -353,6 +354,25 @@ background: rgba(79,142,247,0.055);
 box-shadow: 0 0 0 3px rgba(79,142,247,0.10);
 }
 
+/* ── PULSE for empty required fields ── */
+@keyframes fieldPulse {
+0%   { border-color: rgba(255,255,255,0.08); box-shadow: none; }
+50%  { border-color: rgba(251,191,36,0.55); box-shadow: 0 0 0 3px rgba(251,191,36,0.10), 0 0 14px rgba(251,191,36,0.12); }
+100% { border-color: rgba(255,255,255,0.08); box-shadow: none; }
+}
+
+input.field-required-pulse {
+animation: fieldPulse 2.4s ease-in-out infinite;
+border-color: rgba(251,191,36,0.35);
+}
+
+input.field-required-pulse:focus {
+animation: none;
+border-color: rgba(79,142,247,0.5);
+background: rgba(79,142,247,0.055);
+box-shadow: 0 0 0 3px rgba(79,142,247,0.10);
+}
+
 /* ── RADIO PILLS ── */
 .radio-group {
 display: flex;
@@ -428,6 +448,51 @@ background: rgba(248,113,113,0.10);
 color: var(--accent-rose);
 }
 .radio-pill.opt-noauth input:checked ~ .radio-dot { background: var(--accent-rose); border-color: var(--accent-rose); box-shadow: 0 0 7px rgba(248,113,113,0.6); opacity: 1; }
+
+/* ── QUANTITY INPUTS ── */
+input[type="number"] {
+background: rgba(255,255,255,0.045);
+border: 1px solid rgba(255,255,255,0.08);
+border-radius: var(--radius-sm);
+color: var(--text-primary);
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.9rem;
+padding: 9px 12px;
+outline: none;
+transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+width: 100%;
+-moz-appearance: textfield;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type="number"]:focus {
+border-color: rgba(56,232,200,0.45);
+background: rgba(56,232,200,0.04);
+box-shadow: 0 0 0 3px rgba(56,232,200,0.08);
+}
+
+.qty-row {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+margin-top: 2px;
+}
+
+.qty-block {
+display: flex;
+flex-direction: column;
+gap: 5px;
+}
+
+.qty-block label {
+font-size: 0.67rem;
+color: var(--text-muted);
+letter-spacing: 0.07em;
+text-transform: uppercase;
+font-weight: 600;
+}
+
+.qty-block.hidden { display: none; }
 
 /* ── CHECKBOXES ── */
 .check-group { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -508,10 +573,277 @@ max-width: 240px;
 .toast.fade-out { animation: toastOut 0.28s ease forwards; }
 @keyframes toastOut { to { opacity: 0; transform: translateY(8px); } }
 
+/* ── FAB ── */
+.fab-cal {
+position: fixed;
+bottom: 28px;
+left: 28px;
+width: 52px; height: 52px;
+border-radius: 50%;
+background: rgba(79,142,247,0.18);
+border: 1.5px solid rgba(79,142,247,0.45);
+color: var(--accent-blue);
+cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+box-shadow: 0 8px 28px rgba(79,142,247,0.2), 0 0 0 0 rgba(79,142,247,0.3);
+transition: all 0.22s ease;
+z-index: 100;
+backdrop-filter: blur(12px);
+}
+.fab-cal:hover {
+background: rgba(79,142,247,0.28);
+border-color: rgba(79,142,247,0.7);
+box-shadow: 0 12px 36px rgba(79,142,247,0.3);
+transform: translateY(-2px) scale(1.05);
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+position: fixed; inset: 0;
+background: rgba(5,8,20,0.75);
+backdrop-filter: blur(8px);
+z-index: 500;
+display: none;
+align-items: center;
+justify-content: center;
+padding: 20px;
+animation: fadeIn 0.2s ease;
+}
+.modal-overlay.open { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+background: #0e1628;
+border: 1px solid rgba(255,255,255,0.12);
+border-radius: 22px;
+width: 100%;
+max-width: 820px;
+max-height: 88vh;
+overflow: hidden;
+display: flex;
+flex-direction: column;
+box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+animation: modalIn 0.28s cubic-bezier(0.34,1.4,0.64,1);
+}
+@keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+.modal-header {
+display: flex; align-items: center; justify-content: space-between;
+padding: 18px 22px 16px;
+border-bottom: 1px solid rgba(255,255,255,0.07);
+flex-shrink: 0;
+}
+
+.modal-title {
+display: flex; align-items: center; gap: 10px;
+font-size: 0.92rem; font-weight: 700;
+letter-spacing: 0.05em; text-transform: uppercase;
+color: var(--accent-blue);
+}
+
+.modal-close {
+width: 30px; height: 30px;
+border-radius: 8px;
+border: 1px solid var(--glass-border);
+background: rgba(255,255,255,0.04);
+color: var(--text-secondary);
+cursor: pointer;
+display: flex; align-items: center; justify-content: center;
+transition: all 0.18s;
+}
+.modal-close:hover { background: rgba(248,113,113,0.14); color: var(--accent-rose); border-color: rgba(248,113,113,0.35); }
+
+.modal-body {
+overflow-y: auto;
+padding: 20px 22px 24px;
+flex: 1;
+scrollbar-width: thin;
+scrollbar-color: rgba(255,255,255,0.1) transparent;
+}
+
+/* stats grid */
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 12px;
+margin-bottom: 24px;
+}
+
+.stat-card {
+background: var(--glass-bg);
+border: 1px solid var(--glass-border);
+border-radius: var(--radius-md);
+padding: 14px 16px;
+text-align: center;
+}
+
+.stat-val {
+font-family: 'JetBrains Mono', monospace;
+font-size: 1.8rem;
+font-weight: 500;
+line-height: 1;
+margin-bottom: 5px;
+}
+
+.stat-label {
+font-size: 0.69rem;
+color: var(--text-muted);
+letter-spacing: 0.07em;
+text-transform: uppercase;
+font-weight: 600;
+}
+
+/* weekly chart */
+.chart-section { margin-bottom: 24px; }
+
+.chart-title {
+font-size: 0.72rem;
+font-weight: 700;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+color: var(--text-muted);
+margin-bottom: 12px;
+}
+
+.week-bars {
+display: flex;
+align-items: flex-end;
+gap: 8px;
+height: 90px;
+}
+
+.week-bar-wrap {
+flex: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 4px;
+height: 100%;
+justify-content: flex-end;
+}
+
+.week-bar {
+width: 100%;
+border-radius: 6px 6px 0 0;
+background: rgba(79,142,247,0.25);
+border: 1px solid rgba(79,142,247,0.4);
+transition: height 0.4s cubic-bezier(0.34,1.2,0.64,1);
+min-height: 3px;
+position: relative;
+}
+
+.week-bar.today-bar {
+background: rgba(56,232,200,0.25);
+border-color: rgba(56,232,200,0.5);
+box-shadow: 0 0 12px rgba(56,232,200,0.15);
+}
+
+.week-bar-count {
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.68rem;
+color: var(--text-secondary);
+}
+
+.week-bar-day {
+font-size: 0.65rem;
+color: var(--text-muted);
+letter-spacing: 0.05em;
+text-transform: uppercase;
+font-weight: 600;
+}
+
+/* day list */
+.day-section { margin-bottom: 10px; }
+
+.day-header {
+display: flex; align-items: center; justify-content: space-between;
+padding: 10px 14px;
+border-radius: var(--radius-md) var(--radius-md) 0 0;
+background: rgba(255,255,255,0.04);
+border: 1px solid var(--glass-border);
+cursor: pointer;
+user-select: none;
+transition: background 0.18s;
+}
+.day-header:hover { background: rgba(255,255,255,0.07); }
+
+.day-header-left {
+display: flex; align-items: center; gap: 10px;
+}
+
+.day-date-label {
+font-weight: 700;
+font-size: 0.85rem;
+}
+
+.day-badges {
+display: flex; gap: 6px;
+}
+
+.day-badge {
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.65rem;
+padding: 2px 8px;
+border-radius: 20px;
+font-weight: 600;
+}
+
+.badge-truck { background: rgba(79,142,247,0.15); color: var(--accent-blue); border: 1px solid rgba(79,142,247,0.25); }
+.badge-resi  { background: rgba(248,113,113,0.12); color: var(--accent-rose); border: 1px solid rgba(248,113,113,0.22); }
+.badge-hot   { background: rgba(251,191,36,0.12); color: var(--accent-amber); border: 1px solid rgba(251,191,36,0.25); }
+
+.day-chevron { font-size: 0.7rem; color: var(--text-muted); transition: transform 0.2s; }
+.day-header.open .day-chevron { transform: rotate(180deg); }
+
+.day-entries {
+border: 1px solid var(--glass-border);
+border-top: none;
+border-radius: 0 0 var(--radius-md) var(--radius-md);
+overflow: hidden;
+display: none;
+}
+.day-entries.open { display: block; }
+
+.entry-row {
+display: flex; align-items: center; gap: 10px;
+padding: 9px 14px;
+border-bottom: 1px solid rgba(255,255,255,0.04);
+font-size: 0.8rem;
+}
+.entry-row:last-child { border-bottom: none; }
+
+.entry-type {
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.65rem;
+padding: 2px 7px;
+border-radius: 4px;
+flex-shrink: 0;
+font-weight: 600;
+}
+
+.entry-time {
+font-family: 'JetBrains Mono', monospace;
+font-size: 0.75rem;
+color: var(--accent-cyan);
+flex-shrink: 0;
+min-width: 42px;
+}
+
+.entry-firma { color: var(--text-primary); flex: 1; }
+.entry-sig { color: var(--text-muted); font-size: 0.72rem; }
+.entry-qty { color: var(--text-secondary); font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; }
+
+.no-history {
+text-align: center; padding: 32px 16px;
+color: var(--text-muted); font-size: 0.82rem;
+letter-spacing: 0.04em;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 820px) {
 .columns { grid-template-columns: 1fr; gap: 32px; }
-.column-left { border-right: none; padding-right: 0; border-bottom: 1px solid rgba(79,142,247,0.10); padding-bottom: 28px; }
+.column-left { border-left: none; border-bottom: 1px solid rgba(248,113,113,0.10); padding-bottom: 28px; }
+.column-right { border-left: none; padding-left: 0; }
 .row-2 { grid-template-columns: 1fr; }
 }
 
@@ -551,29 +883,13 @@ body::before, body::after { display: none; }
 
   <div class="columns">
 
-    <!-- ═══ LEFT: CAMIOANE ═══ -->
+    <!-- ═══ LEFT: RESI ═══ -->
     <div class="column column-left">
-      <div class="col-header">
-        <div class="col-title">
-          <span class="col-dot dot-blue"></span>
-          Intrări camioane
-          <span class="col-count" id="count-trucks">1 înregistrare</span>
-        </div>
-        <button class="btn-add" onclick="addTruck()">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Adaugă tracking
-        </button>
-      </div>
-      <div id="trucks-list"></div>
-    </div>
-
-    <!-- ═══ RIGHT: RESI ═══ -->
-    <div class="column column-right">
       <div class="col-header">
         <div class="col-title">
           <span class="col-dot dot-rose"></span>
           Returnări (Resi)
-          <span class="col-count" id="count-resi">1 înregistrare</span>
+          <span class="col-count" id="count-resi">0 înregistrări</span>
         </div>
         <button class="btn-add btn-add-rose" onclick="addResi()">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -583,6 +899,44 @@ body::before, body::after { display: none; }
       <div id="resi-list"></div>
     </div>
 
+    <!-- ═══ RIGHT: CAMIOANE ═══ -->
+    <div class="column column-right">
+      <div class="col-header">
+        <div class="col-title">
+          <span class="col-dot dot-blue"></span>
+          Intrări camioane
+          <span class="col-count" id="count-trucks">0 înregistrări</span>
+        </div>
+        <button class="btn-add" onclick="addTruck()">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Adaugă camion
+        </button>
+      </div>
+      <div id="trucks-list"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FAB Calendar Button -->
+<button class="fab-cal" onclick="openCalendar()" title="Istoric & statistici">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+</button>
+
+<!-- Calendar Modal -->
+
+<div class="modal-overlay" id="calModal" onclick="if(event.target===this)closeCalendar()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Istoric &amp; Statistici
+      </div>
+      <button class="modal-close" onclick="closeCalendar()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="calBody"></div>
   </div>
 </div>
 
@@ -594,180 +948,315 @@ let resiCount = 0;
 
 // ── CLOCK ──
 function updateClock() {
-  const now = new Date();
-  const zi = ['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'][now.getDay()];
-  const luna = ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie'][now.getMonth()];
-  document.getElementById('clock').textContent = now.toLocaleTimeString('ro-RO', { hour12: false });
-  document.getElementById('clock-date').textContent = `${zi}, ${now.getDate()} ${luna} ${now.getFullYear()}`;
+const now = new Date();
+const zi = ['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'][now.getDay()];
+const luna = ['ianuarie','februarie','martie','aprilie','mai','iunie','iulie','august','septembrie','octombrie','noiembrie','decembrie'][now.getMonth()];
+document.getElementById('clock').textContent = now.toLocaleTimeString('ro-RO', { hour12: false });
+document.getElementById('clock-date').textContent = `${zi}, ${now.getDate()} ${luna} ${now.getFullYear()}`;
 }
 setInterval(updateClock, 1000);
 updateClock();
 
 function nowStamp() {
-  const d = new Date();
-  return d.toLocaleString('ro-RO', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12: false });
+const d = new Date();
+return d.toLocaleString('ro-RO', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12: false });
 }
 
 function toast(msg) {
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => { t.classList.add('fade-out'); setTimeout(() => t.remove(), 280); }, 2400);
+const t = document.createElement('div');
+t.className = 'toast';
+t.textContent = msg;
+document.body.appendChild(t);
+setTimeout(() => { t.classList.add('fade-out'); setTimeout(() => t.remove(), 280); }, 2400);
 }
 
 function updateCounts() {
-  const tc = trucks.length;
-  const rc = resis.length;
-  document.getElementById('count-trucks').textContent = tc === 0 ? 'nicio înregistrare' : tc === 1 ? '1 înregistrare' : `${tc} înregistrări`;
-  document.getElementById('count-resi').textContent = rc === 0 ? 'nicio înregistrare' : rc === 1 ? '1 înregistrare' : `${rc} înregistrări`;
+const tc = trucks.length;
+const rc = resis.length;
+document.getElementById('count-trucks').textContent = tc === 0 ? 'nicio înregistrare' : tc === 1 ? '1 înregistrare' : `${tc} înregistrări`;
+document.getElementById('count-resi').textContent = rc === 0 ? 'nicio înregistrare' : rc === 1 ? '1 înregistrare' : `${rc} înregistrări`;
 }
 
 // ══ TRUCKS ══
 function addTruck(data) {
-  truckCount++;
-  const id = 'truck-' + Date.now() + '-' + truckCount;
-  const ts = nowStamp();
-  const entry = data || { id, ts, firma: '', programat: false, bancal: false, cutii: false, comentariu: '', semnatura: '' };
-  if (!data) entry.id = id;
-  trucks.push(entry);
-  renderTrucks();
-  updateCounts();
-  if (!data) toast('🚛 Înregistrare nouă adăugată');
+truckCount++;
+const id = 'truck-' + Date.now() + '-' + truckCount;
+const ts = nowStamp();
+const entry = data || { id, ts, firma: '', programat: false, bancal: false, nrBancale: '', cutii: false, nrCutii: '', comentariu: '', semnatura: '' };
+if (!data) entry.id = id;
+trucks.push(entry);
+renderTrucks();
+updateCounts();
+if (!data) toast('🚛 Înregistrare nouă adăugată');
 }
 
 function removeTruck(id) {
-  if (!confirm('Ștergi această înregistrare?')) return;
-  trucks = trucks.filter(t => t.id !== id);
-  renderTrucks();
-  updateCounts();
-  toast('🗑️ Șters');
+trucks = trucks.filter(t => t.id !== id);
+renderTrucks();
+updateCounts();
 }
 
 function renderTrucks() {
-  const list = document.getElementById('trucks-list');
-  list.innerHTML = '';
-  if (trucks.length === 0) {
-    list.innerHTML = `<div class="empty-state"><span class="emoji">🚛</span>Niciun camion înregistrat astăzi.<br>Apasă „Adaugă camion" pentru a începe.</div>`;
-    return;
-  }
-  trucks.forEach((t, i) => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.id = t.id;
-    card.innerHTML = `
-      <div class="card-header">
-        <span class="card-number">CAM #${String(i+1).padStart(2,'0')}</span>
-        <span class="card-timestamp">${t.ts}</span>
-        <button class="btn-icon delete" title="Șterge" onclick="removeTruck('${t.id}')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        </button>
-      </div>
-      <div class="card-body">
-        <div class="field">
-          <label>Firma / Furnizor</label>
-          <input type="text" placeholder="ex: KOH-I-NOOR, Bic…" value="${t.firma}" onchange="updateTruck('${t.id}','firma',this.value)">
-        </div>
-        <div class="row-2">
-          <div class="field">
-            <label>Status livrare</label>
-            <div class="radio-group">
-              <label class="radio-pill opt-yes">
-                <input type="radio" name="prog-${t.id}" value="programat" ${t.programat==='programat'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)">
-                <span class="radio-dot"></span><span>Programat</span>
-              </label>
-              <label class="radio-pill opt-no">
-                <input type="radio" name="prog-${t.id}" value="neprogramat" ${t.programat==='neprogramat'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)">
-                <span class="radio-dot"></span><span>Neprogramat</span>
-              </label>
-              <label class="radio-pill opt-unknown">
-                <input type="radio" name="prog-${t.id}" value="necunoscut" ${t.programat==='necunoscut'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)">
-                <span class="radio-dot"></span><span>Necunoscut</span>
-              </label>
-            </div>
-          </div>
-          <div class="field">
-            <label>Tip marfă</label>
-            <div class="check-group">
-              <label class="check-label bancal">
-                <input type="checkbox" ${t.bancal?'checked':''} onchange="updateTruck('${t.id}','bancal',this.checked)">
-                <span class="check-box">${t.bancal?'✓':''}</span><span>Bancal</span>
-              </label>
-              <label class="check-label bancal">
-                <input type="checkbox" ${t.cutii?'checked':''} onchange="updateTruck('${t.id}','cutii',this.checked)">
-                <span class="check-box">${t.cutii?'✓':''}</span><span>Cutii</span>
-              </label>
-            </div>
-          </div>
-        </div>
-        <div class="field">
-          <label>Comentariu</label>
-          <textarea placeholder="Observații, daune, lipsuri…" onchange="updateTruck('${t.id}','comentariu',this.value)">${t.comentariu}</textarea>
-        </div>
-        <div class="field">
-          <label>Semnătura responsabil</label>
-          <div class="signature-wrap">
-            <input type="text" placeholder="Numele celui care a ridicat" value="${t.semnatura}" onchange="updateTruck('${t.id}','semnatura',this.value)">
-            <span class="signature-icon">✍️</span>
-          </div>
-        </div>
-      </div>
-    `;
-    list.appendChild(card);
-  });
+const list = document.getElementById('trucks-list');
+list.innerHTML = '';
+if (trucks.length === 0) {
+list.innerHTML = `<div class="empty-state"><span class="emoji">🚛</span>Niciun camion înregistrat astăzi.<br>Apasă „Adaugă camion" pentru a începe.</div>`;
+return;
+}
+trucks.forEach((t, i) => {
+const card = document.createElement('div');
+card.className = 'card';
+card.id = t.id;
+card.innerHTML = `<div class="card-header"> <span class="card-number">CAM #${String(i+1).padStart(2,'0')}</span> <span class="card-timestamp">${t.ts}</span> <button class="btn-icon delete" title="Șterge" onclick="removeTruck('${t.id}')"> <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg> </button> </div> <div class="card-body"> <div class="field"> <label>Firma / Furnizor</label> <input type="text" placeholder="ex: KOH-I-NOOR, Bic…" value="${t.firma}" class="${!t.firma ? 'field-required-pulse' : ''}" oninput="this.classList.toggle('field-required-pulse', !this.value.trim())" onchange="updateTruck('${t.id}','firma',this.value)"> </div> <div class="field"> <label>Status livrare</label> <div class="radio-group"> <label class="radio-pill opt-yes"> <input type="radio" name="prog-${t.id}" value="programat" ${t.programat==='programat'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"> <span class="radio-dot"></span><span>Programat</span> </label> <label class="radio-pill opt-no"> <input type="radio" name="prog-${t.id}" value="neprogramat" ${t.programat==='neprogramat'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"> <span class="radio-dot"></span><span>Neprogramat</span> </label> <label class="radio-pill opt-unknown"> <input type="radio" name="prog-${t.id}" value="necunoscut" ${t.programat==='necunoscut'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"> <span class="radio-dot"></span><span>Necunoscut</span> </label> </div> </div> <div class="field"> <label>Tip marfă</label> <div class="check-group"> <label class="check-label bancal"> <input type="checkbox" ${t.bancal?'checked':''} onchange="updateTruck('${t.id}','bancal',this.checked)"> <span class="check-box">${t.bancal?'✓':''}</span><span>Bancal</span> </label> <label class="check-label bancal"> <input type="checkbox" ${t.cutii?'checked':''} onchange="updateTruck('${t.id}','cutii',this.checked)"> <span class="check-box">${t.cutii?'✓':''}</span><span>Cutii</span> </label> </div> <div class="qty-row"> <div class="qty-block ${t.bancal ? '' : 'hidden'}" id="qty-bancal-${t.id}"> <label>Nr. bancale</label> <input type="number" min="0" placeholder="0" value="${t.nrBancale}" onchange="updateTruck('${t.id}','nrBancale',this.value)"> </div> <div class="qty-block ${t.cutii ? '' : 'hidden'}" id="qty-cutii-${t.id}"> <label>Nr. cutii</label> <input type="number" min="0" placeholder="0" value="${t.nrCutii}" onchange="updateTruck('${t.id}','nrCutii',this.value)"> </div> </div> </div> <div class="field"> <label>Comentariu</label> <textarea placeholder="Observații, daune, lipsuri…" onchange="updateTruck('${t.id}','comentariu',this.value)">${t.comentariu}</textarea> </div> <div class="field"> <label>Semnătura responsabil</label> <div class="signature-wrap"> <input type="text" placeholder="Numele celui care a ridicat" value="${t.semnatura}" class="${!t.semnatura ? 'field-required-pulse' : ''}" oninput="this.classList.toggle('field-required-pulse', !this.value.trim())" onchange="updateTruck('${t.id}','semnatura',this.value)"> <span class="signature-icon">✍️</span> </div> ${t.arrivalTime ?`<div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--accent-cyan);opacity:0.7;margin-top:4px;">⏱ Sosit: ${t.arrivalTime}</div>`: ''} </div> </div>`;
+list.appendChild(card);
+});
 }
 
 function updateTruck(id, field, val) {
-  const t = trucks.find(x => x.id === id);
-  if (t) { t[field] = val; if (field === 'bancal' || field === 'cutii') renderTrucks(); }
+const t = trucks.find(x => x.id === id);
+if (!t) return;
+t[field] = val;
+if (field === 'semnatura' && val.trim() && !t.arrivalTime) {
+t.arrivalTime = new Date().toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit', hour12: false });
+saveHistory();
+renderTrucks();
+return;
+}
+if (field === 'bancal') {
+const el = document.getElementById('qty-bancal-' + id);
+if (el) el.classList.toggle('hidden', !val);
+if (!val) { t.nrBancale = ''; const inp = el && el.querySelector('input'); if (inp) inp.value = ''; }
+} else if (field === 'cutii') {
+const el = document.getElementById('qty-cutii-' + id);
+if (el) el.classList.toggle('hidden', !val);
+if (!val) { t.nrCutii = ''; const inp = el && el.querySelector('input'); if (inp) inp.value = ''; }
+}
 }
 
 // ══ RESI ══
 function addResi(data) {
-  resiCount++;
-  const id = 'resi-' + Date.now() + '-' + resiCount;
-  const ts = nowStamp();
-  const entry = data || { id, ts, descriere: '', autorizat: false, comentariu: '', semnatura: '' };
-  if (!data) entry.id = id;
-  resis.push(entry);
-  renderResis();
-  updateCounts();
-  if (!data) toast('📦 Returnare adăugată');
+resiCount++;
+const id = 'resi-' + Date.now() + '-' + resiCount;
+const ts = nowStamp();
+const entry = data || { id, ts, descriere: '', autorizat: false, bancal: false, nrBancale: '', cutii: false, nrCutii: '', comentariu: '', semnatura: '' };
+if (!data) entry.id = id;
+resis.push(entry);
+renderResis();
+updateCounts();
+if (!data) toast('📦 Returnare adăugată');
 }
 
 function removeResi(id) {
-  if (!confirm('Ștergi această returnare?')) return;
-  resis = resis.filter(r => r.id !== id);
-  renderResis();
-  updateCounts();
-  toast('🗑️ Șters');
+resis = resis.filter(r => r.id !== id);
+renderResis();
+updateCounts();
 }
 
 function renderResis() {
-  const list = document.getElementById('resi-list');
-  list.innerHTML = '';
-  if (resis.length === 0) {
-    list.innerHTML = `<div class="empty-state"><span class="emoji">↩️</span>Nicio returnare înregistrată.<br>Apasă „Adaugă returnare" pentru a începe.</div>`;
-    return;
-  }
-  resis.forEach((r, i) => {
-    const card = document.createElement('div');
-    card.className = 'card';
-    card.id = r.id;
-    card.style.borderColor = 'rgba(248,113,113,0.11)';
-    card.innerHTML = `<div class="card-header"> <span class="card-number" style="color:var(--accent-rose);border-color:rgba(248,113,113,0.2);background:rgba(248,113,113,0.06)">RESI #${String(i+1).padStart(2,'0')}</span> <span class="card-timestamp">${r.ts}</span> <button class="btn-icon delete" title="Șterge" onclick="removeResi('${r.id}')"> <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg> </button> </div> <div class="card-body"> <div class="field"> <label>Descriere pachete returnate</label> <input type="text" placeholder="ex: 3 colete Bic, referință…" value="${r.descriere}" onchange="updateResi('${r.id}','descriere',this.value)"> </div> <div class="field"> <label>Autorizare returnare</label> <div class="radio-group"> <label class="radio-pill opt-auth"> <input type="radio" name="auth-${r.id}" value="autorizat" ${r.autorizat==='autorizat'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"> <span class="radio-dot"></span><span>Autorizată</span> </label> <label class="radio-pill opt-noauth"> <input type="radio" name="auth-${r.id}" value="neautorizat" ${r.autorizat==='neautorizat'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"> <span class="radio-dot"></span><span>Neautorizată</span> </label> <label class="radio-pill opt-unknown"> <input type="radio" name="auth-${r.id}" value="necunoscut" ${r.autorizat==='necunoscut'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"> <span class="radio-dot"></span><span>Necunoscut</span> </label> </div> </div> <div class="field"> <label>Comentariu</label> <textarea placeholder="Motivul returnării, stare pachet…" onchange="updateResi('${r.id}','comentariu',this.value)">${r.comentariu}</textarea> </div> <div class="field"> <label>Semnătura responsabil</label> <div class="signature-wrap"> <input type="text" placeholder="Numele celui care a ridicat" value="${r.semnatura}" onchange="updateResi('${r.id}','semnatura',this.value)"> <span class="signature-icon">✍️</span> </div> </div> </div>`;
-    list.appendChild(card);
-  });
+const list = document.getElementById('resi-list');
+list.innerHTML = '';
+if (resis.length === 0) {
+list.innerHTML = `<div class="empty-state"><span class="emoji">↩️</span>Nicio returnare înregistrată.<br>Apasă „Adaugă returnare" pentru a începe.</div>`;
+return;
+}
+resis.forEach((r, i) => {
+const card = document.createElement('div');
+card.className = 'card';
+card.id = r.id;
+card.style.borderColor = 'rgba(248,113,113,0.11)';
+card.innerHTML = `<div class="card-header"> <span class="card-number" style="color:var(--accent-rose);border-color:rgba(248,113,113,0.2);background:rgba(248,113,113,0.06)">RESI #${String(i+1).padStart(2,'0')}</span> <span class="card-timestamp">${r.ts}</span> <button class="btn-icon delete" title="Șterge" onclick="removeResi('${r.id}')"> <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg> </button> </div> <div class="card-body"> <div class="field"> <label>Descriere pachete returnate</label> <input type="text" placeholder="ex: 3 colete Bic, referință…" value="${r.descriere}" class="${!r.descriere ? 'field-required-pulse' : ''}" oninput="this.classList.toggle('field-required-pulse', !this.value.trim())" onchange="updateResi('${r.id}','descriere',this.value)"> </div> <div class="field"> <label>Tip marfă</label> <div class="check-group"> <label class="check-label bancal"> <input type="checkbox" ${r.bancal?'checked':''} onchange="updateResi('${r.id}','bancal',this.checked)"> <span class="check-box">${r.bancal?'✓':''}</span><span>Bancal</span> </label> <label class="check-label bancal"> <input type="checkbox" ${r.cutii?'checked':''} onchange="updateResi('${r.id}','cutii',this.checked)"> <span class="check-box">${r.cutii?'✓':''}</span><span>Cutii</span> </label> </div> <div class="qty-row"> <div class="qty-block ${r.bancal ? '' : 'hidden'}" id="qty-bancal-${r.id}"> <label>Nr. bancale</label> <input type="number" min="0" placeholder="0" value="${r.nrBancale}" onchange="updateResi('${r.id}','nrBancale',this.value)"> </div> <div class="qty-block ${r.cutii ? '' : 'hidden'}" id="qty-cutii-${r.id}"> <label>Nr. cutii</label> <input type="number" min="0" placeholder="0" value="${r.nrCutii}" onchange="updateResi('${r.id}','nrCutii',this.value)"> </div> </div> </div> <div class="field"> <label>Autorizare returnare</label> <div class="radio-group"> <label class="radio-pill opt-auth"> <input type="radio" name="auth-${r.id}" value="autorizat" ${r.autorizat==='autorizat'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"> <span class="radio-dot"></span><span>Autorizată</span> </label> <label class="radio-pill opt-noauth"> <input type="radio" name="auth-${r.id}" value="neautorizat" ${r.autorizat==='neautorizat'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"> <span class="radio-dot"></span><span>Neautorizată</span> </label> <label class="radio-pill opt-unknown"> <input type="radio" name="auth-${r.id}" value="necunoscut" ${r.autorizat==='necunoscut'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"> <span class="radio-dot"></span><span>Necunoscut</span> </label> </div> </div> <div class="field"> <label>Comentariu</label> <textarea placeholder="Motivul returnării, stare pachet…" onchange="updateResi('${r.id}','comentariu',this.value)">${r.comentariu}</textarea> </div> <div class="field"> <label>Semnătura responsabil</label> <div class="signature-wrap"> <input type="text" placeholder="Numele celui care a ridicat" value="${r.semnatura}" class="${!r.semnatura ? 'field-required-pulse' : ''}" oninput="this.classList.toggle('field-required-pulse', !this.value.trim())" onchange="updateResi('${r.id}','semnatura',this.value)"> <span class="signature-icon">✍️</span> </div> </div> </div>`;
+list.appendChild(card);
+});
 }
 
 function updateResi(id, field, val) {
-  const r = resis.find(x => x.id === id);
-  if (r) { r[field] = val; if (field === 'autorizat') renderResis(); }
+const r = resis.find(x => x.id === id);
+if (!r) return;
+r[field] = val;
+if (field === 'bancal') {
+const el = document.getElementById('qty-bancal-' + id);
+if (el) el.classList.toggle('hidden', !val);
+if (!val) { r.nrBancale = ''; const inp = el && el.querySelector('input'); if (inp) inp.value = ''; }
+} else if (field === 'cutii') {
+const el = document.getElementById('qty-cutii-' + id);
+if (el) el.classList.toggle('hidden', !val);
+if (!val) { r.nrCutii = ''; const inp = el && el.querySelector('input'); if (inp) inp.value = ''; }
+}
 }
 
-addTruck();
-addResi();
-</script>
+updateCounts();
 
+// ══ HISTORY (localStorage) ══
+const HIST_KEY = 'registru_history';
+
+function todayKey() {
+const d = new Date();
+return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function saveHistory() {
+try {
+const raw = localStorage.getItem(HIST_KEY);
+const hist = raw ? JSON.parse(raw) : {};
+const key = todayKey();
+hist[key] = { trucks: trucks.map(t => ({...t})), resis: resis.map(r => ({...r})) };
+localStorage.setItem(HIST_KEY, JSON.stringify(hist));
+} catch(e) {}
+}
+
+function loadHistory() {
+try {
+const raw = localStorage.getItem(HIST_KEY);
+return raw ? JSON.parse(raw) : {};
+} catch(e) { return {}; }
+}
+
+// Patch add/remove to auto-save
+const _baseTruckAdd = addTruck;
+const _baseTruckRemove = removeTruck;
+const _baseResiAdd = addResi;
+const _baseResiRemove = removeResi;
+
+addTruck = function(data) { _baseTruckAdd(data); saveHistory(); };
+removeTruck = function(id) {
+if (!confirm('Ștergi această înregistrare?')) return;
+trucks = trucks.filter(t => t.id !== id);
+renderTrucks(); updateCounts(); saveHistory(); toast('🗑️ Șters');
+};
+addResi = function(data) { _baseResiAdd(data); saveHistory(); };
+removeResi = function(id) {
+if (!confirm('Ștergi această returnare?')) return;
+resis = resis.filter(r => r.id !== id);
+renderResis(); updateCounts(); saveHistory(); toast('🗑️ Șters');
+};
+
+// ══ CALENDAR MODAL ══
+function openCalendar() {
+saveHistory();
+const hist = loadHistory();
+document.getElementById('calBody').innerHTML = buildCalendarHTML(hist);
+document.getElementById('calModal').classList.add('open');
+}
+
+function closeCalendar() {
+document.getElementById('calModal').classList.remove('open');
+}
+
+function toggleDay(idx) {
+document.getElementById('dh-' + idx).classList.toggle('open');
+document.getElementById('de-' + idx).classList.toggle('open');
+}
+
+function buildCalendarHTML(hist) {
+const keys = Object.keys(hist).sort((a, b) => b.localeCompare(a));
+
+if (keys.length === 0) {
+return `<div class="no-history">📭 Niciun istoric salvat încă.<br>Adaugă înregistrări și vor apărea aici.</div>`;
+}
+
+// ── Overall stats ──
+let totalTrucks = 0, totalResis = 0;
+keys.forEach(k => {
+totalTrucks += (hist[k].trucks || []).length;
+totalResis  += (hist[k].resis  || []).length;
+});
+const avgPerDay = keys.length ? (totalTrucks / keys.length).toFixed(1) : 0;
+
+const statsHTML = ` <div class="stats-grid"> <div class="stat-card"> <div class="stat-val" style="color:var(--accent-blue)">${totalTrucks}</div> <div class="stat-label">Intrări camioane</div> </div> <div class="stat-card"> <div class="stat-val" style="color:var(--accent-rose)">${totalResis}</div> <div class="stat-label">Returnări Resi</div> </div> <div class="stat-card"> <div class="stat-val" style="color:var(--accent-amber)">${avgPerDay}</div> <div class="stat-label">Medie / zi</div> </div> </div>`;
+
+// ── Weekly bar chart (last 7 days) ──
+const dayNames = ['Du','Lu','Ma','Mi','Jo','Vi','Sâ'];
+const today = new Date();
+const weekDays = [];
+for (let i = 6; i >= 0; i--) {
+const d = new Date(today);
+d.setDate(today.getDate() - i);
+const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+weekDays.push({ k, day: dayNames[d.getDay()], count: hist[k] ? (hist[k].trucks||[]).length : 0, isToday: i === 0 });
+}
+const maxWeek = Math.max(...weekDays.map(d => d.count), 1);
+
+const weekHTML = `<div class="chart-section"> <div class="chart-title">Camioane — ultimele 7 zile</div> <div class="week-bars"> ${weekDays.map(d =>`
+<div class="week-bar-wrap">
+<div class="week-bar-count">${d.count > 0 ? d.count : ''}</div>
+<div class="week-bar ${d.isToday ? 'today-bar' : ''}" style="height:${Math.max(d.count / maxWeek * 70, d.count > 0 ? 8 : 3)}px"></div>
+<div class="week-bar-day" style="${d.isToday ? 'color:var(--accent-cyan)' : ''}">${d.day}</div>
+</div>`).join('')} </div> </div>`;
+
+// ── Day-by-day history ──
+const dayLabels  = ['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'];
+const monthLabel = ['ian','feb','mar','apr','mai','iun','iul','aug','sep','oct','nov','dec'];
+const todK = todayKey();
+
+const daysHTML = keys.map((k, idx) => {
+const { trucks: ts = [], resis: rs = [] } = hist[k];
+const d = new Date(k + 'T12:00:00');
+const dateLabel = `${dayLabels[d.getDay()]}, ${d.getDate()} ${monthLabel[d.getMonth()]} ${d.getFullYear()}`;
+const isToday   = k === todK;
+const isBusiest = k === busiestKey && busiestCount > 0;
+const startOpen = isToday;
+
+const sorted = [...ts].sort((a, b) => {
+  if (!a.arrivalTime) return 1;
+  if (!b.arrivalTime) return -1;
+  return a.arrivalTime.localeCompare(b.arrivalTime);
+});
+
+const rows = [
+  ...sorted.map(t => {
+    const qty = [
+      t.bancal && t.nrBancale ? `${t.nrBancale} bancale` : (t.bancal ? 'bancale' : ''),
+      t.cutii  && t.nrCutii  ? `${t.nrCutii} cutii`     : (t.cutii  ? 'cutii'   : '')
+    ].filter(Boolean).join(', ');
+    return `<div class="entry-row">
+      <span class="entry-type badge-truck">CAM</span>
+      <span class="entry-time">${t.arrivalTime || '–'}</span>
+      <span class="entry-firma">${t.firma || '<span style="opacity:.4">Firmă necunoscută</span>'}</span>
+      ${qty ? `<span class="entry-qty">${qty}</span>` : ''}
+      ${t.semnatura ? `<span class="entry-sig">✍ ${t.semnatura}</span>` : ''}
+    </div>`;
+  }),
+  ...rs.map(r => {
+    const qty = [
+      r.bancal && r.nrBancale ? `${r.nrBancale} bancale` : (r.bancal ? 'bancale' : ''),
+      r.cutii  && r.nrCutii  ? `${r.nrCutii} cutii`     : (r.cutii  ? 'cutii'   : '')
+    ].filter(Boolean).join(', ');
+    const timeStr = r.ts ? (r.ts.split(' ')[1] || '–') : '–';
+    return `<div class="entry-row">
+      <span class="entry-type badge-resi">RESI</span>
+      <span class="entry-time" style="color:var(--accent-rose)">${timeStr}</span>
+      <span class="entry-firma">${r.descriere || '<span style="opacity:.4">Fără descriere</span>'}</span>
+      ${qty ? `<span class="entry-qty">${qty}</span>` : ''}
+      ${r.semnatura ? `<span class="entry-sig">✍ ${r.semnatura}</span>` : ''}
+    </div>`;
+  })
+].join('');
+
+return `
+  <div class="day-section">
+    <div class="day-header ${startOpen ? 'open' : ''}" id="dh-${idx}" onclick="toggleDay(${idx})">
+      <div class="day-header-left">
+        <span class="day-date-label" style="${isToday ? 'color:var(--accent-cyan)' : ''}">${dateLabel}</span>
+        <div class="day-badges">
+          ${ts.length ? `<span class="day-badge badge-truck">🚛 ${ts.length}</span>` : ''}
+          ${rs.length ? `<span class="day-badge badge-resi">↩ ${rs.length}</span>` : ''}
+          ${isBusiest ? `<span class="day-badge badge-hot">🔥 Cea mai aglomerată</span>` : ''}
+        </div>
+      </div>
+      <span class="day-chevron">▼</span>
+    </div>
+    <div class="day-entries ${startOpen ? 'open' : ''}" id="de-${idx}">
+      ${rows || '<div class="entry-row" style="color:var(--text-muted);font-size:0.78rem">Nicio înregistrare completă</div>'}
+    </div>
+  </div>`;
+
+}).join('');
+
+return statsHTML + weekHTML + daysHTML;
+}
+
+// Busiest day calculation shortcut fix
+let busiestKey = '', busiestCount = 0;
+</script>
 </body>
 </html>
