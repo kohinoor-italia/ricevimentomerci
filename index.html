@@ -339,67 +339,219 @@ input[type="number"]:focus { border-color: rgba(56,232,200,0.45); background: rg
 .fab-day.is-active { background: rgba(167,139,250,0.30); border-color: rgba(167,139,250,0.8); box-shadow: 0 0 0 4px rgba(167,139,250,0.15), 0 12px 36px rgba(167,139,250,0.3); }
 
 /* MODAL BASE */
-.modal-overlay { position: fixed; inset: 0; background: rgba(5,8,20,0.75); backdrop-filter: blur(8px); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.2s ease; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(5,8,20,0.82); backdrop-filter: blur(10px); z-index: 500; display: none; align-items: center; justify-content: center; padding: 0; animation: fadeIn 0.22s ease; }
 .modal-overlay.open { display: flex; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.modal { background: #0e1628; border: 1px solid rgba(255,255,255,0.12); border-radius: 22px; width: 100%; max-width: 820px; max-height: 92vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 32px 80px rgba(0,0,0,0.6); animation: modalIn 0.28s cubic-bezier(0.34,1.4,0.64,1); }
-@keyframes modalIn { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; }
-.modal-title { display: flex; align-items: center; gap: 10px; font-size: 0.92rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent-blue); }
-.modal-close { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.04); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.18s; }
-.modal-close:hover { background: rgba(248,113,113,0.14); color: var(--accent-rose); border-color: rgba(248,113,113,0.35); }
-.modal-body { overflow-y: auto; padding: 20px 22px 24px; flex: 1; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
 
-/* DAY PICKER MODAL (left) */
-.modal-overlay-left { justify-content: flex-start; }
-.modal-overlay-left .modal { max-width: 360px; animation: modalInLeft 0.28s cubic-bezier(0.34,1.4,0.64,1); }
-@keyframes modalInLeft { from { opacity: 0; transform: scale(0.95) translateX(-20px); } to { opacity: 1; transform: scale(1) translateX(0); } }
-.modal-title-violet { color: var(--accent-violet); }
-
-/* DAY PICKER CONTENT */
-.dp-today-btn {
-  width: 100%; padding: 12px 16px; border-radius: var(--radius-md);
-  border: 1px solid rgba(56,232,200,0.35); background: rgba(56,232,200,0.08);
-  color: var(--accent-cyan); font-family: 'Sora', sans-serif; font-size: 0.85rem;
-  font-weight: 600; cursor: pointer; text-align: left;
-  display: flex; align-items: center; gap: 10px; transition: all 0.18s; margin-bottom: 14px;
+/* STATS MODAL — FULLSCREEN */
+.modal-stats {
+  background: #080d1c;
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 0;
+  width: 100vw; height: 100vh;
+  max-width: 100vw; max-height: 100vh;
+  display: flex; flex-direction: column;
+  box-shadow: none;
+  animation: modalFull 0.3s cubic-bezier(0.34,1.2,0.64,1);
+  overflow: hidden;
 }
-.dp-today-btn:hover { background: rgba(56,232,200,0.15); border-color: rgba(56,232,200,0.6); }
-.dp-today-btn.active-day-btn { background: rgba(56,232,200,0.20); border-color: rgba(56,232,200,0.7); box-shadow: 0 0 0 3px rgba(56,232,200,0.08); }
+@keyframes modalFull { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
-/* STATS MODAL */
-.stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
-.stat-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 14px 16px; text-align: center; }
-.stat-val { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 500; line-height: 1; margin-bottom: 5px; }
-.stat-label { font-size: 0.69rem; color: var(--text-muted); letter-spacing: 0.07em; text-transform: uppercase; font-weight: 600; }
+/* STATS TOP BAR */
+.stats-topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  height: 54px; flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(20px);
+  gap: 16px;
+}
+.stats-topbar-title {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent-blue);
+}
+.stats-tab-bar {
+  display: flex; gap: 2px; align-items: center;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px; padding: 3px; flex: 1; max-width: 600px;
+}
+.stats-tab {
+  flex: 1; padding: 6px 14px; border-radius: 7px;
+  font-family: 'Sora', sans-serif; font-size: 0.74rem; font-weight: 600;
+  cursor: pointer; border: none; background: transparent;
+  color: var(--text-muted); transition: all 0.18s; letter-spacing: 0.04em;
+  text-align: center; white-space: nowrap;
+}
+.stats-tab:hover { color: var(--text-secondary); background: rgba(255,255,255,0.04); }
+.stats-tab.active { background: rgba(79,142,247,0.18); color: var(--accent-blue); border: 1px solid rgba(79,142,247,0.3); }
+.stats-tab.active-violet { background: rgba(167,139,250,0.18); color: var(--accent-violet); border: 1px solid rgba(167,139,250,0.3); }
+.stats-tab.active-rose { background: rgba(248,113,113,0.15); color: var(--accent-rose); border: 1px solid rgba(248,113,113,0.3); }
+.stats-tab.active-cyan { background: rgba(56,232,200,0.12); color: var(--accent-cyan); border: 1px solid rgba(56,232,200,0.3); }
+.stats-close-btn {
+  width: 32px; height: 32px; border-radius: 9px;
+  border: 1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04);
+  color: var(--text-secondary); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.18s; flex-shrink: 0;
+}
+.stats-close-btn:hover { background: rgba(248,113,113,0.14); color: var(--accent-rose); border-color: rgba(248,113,113,0.35); }
 
-/* MONTH TABS */
-.month-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 18px; }
-.month-tab { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 600; padding: 4px 11px; border-radius: 20px; cursor: pointer; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03); color: var(--text-muted); transition: all 0.18s; }
+/* STATS BODY SPLIT */
+.stats-body {
+  display: flex; flex: 1; overflow: hidden;
+}
+
+/* LEFT SIDEBAR */
+.stats-sidebar {
+  width: 260px; flex-shrink: 0;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  display: flex; flex-direction: column;
+  overflow-y: auto; overflow-x: hidden;
+  padding: 16px 14px;
+  gap: 10px;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent;
+}
+
+/* KPI CARDS in sidebar */
+.kpi-card {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius-md); padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+  transition: all 0.18s;
+}
+.kpi-card:hover { background: rgba(255,255,255,0.055); border-color: rgba(255,255,255,0.12); }
+.kpi-icon { font-size: 1.3rem; flex-shrink: 0; line-height: 1; }
+.kpi-info { flex: 1; min-width: 0; }
+.kpi-val { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: 500; line-height: 1; margin-bottom: 3px; }
+.kpi-label { font-size: 0.64rem; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+.kpi-sub { font-size: 0.62rem; color: var(--text-muted); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+.kpi-trend { font-size: 0.65rem; padding: 2px 6px; border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-weight: 600; flex-shrink: 0; }
+.trend-up { background: rgba(74,222,128,0.12); color: var(--accent-green); border: 1px solid rgba(74,222,128,0.22); }
+.trend-down { background: rgba(248,113,113,0.10); color: var(--accent-rose); border: 1px solid rgba(248,113,113,0.22); }
+.trend-neutral { background: rgba(251,191,36,0.10); color: var(--accent-amber); border: 1px solid rgba(251,191,36,0.22); }
+
+.sidebar-section-title {
+  font-size: 0.60rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--text-muted);
+  padding: 6px 4px 4px; border-bottom: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 2px;
+}
+
+/* ALERT ITEMS in sidebar */
+.alert-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-radius: var(--radius-sm);
+  background: rgba(248,113,113,0.06); border: 1px solid rgba(248,113,113,0.18);
+  font-size: 0.72rem; color: var(--accent-rose); line-height: 1.4;
+}
+.alert-item.alert-amber { background: rgba(251,191,36,0.06); border-color: rgba(251,191,36,0.18); color: var(--accent-amber); }
+.alert-item.alert-green { background: rgba(74,222,128,0.06); border-color: rgba(74,222,128,0.18); color: var(--accent-green); }
+.alert-icon { font-size: 0.85rem; flex-shrink: 0; }
+
+/* MAIN CONTENT AREA */
+.stats-main {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 20px 24px;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent;
+}
+
+/* TAB PANELS */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: tabIn 0.2s ease; }
+@keyframes tabIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── PANEL: PANORAMICA ── */
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.overview-col { display: flex; flex-direction: column; gap: 12px; }
+
+.panel-card {
+  background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius-md); overflow: hidden;
+}
+.panel-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px 9px; border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 0.67rem; font-weight: 700; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+.panel-card-body { padding: 12px 14px; }
+
+/* DONUT CHART */
+.donut-wrap { display: flex; align-items: center; gap: 16px; }
+.donut-svg-wrap { flex-shrink: 0; position: relative; }
+.donut-center-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.donut-center-val { font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; font-weight: 500; line-height: 1; }
+.donut-center-sub { font-size: 0.58rem; color: var(--text-muted); letter-spacing: 0.07em; text-transform: uppercase; margin-top: 2px; }
+.donut-legend { display: flex; flex-direction: column; gap: 7px; flex: 1; }
+.legend-row { display: flex; align-items: center; gap: 7px; font-size: 0.72rem; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.legend-label { flex: 1; color: var(--text-secondary); }
+.legend-val { font-family: 'JetBrains Mono', monospace; color: var(--text-primary); font-weight: 600; }
+.legend-pct { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); min-width: 34px; text-align: right; }
+
+/* SPARKLINE / MINI CHART */
+.sparkline-wrap { height: 60px; position: relative; }
+.sparkline-svg { width: 100%; height: 100%; }
+
+/* HOUR HEATMAP */
+.hour-heatmap { display: grid; grid-template-columns: repeat(12, 1fr); gap: 3px; }
+.hh-cell {
+  aspect-ratio: 1; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.50rem;
+  color: rgba(255,255,255,0.25); font-weight: 600;
+  transition: all 0.15s; position: relative;
+}
+.hh-cell:hover { transform: scale(1.15); z-index: 2; }
+.hh-cell.hh-0 { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+.hh-cell.hh-1 { background: rgba(79,142,247,0.18); border: 1px solid rgba(79,142,247,0.3); color: rgba(79,142,247,0.7); }
+.hh-cell.hh-2 { background: rgba(79,142,247,0.32); border: 1px solid rgba(79,142,247,0.5); color: rgba(79,142,247,0.9); }
+.hh-cell.hh-3 { background: rgba(56,232,200,0.35); border: 1px solid rgba(56,232,200,0.55); color: rgba(56,232,200,0.9); }
+.hh-cell.hh-4 { background: rgba(56,232,200,0.55); border: 1px solid rgba(56,232,200,0.75); color: #fff; box-shadow: 0 0 8px rgba(56,232,200,0.25); }
+
+/* PERF ROW */
+.perf-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.perf-row:last-child { border-bottom: none; }
+.perf-label { font-size: 0.73rem; color: var(--text-secondary); flex: 1; }
+.perf-bar-wrap { width: 80px; height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; flex-shrink: 0; }
+.perf-bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s cubic-bezier(0.34,1.2,0.64,1); }
+.perf-val { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text-primary); min-width: 28px; text-align: right; }
+
+/* TIMELINE BAR CHART */
+.timeline-chart { display: flex; align-items: flex-end; gap: 3px; }
+.tl-col { display: flex; flex-direction: column; align-items: center; gap: 3px; flex: 1; }
+.tl-bar-stack { width: 100%; border-radius: 4px 4px 0 0; overflow: hidden; min-height: 2px; }
+.tl-bar-t { background: rgba(79,142,247,0.45); border-top: 1px solid rgba(79,142,247,0.7); }
+.tl-bar-r { background: rgba(248,113,113,0.35); border-top: 1px solid rgba(248,113,113,0.55); }
+.tl-label { font-family: 'JetBrains Mono', monospace; font-size: 0.52rem; color: var(--text-muted); letter-spacing: 0.04em; white-space: nowrap; }
+.tl-val { font-family: 'JetBrains Mono', monospace; font-size: 0.56rem; color: var(--text-secondary); }
+
+/* ── PANEL: MENSILE ── */
+.month-tabs-row { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 16px; }
+.month-tab { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 600; padding: 5px 12px; border-radius: 20px; cursor: pointer; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03); color: var(--text-muted); transition: all 0.18s; }
 .month-tab:hover { color: var(--text-secondary); background: rgba(255,255,255,0.06); }
 .month-tab.active { background: rgba(79,142,247,0.15); border-color: rgba(79,142,247,0.4); color: var(--accent-blue); }
 
-/* CHART */
-.chart-section { margin-bottom: 20px; }
-.chart-title { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
-.week-bars { display: flex; align-items: flex-end; gap: 6px; height: 90px; }
-.week-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
-.bar-stack { width: 100%; display: flex; flex-direction: column; border-radius: 6px 6px 0 0; overflow: hidden; transition: height 0.4s cubic-bezier(0.34,1.2,0.64,1); min-height: 3px; }
-.bar-truck { background: rgba(79,142,247,0.30); border-top: 1px solid rgba(79,142,247,0.5); flex-shrink: 0; }
-.bar-resi  { background: rgba(248,113,113,0.25); border-top: 1px solid rgba(248,113,113,0.4); flex-shrink: 0; }
-.week-bar-count { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--text-secondary); }
-.week-bar-day { font-size: 0.65rem; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
-.today-bar-day { color: var(--accent-cyan) !important; }
+.monthly-layout { display: grid; grid-template-columns: 1fr 320px; gap: 16px; }
+.monthly-main { display: flex; flex-direction: column; gap: 14px; }
+.monthly-side { display: flex; flex-direction: column; gap: 12px; }
 
-/* MONTH HEATMAP */
-.month-heatmap { margin-bottom: 20px; }
+/* HEATMAP */
+.month-heatmap { }
 .heatmap-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
 .heatmap-day-label { font-size: 0.58rem; color: var(--text-muted); text-align: center; padding: 2px 0; letter-spacing: 0.05em; text-transform: uppercase; }
-.heatmap-cell { aspect-ratio: 1; border-radius: 4px; cursor: default; transition: all 0.18s; position: relative; }
+.heatmap-cell { aspect-ratio: 1; border-radius: 5px; cursor: default; transition: all 0.15s; position: relative; }
 .heatmap-cell.has-data { cursor: pointer; }
-.heatmap-cell.has-data:hover { transform: scale(1.15); z-index: 2; }
+.heatmap-cell.has-data:hover { transform: scale(1.12); z-index: 2; }
 .heatmap-cell.empty-cell { background: transparent; }
-.heatmap-cell.no-data { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.05); }
+.heatmap-cell.no-data { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
 .heatmap-cell.level-1 { background: rgba(79,142,247,0.15); border: 1px solid rgba(79,142,247,0.25); }
 .heatmap-cell.level-2 { background: rgba(79,142,247,0.28); border: 1px solid rgba(79,142,247,0.4); }
 .heatmap-cell.level-3 { background: rgba(79,142,247,0.45); border: 1px solid rgba(79,142,247,0.6); }
@@ -407,65 +559,135 @@ input[type="number"]:focus { border-color: rgba(56,232,200,0.45); background: rg
 .heatmap-cell.is-today-cell { box-shadow: 0 0 0 2px var(--accent-cyan); }
 .heatmap-date-num { position: absolute; bottom: 2px; right: 3px; font-family: 'JetBrains Mono', monospace; font-size: 0.52rem; color: rgba(255,255,255,0.35); line-height: 1; }
 
-/* MONTH SUMMARY */
-.month-summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-.month-stat-row { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: var(--radius-sm); background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); font-size: 0.78rem; }
-.month-stat-icon { font-size: 0.9rem; flex-shrink: 0; }
-.month-stat-label { flex: 1; color: var(--text-secondary); }
-.month-stat-val { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; font-weight: 600; color: var(--text-primary); }
+/* MONTH STATS GRID */
+.month-stats-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
+}
+.ms-cell {
+  background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--radius-sm); padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 3px;
+}
+.ms-label { font-size: 0.60rem; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+.ms-val { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 500; line-height: 1.1; }
+.ms-sub { font-size: 0.60rem; color: var(--text-muted); }
 
-/* TOP SUPPLIERS */
-.top-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
-.top-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius-sm); background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.05); }
-.top-rank { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); width: 18px; flex-shrink: 0; }
+/* WEEK BARS */
+.week-bars { display: flex; align-items: flex-end; gap: 5px; }
+.week-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; justify-content: flex-end; height: 100%; }
+.bar-stack { width: 100%; display: flex; flex-direction: column; border-radius: 5px 5px 0 0; overflow: hidden; min-height: 3px; }
+.bar-truck { background: rgba(79,142,247,0.35); border-top: 1px solid rgba(79,142,247,0.6); flex-shrink: 0; }
+.bar-resi  { background: rgba(248,113,113,0.28); border-top: 1px solid rgba(248,113,113,0.5); flex-shrink: 0; }
+.week-bar-count { font-family: 'JetBrains Mono', monospace; font-size: 0.60rem; color: var(--text-secondary); }
+.week-bar-day { font-size: 0.60rem; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+.today-bar-day { color: var(--accent-cyan) !important; }
+
+/* ── PANEL: FORNITORI ── */
+.suppliers-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.top-list { display: flex; flex-direction: column; gap: 5px; }
+.top-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--radius-sm); background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.05); transition: all 0.15s; }
+.top-item:hover { background: rgba(255,255,255,0.045); border-color: rgba(255,255,255,0.09); }
+.top-rank { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-muted); width: 20px; flex-shrink: 0; }
+.top-rank-gold { color: #ffd700; }
+.top-rank-silver { color: #c0c0c0; }
+.top-rank-bronze { color: #cd7f32; }
 .top-name { flex: 1; font-size: 0.8rem; font-weight: 600; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.top-bar-wrap { width: 60px; height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; flex-shrink: 0; }
-.top-bar-fill { height: 100%; border-radius: 3px; background: var(--accent-blue); }
-.top-count { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--text-secondary); flex-shrink: 0; min-width: 30px; text-align: right; }
+.top-bar-wrap { width: 70px; height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; flex-shrink: 0; }
+.top-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); }
+.top-count { font-family: 'JetBrains Mono', monospace; font-size: 0.70rem; color: var(--text-secondary); flex-shrink: 0; min-width: 32px; text-align: right; }
+.top-pct { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; color: var(--text-muted); min-width: 36px; text-align: right; flex-shrink: 0; }
 
-/* DAY SECTIONS */
-.day-section { margin-bottom: 10px; }
-.day-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: var(--radius-md) var(--radius-md) 0 0; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); cursor: pointer; user-select: none; transition: background 0.18s; }
+/* ── PANEL: CRONOLOGIA ── */
+.history-controls { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.hist-search { flex: 1; min-width: 180px; }
+.hist-search input { padding: 7px 12px; font-size: 0.78rem; }
+.hist-filter-btn { padding: 6px 13px; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03); color: var(--text-secondary); font-family: 'Sora', sans-serif; font-size: 0.73rem; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.hist-filter-btn:hover { background: rgba(255,255,255,0.06); color: var(--text-primary); }
+.hist-filter-btn.active { background: rgba(79,142,247,0.15); border-color: rgba(79,142,247,0.35); color: var(--accent-blue); }
+.hist-filter-btn.active-rose { background: rgba(248,113,113,0.12); border-color: rgba(248,113,113,0.3); color: var(--accent-rose); }
+
+.day-section { margin-bottom: 8px; }
+.day-header { display: flex; align-items: center; justify-content: space-between; padding: 9px 14px; border-radius: var(--radius-md) var(--radius-md) 0 0; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); cursor: pointer; user-select: none; transition: background 0.15s; }
 .day-header:hover { background: rgba(255,255,255,0.07); }
 .day-header.open .day-chevron { transform: rotate(180deg); }
 .day-header-left { display: flex; align-items: center; gap: 10px; }
-.day-date-label { font-weight: 700; font-size: 0.85rem; }
-.day-badges { display: flex; gap: 6px; }
-.day-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+.day-date-label { font-weight: 700; font-size: 0.82rem; }
+.day-badges { display: flex; gap: 5px; }
+.day-badge { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; padding: 2px 7px; border-radius: 20px; font-weight: 600; }
 .badge-truck { background: rgba(79,142,247,0.15); color: var(--accent-blue); border: 1px solid rgba(79,142,247,0.25); }
 .badge-resi  { background: rgba(248,113,113,0.12); color: var(--accent-rose); border: 1px solid rgba(248,113,113,0.22); }
 .badge-hot   { background: rgba(251,191,36,0.12); color: var(--accent-amber); border: 1px solid rgba(251,191,36,0.25); }
 .day-chevron { font-size: 0.7rem; color: var(--text-muted); transition: transform 0.2s; }
 .day-entries { border: 1px solid var(--glass-border); border-top: none; border-radius: 0 0 var(--radius-md) var(--radius-md); overflow: hidden; display: none; }
 .day-entries.open { display: block; }
-.entry-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.8rem; flex-wrap: wrap; }
+.entry-row { display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.78rem; flex-wrap: wrap; }
 .entry-row:last-child { border-bottom: none; }
-.entry-type { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; padding: 2px 7px; border-radius: 4px; flex-shrink: 0; font-weight: 600; }
-.entry-time { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-cyan); flex-shrink: 0; min-width: 42px; }
+.entry-row:hover { background: rgba(255,255,255,0.02); }
+.entry-type { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; padding: 2px 6px; border-radius: 4px; flex-shrink: 0; font-weight: 600; }
+.entry-time { font-family: 'JetBrains Mono', monospace; font-size: 0.73rem; color: var(--accent-cyan); flex-shrink: 0; min-width: 42px; }
 .entry-firma { color: var(--text-primary); flex: 1; font-weight: 600; }
-.entry-sig { color: var(--text-muted); font-size: 0.72rem; }
-.entry-qty { color: var(--text-secondary); font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; }
-.entry-note { width: 100%; font-size: 0.73rem; color: var(--text-muted); padding-left: 0; line-height: 1.4; font-style: italic; }
-.entry-meta { display: flex; gap: 5px; flex-wrap: wrap; }
-.no-history { text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 0.82rem; letter-spacing: 0.04em; }
+.entry-sig { color: var(--text-muted); font-size: 0.70rem; }
+.entry-qty { color: var(--text-secondary); font-size: 0.70rem; font-family: 'JetBrains Mono', monospace; }
+.entry-note { width: 100%; font-size: 0.71rem; color: var(--text-muted); padding-left: 0; line-height: 1.4; font-style: italic; }
+.no-history { text-align: center; padding: 40px 16px; color: var(--text-muted); font-size: 0.82rem; letter-spacing: 0.04em; }
 
-/* NAV BUTTONS in picker */
-.day-nav-btn {
-  display: flex; align-items: center; justify-content: center;
-  border-radius: var(--radius-sm); border: 1px solid var(--glass-border);
-  background: rgba(255,255,255,0.04); color: var(--text-secondary);
-  cursor: pointer; transition: all 0.18s;
-}
+/* DAY PICKER MODAL (smaller, side) */
+.modal-overlay-left { justify-content: flex-start; }
+.modal-day { background: #0e1628; border: 1px solid rgba(255,255,255,0.12); border-radius: 22px; width: 100%; max-width: 360px; max-height: 92vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 32px 80px rgba(0,0,0,0.6); animation: modalInLeft 0.28s cubic-bezier(0.34,1.4,0.64,1); }
+@keyframes modalInLeft { from { opacity: 0; transform: scale(0.95) translateX(-20px); } to { opacity: 1; transform: scale(1) translateX(0); } }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0; }
+.modal-title { display: flex; align-items: center; gap: 10px; font-size: 0.92rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent-blue); }
+.modal-close { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.04); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.18s; }
+.modal-close:hover { background: rgba(248,113,113,0.14); color: var(--accent-rose); border-color: rgba(248,113,113,0.35); }
+.modal-body { overflow-y: auto; padding: 20px 22px 24px; flex: 1; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
+.modal-title-violet { color: var(--accent-violet); }
+.dp-today-btn { width: 100%; padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid rgba(56,232,200,0.35); background: rgba(56,232,200,0.08); color: var(--accent-cyan); font-family: 'Sora', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-align: left; display: flex; align-items: center; gap: 10px; transition: all 0.18s; margin-bottom: 14px; }
+.dp-today-btn:hover { background: rgba(56,232,200,0.15); border-color: rgba(56,232,200,0.6); }
+.dp-today-btn.active-day-btn { background: rgba(56,232,200,0.20); border-color: rgba(56,232,200,0.7); box-shadow: 0 0 0 3px rgba(56,232,200,0.08); }
+.day-nav-btn { display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); border: 1px solid var(--glass-border); background: rgba(255,255,255,0.04); color: var(--text-secondary); cursor: pointer; transition: all 0.18s; }
 .day-nav-btn:hover:not(:disabled) { background: rgba(255,255,255,0.09); color: var(--text-primary); }
 .day-nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* RECORD TABLE in suppliers */
+.rec-table { width: 100%; border-collapse: collapse; font-size: 0.74rem; }
+.rec-table th { text-align: left; padding: 6px 10px; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.07); }
+.rec-table td { padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text-secondary); }
+.rec-table tr:last-child td { border-bottom: none; }
+.rec-table tr:hover td { background: rgba(255,255,255,0.02); }
+.rec-table .td-firma { color: var(--text-primary); font-weight: 600; }
+.rec-table .td-mono { font-family: 'JetBrains Mono', monospace; }
+.rec-table .td-blue { color: var(--accent-blue); }
+.rec-table .td-cyan { color: var(--accent-cyan); }
+
+/* EXPORT BTN */
+.export-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 14px; border-radius: var(--radius-sm);
+  border: 1px solid rgba(74,222,128,0.35); background: rgba(74,222,128,0.08);
+  color: var(--accent-green); font-family: 'Sora', sans-serif;
+  font-size: 0.74rem; font-weight: 600; cursor: pointer; transition: all 0.18s;
+}
+.export-btn:hover { background: rgba(74,222,128,0.16); border-color: rgba(74,222,128,0.55); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 
 @media (max-width: 900px) {
   .main-layout { grid-template-columns: 1fr; }
   .column-left { grid-column: 1; grid-row: 1; }
   .column-right { grid-column: 1; grid-row: 2; border-left: none; padding-left: 0; }
-  .modal { max-width: 100%; }
+  .stats-sidebar { width: 200px; }
+  .overview-grid { grid-template-columns: 1fr 1fr; }
+  .monthly-layout { grid-template-columns: 1fr; }
+  .suppliers-layout { grid-template-columns: 1fr; }
 }
-@media (max-width: 500px) {
+@media (max-width: 600px) {
+  .stats-sidebar { display: none; }
+  .stats-tab-bar { max-width: 100%; }
+  .overview-grid { grid-template-columns: 1fr; }
+  .stats-topbar { padding: 0 12px; gap: 8px; }
   .page { padding: 14px 12px 50px; }
   .header { flex-direction: column; }
   .clock-card { text-align: left; width: 100%; }
@@ -543,7 +765,7 @@ input[type="number"]:focus { border-color: rgba(56,232,200,0.45); background: rg
 
 <!-- Day Picker Modal -->
 <div class="modal-overlay modal-overlay-left" id="dayPickerModal" onclick="if(event.target===this)closeDayPicker()">
-  <div class="modal" style="max-width:360px;">
+  <div class="modal-day" style="margin: 20px;">
     <div class="modal-header">
       <div class="modal-title modal-title-violet">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -557,1023 +779,854 @@ input[type="number"]:focus { border-color: rgba(56,232,200,0.45); background: rg
   </div>
 </div>
 
-<!-- Stats Modal -->
+<!-- Stats Modal FULLSCREEN -->
 <div class="modal-overlay" id="calModal" onclick="if(event.target===this)closeCalendar()">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+  <div class="modal-stats">
+
+    <!-- TOP BAR -->
+    <div class="stats-topbar">
+      <div class="stats-topbar-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Storico &amp; Statistiche
       </div>
-      <button class="modal-close" onclick="closeCalendar()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+      <div class="stats-tab-bar" id="statsTabBar">
+        <button class="stats-tab active" id="tab-btn-overview" onclick="switchStatsTab('overview')">📊 Panoramica</button>
+        <button class="stats-tab" id="tab-btn-monthly" onclick="switchStatsTab('monthly')">📅 Mensile</button>
+        <button class="stats-tab" id="tab-btn-suppliers" onclick="switchStatsTab('suppliers')">🏭 Fornitori</button>
+        <button class="stats-tab" id="tab-btn-history" onclick="switchStatsTab('history')">📋 Cronologia</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="export-btn" onclick="exportCSV()" title="Esporta dati CSV">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Esporta CSV
+        </button>
+        <button class="stats-close-btn" onclick="closeCalendar()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
     </div>
-    <div class="modal-body" id="calBody"></div>
+
+    <!-- BODY -->
+    <div class="stats-body">
+
+      <!-- SIDEBAR -->
+      <div class="stats-sidebar" id="statsSidebar">
+        <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:0.8rem">⏳ Caricamento…</div>
+      </div>
+
+      <!-- MAIN PANELS -->
+      <div class="stats-main" id="statsMain">
+        <div style="text-align:center;padding:60px;color:var(--text-muted)">⏳ Caricamento statistiche…</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <script>
-// ─── SUPABASE CONFIG ──────────────────────────────────────────────────────────
+// ─── SUPABASE CONFIG ───────────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://wvqopsvqmemkxhllajqb.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_8-Zs8sEHZtFnQr4lE_W5Eg_kEhMiEGf';
-
 const sbHeaders = {
   'Content-Type': 'application/json',
   'apikey': SUPABASE_KEY,
   'Authorization': `Bearer ${SUPABASE_KEY}`,
   'Prefer': 'return=minimal'
 };
-
-async function sbGet(table, params = '') {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
-    headers: { ...sbHeaders, 'Prefer': 'return=representation' }
-  });
+async function sbGet(table, params='') {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, { headers: {...sbHeaders,'Prefer':'return=representation'} });
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
-
 async function sbUpsert(table, data) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
-    method: 'POST',
-    headers: { ...sbHeaders, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-    body: JSON.stringify(data)
-  });
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, { method:'POST', headers:{...sbHeaders,'Prefer':'resolution=merge-duplicates,return=minimal'}, body: JSON.stringify(data) });
   if (!res.ok) throw new Error(await res.text());
 }
-
 async function sbDelete(table, id) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`, {
-    method: 'DELETE',
-    headers: sbHeaders
-  });
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`, { method:'DELETE', headers: sbHeaders });
   if (!res.ok) throw new Error(await res.text());
 }
 
-// ─── DB ↔ APP CONVERTERS ──────────────────────────────────────────────────────
+// ─── CONVERTERS ───────────────────────────────────────────────────────────────
 function dbToTruck(row) {
-  return {
-    id: row.id, ts: row.ts || '', firma: row.firma || '',
-    programat: row.programat || '', bancal: !!row.bancal, nrBancale: row.nr_bancale || '',
-    cutii: !!row.cutii, nrCutii: row.nr_cutii || '', comentariu: row.comentariu || '',
-    semnatura: row.semnatura || '', arrivalTime: row.arrival_time || '',
-    collapsed: !!row.collapsed, editing: false, isDraft: false, dateKey: row.date_key
-  };
+  return { id:row.id, ts:row.ts||'', firma:row.firma||'', programat:row.programat||'', bancal:!!row.bancal, nrBancale:row.nr_bancale||'', cutii:!!row.cutii, nrCutii:row.nr_cutii||'', comentariu:row.comentariu||'', semnatura:row.semnatura||'', arrivalTime:row.arrival_time||'', collapsed:!!row.collapsed, editing:false, isDraft:false, dateKey:row.date_key };
 }
 function truckToDb(t, dateKey) {
-  return {
-    id: t.id, date_key: dateKey || t.dateKey || todayKey(),
-    ts: t.ts || '', firma: t.firma || '', programat: t.programat || '',
-    bancal: !!t.bancal, nr_bancale: t.nrBancale || '',
-    cutii: !!t.cutii, nr_cutii: t.nrCutii || '',
-    comentariu: t.comentariu || '', semnatura: t.semnatura || '',
-    arrival_time: t.arrivalTime || '', collapsed: !!t.collapsed
-  };
+  return { id:t.id, date_key:dateKey||t.dateKey||todayKey(), ts:t.ts||'', firma:t.firma||'', programat:t.programat||'', bancal:!!t.bancal, nr_bancale:t.nrBancale||'', cutii:!!t.cutii, nr_cutii:t.nrCutii||'', comentariu:t.comentariu||'', semnatura:t.semnatura||'', arrival_time:t.arrivalTime||'', collapsed:!!t.collapsed };
 }
-
 function dbToResi(row) {
-  return {
-    id: row.id, ts: row.ts || '', descriere: row.descriere || '',
-    autorizat: row.autorizat || '', bancal: !!row.bancal, nrBancale: row.nr_bancale || '',
-    cutii: !!row.cutii, nrCutii: row.nr_cutii || '', comentariu: row.comentariu || '',
-    semnatura: row.semnatura || '', collapsed: !!row.collapsed,
-    editing: false, isDraft: false, dateKey: row.date_key
-  };
+  return { id:row.id, ts:row.ts||'', descriere:row.descriere||'', autorizat:row.autorizat||'', bancal:!!row.bancal, nrBancale:row.nr_bancale||'', cutii:!!row.cutii, nrCutii:row.nr_cutii||'', comentariu:row.comentariu||'', semnatura:row.semnatura||'', collapsed:!!row.collapsed, editing:false, isDraft:false, dateKey:row.date_key };
 }
 function resiToDb(r, dateKey) {
-  return {
-    id: r.id, date_key: dateKey || r.dateKey || todayKey(),
-    ts: r.ts || '', descriere: r.descriere || '', autorizat: r.autorizat || '',
-    bancal: !!r.bancal, nr_bancale: r.nrBancale || '',
-    cutii: !!r.cutii, nr_cutii: r.nrCutii || '',
-    comentariu: r.comentariu || '', semnatura: r.semnatura || '',
-    collapsed: !!r.collapsed
-  };
+  return { id:r.id, date_key:dateKey||r.dateKey||todayKey(), ts:r.ts||'', descriere:r.descriere||'', autorizat:r.autorizat||'', bancal:!!r.bancal, nr_bancale:r.nrBancale||'', cutii:!!r.cutii, nr_cutii:r.nrCutii||'', comentariu:r.comentariu||'', semnatura:r.semnatura||'', collapsed:!!r.collapsed };
 }
 
 // ─── SYNC STATUS ──────────────────────────────────────────────────────────────
 function setSyncStatus(state, msg) {
-  const bar = document.getElementById('sync-bar');
-  const dot = document.getElementById('sync-dot');
-  const txt = document.getElementById('sync-text');
-  bar.className = 'sync-bar ' + state;
-  dot.className = 'sync-dot' + (state === 'syncing' ? ' pulse' : '');
-  txt.textContent = msg;
+  const bar=document.getElementById('sync-bar'), dot=document.getElementById('sync-dot'), txt=document.getElementById('sync-text');
+  bar.className='sync-bar '+state;
+  dot.className='sync-dot'+(state==='syncing'?' pulse':'');
+  txt.textContent=msg;
 }
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
-let trucks = [];
-let resis  = [];
-let truckCount = 0;
-let resiCount  = 0;
-let activeDay = null;
+let trucks=[], resis=[], truckCount=0, resiCount=0, activeDay=null;
+let currentStatsTab='overview', activeStatsMonth=null;
+let statsHistCache=null;
 
 // ─── CLOCK ────────────────────────────────────────────────────────────────────
 function updateClock() {
-  const now = new Date();
-  const gi = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'][now.getDay()];
-  const mese = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'][now.getMonth()];
-  document.getElementById('clock').textContent = now.toLocaleTimeString('it-IT', { hour12: false });
-  document.getElementById('clock-date').textContent = `${gi}, ${now.getDate()} ${mese} ${now.getFullYear()}`;
+  const now=new Date();
+  const gi=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'][now.getDay()];
+  const mese=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'][now.getMonth()];
+  document.getElementById('clock').textContent=now.toLocaleTimeString('it-IT',{hour12:false});
+  document.getElementById('clock-date').textContent=`${gi}, ${now.getDate()} ${mese} ${now.getFullYear()}`;
 }
-setInterval(updateClock, 1000);
-updateClock();
+setInterval(updateClock,1000); updateClock();
 
 function nowStamp() {
-  const d = new Date();
-  return d.toLocaleString('it-IT', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12: false });
+  const d=new Date();
+  return d.toLocaleString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false});
 }
-
-function toast(msg, isError = false) {
-  const t = document.createElement('div');
-  t.className = 'toast' + (isError ? ' toast-error' : '');
-  t.textContent = msg;
+function toast(msg,isError=false) {
+  const t=document.createElement('div');
+  t.className='toast'+(isError?' toast-error':'');
+  t.textContent=msg;
   document.body.appendChild(t);
-  setTimeout(() => { t.classList.add('fade-out'); setTimeout(() => t.remove(), 280); }, 2800);
+  setTimeout(()=>{t.classList.add('fade-out');setTimeout(()=>t.remove(),280);},2800);
 }
-
 function updateCounts() {
-  const tc = trucks.filter(t => !t.isDraft).length;
-  const rc = resis.filter(r => !r.isDraft).length;
-  document.getElementById('count-trucks').textContent = tc === 0 ? 'nessuna' : tc === 1 ? '1 registrazione' : `${tc} registrazioni`;
-  document.getElementById('count-resi').textContent   = rc === 0 ? 'nessuna' : rc === 1 ? '1 registrazione' : `${rc} registrazioni`;
+  const tc=trucks.filter(t=>!t.isDraft).length, rc=resis.filter(r=>!r.isDraft).length;
+  document.getElementById('count-trucks').textContent=tc===0?'nessuna':tc===1?'1 registrazione':`${tc} registrazioni`;
+  document.getElementById('count-resi').textContent=rc===0?'nessuna':rc===1?'1 registrazione':`${rc} registrazioni`;
 }
-
 function todayKey() {
-  const d = new Date();
+  const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-
 function formatKeyLabel(k) {
-  const d = new Date(k + 'T12:00:00');
-  const days = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
-  const months = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  const d=new Date(k+'T12:00:00');
+  const days=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+  const months=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
   return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
 }
 
 // ─── VALIDATION ───────────────────────────────────────────────────────────────
 function validateTruck(t) {
-  const errors = [];
-  if (!t.firma || !t.firma.trim())      errors.push('Azienda / Fornitore obbligatorio');
-  if (!t.programat)                     errors.push('Stato consegna obbligatorio (Programmato / Non programmato / Sconosciuto)');
-  if (!t.bancal && !t.cutii)            errors.push('Tipo merce obbligatorio (seleziona Bancale e/o Colli)');
-  if (t.bancal && (!t.nrBancale || parseInt(t.nrBancale) < 1))
-                                        errors.push('Numero bancali obbligatorio (≥ 1)');
-  if (t.cutii && (!t.nrCutii || parseInt(t.nrCutii) < 1))
-                                        errors.push('Numero colli obbligatorio (≥ 1)');
-  if (!t.semnatura || !t.semnatura.trim()) errors.push('Firma responsabile obbligatoria');
+  const errors=[];
+  if(!t.firma||!t.firma.trim()) errors.push('Azienda / Fornitore obbligatorio');
+  if(!t.programat) errors.push('Stato consegna obbligatorio');
+  if(!t.bancal&&!t.cutii) errors.push('Tipo merce obbligatorio');
+  if(t.bancal&&(!t.nrBancale||parseInt(t.nrBancale)<1)) errors.push('Numero bancali obbligatorio (≥ 1)');
+  if(t.cutii&&(!t.nrCutii||parseInt(t.nrCutii)<1)) errors.push('Numero colli obbligatorio (≥ 1)');
+  if(!t.semnatura||!t.semnatura.trim()) errors.push('Firma responsabile obbligatoria');
   return errors;
 }
-
 function validateResi(r) {
-  const errors = [];
-  if (!r.descriere || !r.descriere.trim()) errors.push('Descrizione pacchi restituiti obbligatoria');
-  if (!r.bancal && !r.cutii)               errors.push('Tipo merce obbligatorio (seleziona Bancale e/o Colli)');
-  if (r.bancal && (!r.nrBancale || parseInt(r.nrBancale) < 1))
-                                           errors.push('Numero bancali obbligatorio (≥ 1)');
-  if (r.cutii && (!r.nrCutii || parseInt(r.nrCutii) < 1))
-                                           errors.push('Numero colli obbligatorio (≥ 1)');
-  if (!r.autorizat)                        errors.push('Autorizzazione reso obbligatoria');
-  if (!r.semnatura || !r.semnatura.trim()) errors.push('Firma responsabile obbligatoria');
+  const errors=[];
+  if(!r.descriere||!r.descriere.trim()) errors.push('Descrizione pacchi restituiti obbligatoria');
+  if(!r.bancal&&!r.cutii) errors.push('Tipo merce obbligatorio');
+  if(r.bancal&&(!r.nrBancale||parseInt(r.nrBancale)<1)) errors.push('Numero bancali obbligatorio (≥ 1)');
+  if(r.cutii&&(!r.nrCutii||parseInt(r.nrCutii)<1)) errors.push('Numero colli obbligatorio (≥ 1)');
+  if(!r.autorizat) errors.push('Autorizzazione reso obbligatoria');
+  if(!r.semnatura||!r.semnatura.trim()) errors.push('Firma responsabile obbligatoria');
   return errors;
 }
-
-function showCardErrors(cardEl, errors) {
-  let errDiv = cardEl.querySelector('.validation-errors');
-  if (!errDiv) return;
-  if (errors.length === 0) { errDiv.classList.remove('visible'); return; }
-  errDiv.innerHTML = '<ul>' + errors.map(e => `<li>${e}</li>`).join('') + '</ul>';
+function showCardErrors(cardEl,errors) {
+  let errDiv=cardEl.querySelector('.validation-errors');
+  if(!errDiv)return;
+  if(errors.length===0){errDiv.classList.remove('visible');return;}
+  errDiv.innerHTML='<ul>'+errors.map(e=>`<li>${e}</li>`).join('')+'</ul>';
   errDiv.classList.add('visible');
-  cardEl.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
-  cardEl.querySelectorAll('.group-error').forEach(el => el.classList.remove('group-error'));
 }
 
 // ─── LOAD DAY ─────────────────────────────────────────────────────────────────
 async function loadDay(key) {
-  setSyncStatus('syncing', 'Caricamento…');
+  setSyncStatus('syncing','Caricamento…');
   try {
-    const [tRows, rRows] = await Promise.all([
-      sbGet('trucks', `date_key=eq.${key}&order=created_at.asc`),
-      sbGet('resi',   `date_key=eq.${key}&order=created_at.asc`)
-    ]);
-    trucks = tRows.map(dbToTruck);
-    resis  = rRows.map(dbToResi);
-    truckCount = trucks.length;
-    resiCount  = resis.length;
+    const [tRows,rRows]=await Promise.all([sbGet('trucks',`date_key=eq.${key}&order=created_at.asc`),sbGet('resi',`date_key=eq.${key}&order=created_at.asc`)]);
+    trucks=tRows.map(dbToTruck); resis=rRows.map(dbToResi);
+    truckCount=trucks.length; resiCount=resis.length;
     renderAll();
-    setSyncStatus('synced', `Caricato: ${formatKeyLabel(key)} ✓`);
-  } catch(e) {
-    setSyncStatus('error', 'Errore caricamento: ' + e.message);
-    console.error(e);
-  }
+    setSyncStatus('synced',`Caricato: ${formatKeyLabel(key)} ✓`);
+  } catch(e) { setSyncStatus('error','Errore caricamento: '+e.message); }
 }
 
-// ─── ACTIVE DAY SWITCHING ─────────────────────────────────────────────────────
 async function switchToDay(key) {
-  if (key === null || key === todayKey()) { returnToToday(); return; }
-  activeDay = key;
+  if(key===null||key===todayKey()){returnToToday();return;}
+  activeDay=key;
   await loadDay(key);
   updateBanner(); updateFabDay(); closeDayPicker();
-  toast('📅 ' + formatKeyLabel(key));
+  toast('📅 '+formatKeyLabel(key));
 }
-
 async function returnToToday() {
-  activeDay = null;
+  activeDay=null;
   await loadDay(todayKey());
   updateBanner(); updateFabDay(); closeDayPicker();
 }
-
 function updateBanner() {
-  const banner = document.getElementById('active-day-banner');
-  const label  = document.getElementById('adb-date-label');
-  if (activeDay) { banner.classList.add('visible'); label.textContent = formatKeyLabel(activeDay); }
+  const banner=document.getElementById('active-day-banner'), label=document.getElementById('adb-date-label');
+  if(activeDay){banner.classList.add('visible');label.textContent=formatKeyLabel(activeDay);}
   else banner.classList.remove('visible');
 }
 function updateFabDay() {
-  const fab = document.getElementById('fab-day-btn');
-  if (activeDay) fab.classList.add('is-active');
-  else fab.classList.remove('is-active');
+  const fab=document.getElementById('fab-day-btn');
+  if(activeDay)fab.classList.add('is-active'); else fab.classList.remove('is-active');
+}
+function renderAll(){renderTrucks();renderResis();updateCounts();}
+
+function isTruckComplete(t){return !!(t.firma&&t.firma.trim()&&t.semnatura&&t.semnatura.trim());}
+function isResiComplete(r){return !!(r.descriere&&r.descriere.trim()&&r.semnatura&&r.semnatura.trim());}
+
+function expandCard(id,type) {
+  if(type==='truck'){const t=trucks.find(x=>x.id===id);if(t){t.collapsed=false;t.editing=true;renderTrucks();}}
+  else{const r=resis.find(x=>x.id===id);if(r){r.collapsed=false;r.editing=true;renderResis();}}
 }
 
-function renderAll() { renderTrucks(); renderResis(); updateCounts(); }
-
-// ─── COMPACT / EXPAND ─────────────────────────────────────────────────────────
-function isTruckComplete(t) { return !!(t.firma && t.firma.trim() && t.semnatura && t.semnatura.trim()); }
-function isResiComplete(r)  { return !!(r.descriere && r.descriere.trim() && r.semnatura && r.semnatura.trim()); }
-
-function expandCard(id, type) {
-  if (type === 'truck') {
-    const t = trucks.find(x => x.id === id);
-    if (t) { t.collapsed = false; t.editing = true; renderTrucks(); }
-  } else {
-    const r = resis.find(x => x.id === id);
-    if (r) { r.collapsed = false; r.editing = true; renderResis(); }
-  }
-}
-
-// ─── CONFIRM EDIT ─────────────────────────────────────────────────────────────
-async function confirmEdit(id, type) {
-  if (type === 'truck') {
-    const t = trucks.find(x => x.id === id);
-    if (!t) return;
-    const errors = validateTruck(t);
-    const cardEl = document.getElementById(id);
-    showCardErrors(cardEl, errors);
-    if (errors.length > 0) {
-      toast('⚠ Compila tutti i campi obbligatori', true);
-      cardEl.querySelector('.validation-errors').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      return;
-    }
-    const wasDraft = t.isDraft;
-    t.editing = false;
-    t.isDraft = false;
-    t.collapsed = true;
-    if (t.semnatura && !t.arrivalTime) {
-      t.arrivalTime = new Date().toLocaleTimeString('it-IT', { hour:'2-digit', minute:'2-digit', hour12:false });
-    }
+async function confirmEdit(id,type) {
+  if(type==='truck'){
+    const t=trucks.find(x=>x.id===id); if(!t)return;
+    const errors=validateTruck(t); const cardEl=document.getElementById(id);
+    showCardErrors(cardEl,errors);
+    if(errors.length>0){toast('⚠ Compila tutti i campi obbligatori',true);cardEl.querySelector('.validation-errors').scrollIntoView({behavior:'smooth',block:'nearest'});return;}
+    const wasDraft=t.isDraft; t.editing=false; t.isDraft=false; t.collapsed=true;
+    if(t.semnatura&&!t.arrivalTime) t.arrivalTime=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false});
     renderTrucks();
-    setSyncStatus('syncing', 'Salvataggio in corso…');
-    try {
-      await sbUpsert('trucks', truckToDb(t, activeDay || todayKey()));
-      setSyncStatus('synced', 'Salvato su Supabase ✓');
-      toast(wasDraft ? '🚛 Camion registrato!' : '💾 Modifiche salvate');
-    } catch(e) {
-      setSyncStatus('error', 'Errore: ' + e.message);
-      toast('❌ Errore salvataggio', true);
-    }
+    setSyncStatus('syncing','Salvataggio in corso…');
+    try { await sbUpsert('trucks',truckToDb(t,activeDay||todayKey())); setSyncStatus('synced','Salvato su Supabase ✓'); toast(wasDraft?'🚛 Camion registrato!':'💾 Modifiche salvate'); }
+    catch(e){ setSyncStatus('error','Errore: '+e.message); toast('❌ Errore salvataggio',true); }
   } else {
-    const r = resis.find(x => x.id === id);
-    if (!r) return;
-    const errors = validateResi(r);
-    const cardEl = document.getElementById(id);
-    showCardErrors(cardEl, errors);
-    if (errors.length > 0) {
-      toast('⚠ Compila tutti i campi obbligatori', true);
-      cardEl.querySelector('.validation-errors').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      return;
-    }
-    const wasDraft = r.isDraft;
-    r.editing = false;
-    r.isDraft = false;
-    r.collapsed = true;
+    const r=resis.find(x=>x.id===id); if(!r)return;
+    const errors=validateResi(r); const cardEl=document.getElementById(id);
+    showCardErrors(cardEl,errors);
+    if(errors.length>0){toast('⚠ Compila tutti i campi obbligatori',true);cardEl.querySelector('.validation-errors').scrollIntoView({behavior:'smooth',block:'nearest'});return;}
+    const wasDraft=r.isDraft; r.editing=false; r.isDraft=false; r.collapsed=true;
     renderResis();
-    setSyncStatus('syncing', 'Salvataggio in corso…');
-    try {
-      await sbUpsert('resi', resiToDb(r, activeDay || todayKey()));
-      setSyncStatus('synced', 'Salvato su Supabase ✓');
-      toast(wasDraft ? '📦 Reso registrato!' : '💾 Modifiche salvate');
-    } catch(e) {
-      setSyncStatus('error', 'Errore: ' + e.message);
-      toast('❌ Errore salvataggio', true);
-    }
+    setSyncStatus('syncing','Salvataggio in corso…');
+    try { await sbUpsert('resi',resiToDb(r,activeDay||todayKey())); setSyncStatus('synced','Salvato su Supabase ✓'); toast(wasDraft?'📦 Reso registrato!':'💾 Modifiche salvate'); }
+    catch(e){ setSyncStatus('error','Errore: '+e.message); toast('❌ Errore salvataggio',true); }
   }
   updateCounts();
 }
 
-// ─── CANCEL EDIT ─────────────────────────────────────────────────────────────
-function cancelEdit(id, type) {
-  if (type === 'truck') {
-    const t = trucks.find(x => x.id === id);
-    if (!t) return;
-    if (t.isDraft) {
-      trucks = trucks.filter(x => x.id !== id);
-      renderTrucks(); updateCounts();
-      toast('🗑 Bozza annullata');
-    } else {
-      t.editing = false;
-      t.collapsed = isTruckComplete(t);
-      renderTrucks();
-    }
+function cancelEdit(id,type) {
+  if(type==='truck'){
+    const t=trucks.find(x=>x.id===id); if(!t)return;
+    if(t.isDraft){trucks=trucks.filter(x=>x.id!==id);renderTrucks();updateCounts();toast('🗑 Bozza annullata');}
+    else{t.editing=false;t.collapsed=isTruckComplete(t);renderTrucks();}
   } else {
-    const r = resis.find(x => x.id === id);
-    if (!r) return;
-    if (r.isDraft) {
-      resis = resis.filter(x => x.id !== id);
-      renderResis(); updateCounts();
-      toast('🗑 Bozza annullata');
-    } else {
-      r.editing = false;
-      r.collapsed = isResiComplete(r);
-      renderResis();
-    }
+    const r=resis.find(x=>x.id===id); if(!r)return;
+    if(r.isDraft){resis=resis.filter(x=>x.id!==id);renderResis();updateCounts();toast('🗑 Bozza annullata');}
+    else{r.editing=false;r.collapsed=isResiComplete(r);renderResis();}
   }
 }
 
 // ─── TRUCKS ───────────────────────────────────────────────────────────────────
 function addTruck() {
   truckCount++;
-  const id = 'truck-' + Date.now() + '-' + truckCount;
-  const dKey = activeDay || todayKey();
-  const entry = {
-    id, ts: nowStamp(), firma:'', programat:'', bancal:false, nrBancale:'',
-    cutii:false, nrCutii:'', comentariu:'', semnatura:'', arrivalTime:'',
-    collapsed:false, editing:true, isDraft:true, dateKey: dKey
-  };
-  trucks.push(entry);
+  const id='truck-'+Date.now()+'-'+truckCount, dKey=activeDay||todayKey();
+  trucks.push({id,ts:nowStamp(),firma:'',programat:'',bancal:false,nrBancale:'',cutii:false,nrCutii:'',comentariu:'',semnatura:'',arrivalTime:'',collapsed:false,editing:true,isDraft:true,dateKey:dKey});
   renderTrucks(); updateCounts();
-  setTimeout(() => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, 80);
+  setTimeout(()=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});},80);
 }
-
 async function removeTruck(id) {
-  const t = trucks.find(x => x.id === id);
-  if (!t) return;
-  if (t.isDraft) {
-    trucks = trucks.filter(x => x.id !== id);
-    renderTrucks(); updateCounts();
-    toast('🗑️ Bozza eliminata');
-    return;
-  }
-  if (!confirm('Eliminare questa registrazione?')) return;
-  trucks = trucks.filter(x => x.id !== id);
-  renderTrucks(); updateCounts();
-  setSyncStatus('syncing', 'Eliminazione…');
-  try {
-    await sbDelete('trucks', id);
-    setSyncStatus('synced', 'Eliminato ✓');
-    toast('🗑️ Eliminato');
-  } catch(e) {
-    setSyncStatus('error', 'Errore: ' + e.message);
-  }
+  const t=trucks.find(x=>x.id===id); if(!t)return;
+  if(t.isDraft){trucks=trucks.filter(x=>x.id!==id);renderTrucks();updateCounts();toast('🗑️ Bozza eliminata');return;}
+  if(!confirm('Eliminare questa registrazione?'))return;
+  trucks=trucks.filter(x=>x.id!==id); renderTrucks(); updateCounts();
+  setSyncStatus('syncing','Eliminazione…');
+  try{await sbDelete('trucks',id);setSyncStatus('synced','Eliminato ✓');toast('🗑️ Eliminato');}
+  catch(e){setSyncStatus('error','Errore: '+e.message);}
 }
 
 function renderTrucks() {
-  const list = document.getElementById('trucks-list');
-  list.innerHTML = '';
-  if (trucks.length === 0) {
-    list.innerHTML = `<div class="empty-state"><span class="emoji">🚛</span>Nessun camion registrato.<br>Clicca "Aggiungi camion" per iniziare.</div>`;
-    return;
-  }
-  let confirmedIdx = 0;
-  trucks.forEach((t) => {
-    if (!t.isDraft) confirmedIdx++;
-    const displayNum = t.isDraft ? '—' : String(confirmedIdx).padStart(2,'0');
-
-    const card = document.createElement('div');
-    card.className = 'card' + (t.collapsed ? ' is-compact' : '') + (t.editing ? ' is-editing' : '');
-    card.id = t.id;
-
-    const qty = [
-      t.bancal && t.nrBancale ? `${t.nrBancale} bancali` : t.bancal ? 'bancali' : '',
-      t.cutii && t.nrCutii ? `${t.nrCutii} colli` : t.cutii ? 'colli' : ''
-    ].filter(Boolean).join(' · ');
-
-    const progLabel = t.programat === 'programmato' ? '✓ Prog.' : t.programat === 'non_programmato' ? '✗ Non prog.' : t.programat === 'sconosciuto' ? '? Sconosciuto' : '';
-    const progClass = t.programat === 'programmato' ? 'meta-prog' : t.programat === 'non_programmato' ? 'meta-nonprog' : 'meta-unknown';
-
-    card.innerHTML = `
-      ${t.isDraft ? `<div class="draft-banner"><span class="draft-banner-dot"></span>Bozza non salvata — completa e conferma per registrare</div>` : ''}
+  const list=document.getElementById('trucks-list'); list.innerHTML='';
+  if(trucks.length===0){list.innerHTML=`<div class="empty-state"><span class="emoji">🚛</span>Nessun camion registrato.<br>Clicca "Aggiungi camion" per iniziare.</div>`;return;}
+  let ci=0;
+  trucks.forEach(t=>{
+    if(!t.isDraft)ci++;
+    const dn=t.isDraft?'—':String(ci).padStart(2,'0');
+    const card=document.createElement('div');
+    card.className='card'+(t.collapsed?' is-compact':'')+(t.editing?' is-editing':'');
+    card.id=t.id;
+    const qty=[t.bancal&&t.nrBancale?`${t.nrBancale} bancali`:t.bancal?'bancali':'',t.cutii&&t.nrCutii?`${t.nrCutii} colli`:t.cutii?'colli':''].filter(Boolean).join(' · ');
+    const progLabel=t.programat==='programmato'?'✓ Prog.':t.programat==='non_programmato'?'✗ Non prog.':t.programat==='sconosciuto'?'? Sconosciuto':'';
+    const progClass=t.programat==='programmato'?'meta-prog':t.programat==='non_programmato'?'meta-nonprog':'meta-unknown';
+    card.innerHTML=`
+      ${t.isDraft?`<div class="draft-banner"><span class="draft-banner-dot"></span>Bozza non salvata — completa e conferma per registrare</div>`:''}
       <div class="card-compact-view" onclick="expandCard('${t.id}','truck')">
         <div class="compact-top">
-          <span class="compact-badge compact-badge-blue">CAM #${displayNum}</span>
-          <span class="compact-time">${t.arrivalTime || (t.ts ? t.ts.split(' ')[1] : '–') || '–'}</span>
-          <span class="compact-firma">${t.firma || 'Azienda sconosciuta'}</span>
-          ${t.semnatura ? `<span class="compact-sig">✍ ${t.semnatura}</span>` : ''}
-          <div class="compact-pills">
-            ${qty ? `<span class="compact-pill">${qty}</span>` : ''}
-          </div>
-          ${progLabel ? `<span class="compact-meta-pill ${progClass}">${progLabel}</span>` : ''}
+          <span class="compact-badge compact-badge-blue">CAM #${dn}</span>
+          <span class="compact-time">${t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'–')||'–'}</span>
+          <span class="compact-firma">${t.firma||'Azienda sconosciuta'}</span>
+          ${t.semnatura?`<span class="compact-sig">✍ ${t.semnatura}</span>`:''}
+          <div class="compact-pills">${qty?`<span class="compact-pill">${qty}</span>`:''}</div>
+          ${progLabel?`<span class="compact-meta-pill ${progClass}">${progLabel}</span>`:''}
         </div>
-        ${t.comentariu ? `<div class="compact-desc">${t.comentariu}</div>` : ''}
+        ${t.comentariu?`<div class="compact-desc">${t.comentariu}</div>`:''}
       </div>
       <div class="card-header">
-        <span class="card-number">CAM #${displayNum}</span>
+        <span class="card-number">CAM #${dn}</span>
         <span class="card-timestamp">${t.ts}</span>
-        <button class="btn-icon delete" title="Elimina" onclick="removeTruck('${t.id}')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        </button>
+        <button class="btn-icon delete" title="Elimina" onclick="removeTruck('${t.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
       </div>
       <div class="card-body">
-        <div class="field">
-          <label class="field-required-label">Azienda / Fornitore</label>
-          <input type="text" placeholder="es: KOH-I-NOOR, Bic…" value="${t.firma}"
-            class="${!t.firma ? 'field-required-pulse' : ''}"
-            oninput="this.classList.toggle('field-required-pulse',!this.value.trim())"
-            onchange="updateTruck('${t.id}','firma',this.value)">
-        </div>
-        <div class="field">
-          <label class="field-required-label">Stato consegna</label>
-          <div class="radio-group" id="rg-prog-${t.id}">
-            <label class="radio-pill opt-yes"><input type="radio" name="prog-${t.id}" value="programmato" ${t.programat==='programmato'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Programmato</span></label>
-            <label class="radio-pill opt-no"><input type="radio" name="prog-${t.id}" value="non_programmato" ${t.programat==='non_programmato'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Non programmato</span></label>
-            <label class="radio-pill opt-unknown"><input type="radio" name="prog-${t.id}" value="sconosciuto" ${t.programat==='sconosciuto'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Sconosciuto</span></label>
-          </div>
-        </div>
-        <div class="field">
-          <label class="field-required-label">Tipo merce</label>
-          <div class="check-group" id="cg-merce-${t.id}">
-            <label class="check-label bancal"><input type="checkbox" ${t.bancal?'checked':''} onchange="updateTruck('${t.id}','bancal',this.checked)"><span class="check-box">${t.bancal?'✓':''}</span><span>Bancale</span></label>
-            <label class="check-label bancal"><input type="checkbox" ${t.cutii?'checked':''} onchange="updateTruck('${t.id}','cutii',this.checked)"><span class="check-box">${t.cutii?'✓':''}</span><span>Colli</span></label>
-          </div>
-          <div class="qty-row">
-            <div class="qty-block ${t.bancal?'':'hidden'}" id="qty-bancal-${t.id}">
-              <label class="field-required-label">N° bancali</label>
-              <input type="number" min="1" placeholder="0" value="${t.nrBancale}" onchange="updateTruck('${t.id}','nrBancale',this.value)">
-            </div>
-            <div class="qty-block ${t.cutii?'':'hidden'}" id="qty-cutii-${t.id}">
-              <label class="field-required-label">N° colli</label>
-              <input type="number" min="1" placeholder="0" value="${t.nrCutii}" onchange="updateTruck('${t.id}','nrCutii',this.value)">
-            </div>
-          </div>
-        </div>
-        <div class="field">
-          <label>Note</label>
-          <textarea placeholder="Osservazioni, danni, mancanze…" onchange="updateTruck('${t.id}','comentariu',this.value)">${t.comentariu}</textarea>
-        </div>
-        <div class="field">
-          <label class="field-required-label">Firma responsabile</label>
-          <div class="signature-wrap">
-            <input type="text" placeholder="Nome di chi ha ritirato" value="${t.semnatura}"
-              class="${!t.semnatura?'field-required-pulse':''}"
-              oninput="this.classList.toggle('field-required-pulse',!this.value.trim())"
-              onchange="updateTruck('${t.id}','semnatura',this.value)">
-            <span class="signature-icon">✍️</span>
-          </div>
-          ${t.arrivalTime?`<div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--accent-cyan);opacity:0.7;margin-top:4px;">⏱ Arrivato: ${t.arrivalTime}</div>`:''}
-        </div>
+        <div class="field"><label class="field-required-label">Azienda / Fornitore</label><input type="text" placeholder="es: KOH-I-NOOR, Bic…" value="${t.firma}" class="${!t.firma?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateTruck('${t.id}','firma',this.value)"></div>
+        <div class="field"><label class="field-required-label">Stato consegna</label><div class="radio-group"><label class="radio-pill opt-yes"><input type="radio" name="prog-${t.id}" value="programmato" ${t.programat==='programmato'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Programmato</span></label><label class="radio-pill opt-no"><input type="radio" name="prog-${t.id}" value="non_programmato" ${t.programat==='non_programmato'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Non programmato</span></label><label class="radio-pill opt-unknown"><input type="radio" name="prog-${t.id}" value="sconosciuto" ${t.programat==='sconosciuto'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Sconosciuto</span></label></div></div>
+        <div class="field"><label class="field-required-label">Tipo merce</label><div class="check-group"><label class="check-label bancal"><input type="checkbox" ${t.bancal?'checked':''} onchange="updateTruck('${t.id}','bancal',this.checked)"><span class="check-box">${t.bancal?'✓':''}</span><span>Bancale</span></label><label class="check-label bancal"><input type="checkbox" ${t.cutii?'checked':''} onchange="updateTruck('${t.id}','cutii',this.checked)"><span class="check-box">${t.cutii?'✓':''}</span><span>Colli</span></label></div>
+          <div class="qty-row"><div class="qty-block ${t.bancal?'':'hidden'}" id="qty-bancal-${t.id}"><label class="field-required-label">N° bancali</label><input type="number" min="1" placeholder="0" value="${t.nrBancale}" onchange="updateTruck('${t.id}','nrBancale',this.value)"></div><div class="qty-block ${t.cutii?'':'hidden'}" id="qty-cutii-${t.id}"><label class="field-required-label">N° colli</label><input type="number" min="1" placeholder="0" value="${t.nrCutii}" onchange="updateTruck('${t.id}','nrCutii',this.value)"></div></div></div>
+        <div class="field"><label>Note</label><textarea placeholder="Osservazioni, danni, mancanze…" onchange="updateTruck('${t.id}','comentariu',this.value)">${t.comentariu}</textarea></div>
+        <div class="field"><label class="field-required-label">Firma responsabile</label><div class="signature-wrap"><input type="text" placeholder="Nome di chi ha ritirato" value="${t.semnatura}" class="${!t.semnatura?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateTruck('${t.id}','semnatura',this.value)"><span class="signature-icon">✍️</span></div>${t.arrivalTime?`<div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--accent-cyan);opacity:0.7;margin-top:4px;">⏱ Arrivato: ${t.arrivalTime}</div>`:''}</div>
         <div class="validation-errors" id="verr-${t.id}"></div>
       </div>
-      <div class="confirm-bar">
-        <span class="editing-label">${t.isDraft ? '⚡ Nuova registrazione' : '✎ Modalità modifica'}</span>
-        <button class="btn-cancel-edit" onclick="cancelEdit('${t.id}','truck')">${t.isDraft ? 'Annulla' : 'Annulla'}</button>
-        <button class="btn-confirm" onclick="confirmEdit('${t.id}','truck')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          ${t.isDraft ? 'Registra' : 'Conferma'}
-        </button>
-      </div>
+      <div class="confirm-bar"><span class="editing-label">${t.isDraft?'⚡ Nuova registrazione':'✎ Modalità modifica'}</span><button class="btn-cancel-edit" onclick="cancelEdit('${t.id}','truck')">Annulla</button><button class="btn-confirm" onclick="confirmEdit('${t.id}','truck')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${t.isDraft?'Registra':'Conferma'}</button></div>
     `;
     list.appendChild(card);
-
-    const verrEl = card.querySelector('.validation-errors');
-    if (verrEl) verrEl.id = 'verr-' + t.id;
   });
 }
 
-function updateTruck(id, field, val) {
-  const t = trucks.find(x => x.id === id);
-  if (!t) return;
-  t[field] = val;
-  if (field === 'semnatura' && val.trim() && !t.arrivalTime) {
-    t.arrivalTime = new Date().toLocaleTimeString('it-IT', { hour:'2-digit', minute:'2-digit', hour12:false });
-  }
-  if (field === 'bancal') {
-    const el = document.getElementById('qty-bancal-' + id);
-    if (el) el.classList.toggle('hidden', !val);
-    if (!val) { t.nrBancale = ''; const inp = el && el.querySelector('input'); if(inp) inp.value = ''; }
-  } else if (field === 'cutii') {
-    const el = document.getElementById('qty-cutii-' + id);
-    if (el) el.classList.toggle('hidden', !val);
-    if (!val) { t.nrCutii = ''; const inp = el && el.querySelector('input'); if(inp) inp.value = ''; }
-  }
-  const cardEl = document.getElementById(id);
-  if (cardEl) { const ev = cardEl.querySelector('.validation-errors'); if (ev) ev.classList.remove('visible'); }
+function updateTruck(id,field,val) {
+  const t=trucks.find(x=>x.id===id); if(!t)return;
+  t[field]=val;
+  if(field==='semnatura'&&val.trim()&&!t.arrivalTime) t.arrivalTime=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false});
+  if(field==='bancal'){const el=document.getElementById('qty-bancal-'+id);if(el)el.classList.toggle('hidden',!val);if(!val){t.nrBancale='';const inp=el&&el.querySelector('input');if(inp)inp.value='';}}
+  else if(field==='cutii'){const el=document.getElementById('qty-cutii-'+id);if(el)el.classList.toggle('hidden',!val);if(!val){t.nrCutii='';const inp=el&&el.querySelector('input');if(inp)inp.value='';}}
+  const cardEl=document.getElementById(id); if(cardEl){const ev=cardEl.querySelector('.validation-errors');if(ev)ev.classList.remove('visible');}
 }
 
 // ─── RESI ─────────────────────────────────────────────────────────────────────
 function addResi() {
   resiCount++;
-  const id = 'resi-' + Date.now() + '-' + resiCount;
-  const dKey = activeDay || todayKey();
-  const entry = {
-    id, ts: nowStamp(), descriere:'', autorizat:'', bancal:false, nrBancale:'',
-    cutii:false, nrCutii:'', comentariu:'', semnatura:'',
-    collapsed:false, editing:true, isDraft:true, dateKey: dKey
-  };
-  resis.push(entry);
+  const id='resi-'+Date.now()+'-'+resiCount, dKey=activeDay||todayKey();
+  resis.push({id,ts:nowStamp(),descriere:'',autorizat:'',bancal:false,nrBancale:'',cutii:false,nrCutii:'',comentariu:'',semnatura:'',collapsed:false,editing:true,isDraft:true,dateKey:dKey});
   renderResis(); updateCounts();
-  setTimeout(() => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, 80);
+  setTimeout(()=>{const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});},80);
 }
-
 async function removeResi(id) {
-  const r = resis.find(x => x.id === id);
-  if (!r) return;
-  if (r.isDraft) {
-    resis = resis.filter(x => x.id !== id);
-    renderResis(); updateCounts();
-    toast('🗑️ Bozza eliminata');
-    return;
-  }
-  if (!confirm('Eliminare questo reso?')) return;
-  resis = resis.filter(x => x.id !== id);
-  renderResis(); updateCounts();
-  setSyncStatus('syncing', 'Eliminazione…');
-  try {
-    await sbDelete('resi', id);
-    setSyncStatus('synced', 'Eliminato ✓');
-    toast('🗑️ Eliminato');
-  } catch(e) {
-    setSyncStatus('error', 'Errore: ' + e.message);
-  }
+  const r=resis.find(x=>x.id===id); if(!r)return;
+  if(r.isDraft){resis=resis.filter(x=>x.id!==id);renderResis();updateCounts();toast('🗑️ Bozza eliminata');return;}
+  if(!confirm('Eliminare questo reso?'))return;
+  resis=resis.filter(x=>x.id!==id); renderResis(); updateCounts();
+  setSyncStatus('syncing','Eliminazione…');
+  try{await sbDelete('resi',id);setSyncStatus('synced','Eliminato ✓');toast('🗑️ Eliminato');}
+  catch(e){setSyncStatus('error','Errore: '+e.message);}
 }
 
 function renderResis() {
-  const list = document.getElementById('resi-list');
-  list.innerHTML = '';
-  if (resis.length === 0) {
-    list.innerHTML = `<div class="empty-state"><span class="emoji">↩️</span>Nessun reso registrato.<br>Clicca "Aggiungi reso" per iniziare.</div>`;
-    return;
-  }
-  let confirmedIdx = 0;
-  resis.forEach((r) => {
-    if (!r.isDraft) confirmedIdx++;
-    const displayNum = r.isDraft ? '—' : String(confirmedIdx).padStart(2,'0');
-
-    const card = document.createElement('div');
-    card.className = 'card resi-card' + (r.collapsed ? ' is-compact' : '') + (r.editing ? ' is-editing' : '');
-    card.id = r.id;
-    if (!r.collapsed) card.style.borderColor = 'rgba(248,113,113,0.11)';
-
-    const qty = [
-      r.bancal && r.nrBancale ? `${r.nrBancale} bancali` : r.bancal ? 'bancali' : '',
-      r.cutii && r.nrCutii ? `${r.nrCutii} colli` : r.cutii ? 'colli' : ''
-    ].filter(Boolean).join(' · ');
-
-    const authLabel = r.autorizat === 'autorizzato' ? '✓ Autorizzato' : r.autorizat === 'non_autorizzato' ? '✗ Non autor.' : r.autorizat === 'sconosciuto' ? '? Sconosciuto' : '';
-    const authClass = r.autorizat === 'autorizzato' ? 'meta-auth' : r.autorizat === 'non_autorizzato' ? 'meta-noauth' : 'meta-unknown';
-
-    card.innerHTML = `
-      ${r.isDraft ? `<div class="draft-banner"><span class="draft-banner-dot"></span>Bozza non salvata — completa e conferma per registrare</div>` : ''}
+  const list=document.getElementById('resi-list'); list.innerHTML='';
+  if(resis.length===0){list.innerHTML=`<div class="empty-state"><span class="emoji">↩️</span>Nessun reso registrato.<br>Clicca "Aggiungi reso" per iniziare.</div>`;return;}
+  let ci=0;
+  resis.forEach(r=>{
+    if(!r.isDraft)ci++;
+    const dn=r.isDraft?'—':String(ci).padStart(2,'0');
+    const card=document.createElement('div');
+    card.className='card resi-card'+(r.collapsed?' is-compact':'')+(r.editing?' is-editing':'');
+    card.id=r.id;
+    if(!r.collapsed)card.style.borderColor='rgba(248,113,113,0.11)';
+    const qty=[r.bancal&&r.nrBancale?`${r.nrBancale} bancali`:r.bancal?'bancali':'',r.cutii&&r.nrCutii?`${r.nrCutii} colli`:r.cutii?'colli':''].filter(Boolean).join(' · ');
+    const authLabel=r.autorizat==='autorizzato'?'✓ Autorizzato':r.autorizat==='non_autorizzato'?'✗ Non autor.':r.autorizat==='sconosciuto'?'? Sconosciuto':'';
+    const authClass=r.autorizat==='autorizzato'?'meta-auth':r.autorizat==='non_autorizzato'?'meta-noauth':'meta-unknown';
+    card.innerHTML=`
+      ${r.isDraft?`<div class="draft-banner"><span class="draft-banner-dot"></span>Bozza non salvata — completa e conferma per registrare</div>`:''}
       <div class="card-compact-view" onclick="expandCard('${r.id}','resi')">
         <div class="compact-top">
-          <span class="compact-badge compact-badge-rose">RESI #${displayNum}</span>
-          <span class="compact-time" style="color:var(--accent-rose)">${r.ts ? r.ts.split(' ')[1] : '–'}</span>
-          <span class="compact-firma">${r.descriere || 'Senza descrizione'}</span>
-          ${r.semnatura ? `<span class="compact-sig">✍ ${r.semnatura}</span>` : ''}
-          <div class="compact-pills">
-            ${qty ? `<span class="compact-pill">${qty}</span>` : ''}
-          </div>
-          ${authLabel ? `<span class="compact-meta-pill ${authClass}">${authLabel}</span>` : ''}
+          <span class="compact-badge compact-badge-rose">RESI #${dn}</span>
+          <span class="compact-time" style="color:var(--accent-rose)">${r.ts?r.ts.split(' ')[1]:'–'}</span>
+          <span class="compact-firma">${r.descriere||'Senza descrizione'}</span>
+          ${r.semnatura?`<span class="compact-sig">✍ ${r.semnatura}</span>`:''}
+          <div class="compact-pills">${qty?`<span class="compact-pill">${qty}</span>`:''}</div>
+          ${authLabel?`<span class="compact-meta-pill ${authClass}">${authLabel}</span>`:''}
         </div>
-        ${r.comentariu ? `<div class="compact-desc">${r.comentariu}</div>` : ''}
+        ${r.comentariu?`<div class="compact-desc">${r.comentariu}</div>`:''}
       </div>
-      <div class="card-header">
-        <span class="card-number" style="color:var(--accent-rose);border-color:rgba(248,113,113,0.2);background:rgba(248,113,113,0.06)">RESI #${displayNum}</span>
-        <span class="card-timestamp">${r.ts}</span>
-        <button class="btn-icon delete" title="Elimina" onclick="removeResi('${r.id}')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-        </button>
-      </div>
+      <div class="card-header"><span class="card-number" style="color:var(--accent-rose);border-color:rgba(248,113,113,0.2);background:rgba(248,113,113,0.06)">RESI #${dn}</span><span class="card-timestamp">${r.ts}</span><button class="btn-icon delete" title="Elimina" onclick="removeResi('${r.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div>
       <div class="card-body">
-        <div class="field">
-          <label class="field-required-label">Descrizione pacchi restituiti</label>
-          <input type="text" placeholder="es: 3 colli Bic, riferimento…" value="${r.descriere}"
-            class="${!r.descriere?'field-required-pulse':''}"
-            oninput="this.classList.toggle('field-required-pulse',!this.value.trim())"
-            onchange="updateResi('${r.id}','descriere',this.value)">
-        </div>
-        <div class="field">
-          <label class="field-required-label">Tipo merce</label>
-          <div class="check-group" id="cg-merce-${r.id}">
-            <label class="check-label bancal"><input type="checkbox" ${r.bancal?'checked':''} onchange="updateResi('${r.id}','bancal',this.checked)"><span class="check-box">${r.bancal?'✓':''}</span><span>Bancale</span></label>
-            <label class="check-label bancal"><input type="checkbox" ${r.cutii?'checked':''} onchange="updateResi('${r.id}','cutii',this.checked)"><span class="check-box">${r.cutii?'✓':''}</span><span>Colli</span></label>
-          </div>
-          <div class="qty-row">
-            <div class="qty-block ${r.bancal?'':'hidden'}" id="qty-bancal-${r.id}">
-              <label class="field-required-label">N° bancali</label>
-              <input type="number" min="1" placeholder="0" value="${r.nrBancale}" onchange="updateResi('${r.id}','nrBancale',this.value)">
-            </div>
-            <div class="qty-block ${r.cutii?'':'hidden'}" id="qty-cutii-${r.id}">
-              <label class="field-required-label">N° colli</label>
-              <input type="number" min="1" placeholder="0" value="${r.nrCutii}" onchange="updateResi('${r.id}','nrCutii',this.value)">
-            </div>
-          </div>
-        </div>
-        <div class="field">
-          <label class="field-required-label">Autorizzazione reso</label>
-          <div class="radio-group" id="rg-auth-${r.id}">
-            <label class="radio-pill opt-auth"><input type="radio" name="auth-${r.id}" value="autorizzato" ${r.autorizat==='autorizzato'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"><span class="radio-dot"></span><span>Autorizzato</span></label>
-            <label class="radio-pill opt-noauth"><input type="radio" name="auth-${r.id}" value="non_autorizzato" ${r.autorizat==='non_autorizzato'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"><span class="radio-dot"></span><span>Non autorizzato</span></label>
-            <label class="radio-pill opt-unknown"><input type="radio" name="auth-${r.id}" value="sconosciuto" ${r.autorizat==='sconosciuto'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"><span class="radio-dot"></span><span>Sconosciuto</span></label>
-          </div>
-        </div>
-        <div class="field">
-          <label>Note</label>
-          <textarea placeholder="Motivo del reso, stato del pacco…" onchange="updateResi('${r.id}','comentariu',this.value)">${r.comentariu}</textarea>
-        </div>
-        <div class="field">
-          <label class="field-required-label">Firma responsabile</label>
-          <div class="signature-wrap">
-            <input type="text" placeholder="Nome di chi ha ritirato" value="${r.semnatura}"
-              class="${!r.semnatura?'field-required-pulse':''}"
-              oninput="this.classList.toggle('field-required-pulse',!this.value.trim())"
-              onchange="updateResi('${r.id}','semnatura',this.value)">
-            <span class="signature-icon">✍️</span>
-          </div>
-        </div>
+        <div class="field"><label class="field-required-label">Descrizione pacchi restituiti</label><input type="text" placeholder="es: 3 colli Bic, riferimento…" value="${r.descriere}" class="${!r.descriere?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateResi('${r.id}','descriere',this.value)"></div>
+        <div class="field"><label class="field-required-label">Tipo merce</label><div class="check-group"><label class="check-label bancal"><input type="checkbox" ${r.bancal?'checked':''} onchange="updateResi('${r.id}','bancal',this.checked)"><span class="check-box">${r.bancal?'✓':''}</span><span>Bancale</span></label><label class="check-label bancal"><input type="checkbox" ${r.cutii?'checked':''} onchange="updateResi('${r.id}','cutii',this.checked)"><span class="check-box">${r.cutii?'✓':''}</span><span>Colli</span></label></div>
+          <div class="qty-row"><div class="qty-block ${r.bancal?'':'hidden'}" id="qty-bancal-${r.id}"><label class="field-required-label">N° bancali</label><input type="number" min="1" placeholder="0" value="${r.nrBancale}" onchange="updateResi('${r.id}','nrBancale',this.value)"></div><div class="qty-block ${r.cutii?'':'hidden'}" id="qty-cutii-${r.id}"><label class="field-required-label">N° colli</label><input type="number" min="1" placeholder="0" value="${r.nrCutii}" onchange="updateResi('${r.id}','nrCutii',this.value)"></div></div></div>
+        <div class="field"><label class="field-required-label">Autorizzazione reso</label><div class="radio-group"><label class="radio-pill opt-auth"><input type="radio" name="auth-${r.id}" value="autorizzato" ${r.autorizat==='autorizzato'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"><span class="radio-dot"></span><span>Autorizzato</span></label><label class="radio-pill opt-noauth"><input type="radio" name="auth-${r.id}" value="non_autorizzato" ${r.autorizat==='non_autorizzato'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"><span class="radio-dot"></span><span>Non autorizzato</span></label><label class="radio-pill opt-unknown"><input type="radio" name="auth-${r.id}" value="sconosciuto" ${r.autorizat==='sconosciuto'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"><span class="radio-dot"></span><span>Sconosciuto</span></label></div></div>
+        <div class="field"><label>Note</label><textarea placeholder="Motivo del reso, stato del pacco…" onchange="updateResi('${r.id}','comentariu',this.value)">${r.comentariu}</textarea></div>
+        <div class="field"><label class="field-required-label">Firma responsabile</label><div class="signature-wrap"><input type="text" placeholder="Nome di chi ha ritirato" value="${r.semnatura}" class="${!r.semnatura?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateResi('${r.id}','semnatura',this.value)"><span class="signature-icon">✍️</span></div></div>
         <div class="validation-errors" id="verr-${r.id}"></div>
       </div>
-      <div class="confirm-bar">
-        <span class="editing-label">${r.isDraft ? '⚡ Nuovo reso' : '✎ Modalità modifica'}</span>
-        <button class="btn-cancel-edit" onclick="cancelEdit('${r.id}','resi')">Annulla</button>
-        <button class="btn-confirm" onclick="confirmEdit('${r.id}','resi')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          ${r.isDraft ? 'Registra' : 'Conferma'}
-        </button>
-      </div>
+      <div class="confirm-bar"><span class="editing-label">${r.isDraft?'⚡ Nuovo reso':'✎ Modalità modifica'}</span><button class="btn-cancel-edit" onclick="cancelEdit('${r.id}','resi')">Annulla</button><button class="btn-confirm" onclick="confirmEdit('${r.id}','resi')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${r.isDraft?'Registra':'Conferma'}</button></div>
     `;
     list.appendChild(card);
   });
 }
 
-function updateResi(id, field, val) {
-  const r = resis.find(x => x.id === id);
-  if (!r) return;
-  r[field] = val;
-  if (field === 'bancal') {
-    const el = document.getElementById('qty-bancal-' + id);
-    if (el) el.classList.toggle('hidden', !val);
-    if (!val) { r.nrBancale = ''; const inp = el && el.querySelector('input'); if(inp) inp.value = ''; }
-  } else if (field === 'cutii') {
-    const el = document.getElementById('qty-cutii-' + id);
-    if (el) el.classList.toggle('hidden', !val);
-    if (!val) { r.nrCutii = ''; const inp = el && el.querySelector('input'); if(inp) inp.value = ''; }
-  }
-  const cardEl = document.getElementById(id);
-  if (cardEl) { const ev = cardEl.querySelector('.validation-errors'); if (ev) ev.classList.remove('visible'); }
+function updateResi(id,field,val) {
+  const r=resis.find(x=>x.id===id); if(!r)return;
+  r[field]=val;
+  if(field==='bancal'){const el=document.getElementById('qty-bancal-'+id);if(el)el.classList.toggle('hidden',!val);if(!val){r.nrBancale='';const inp=el&&el.querySelector('input');if(inp)inp.value='';}}
+  else if(field==='cutii'){const el=document.getElementById('qty-cutii-'+id);if(el)el.classList.toggle('hidden',!val);if(!val){r.nrCutii='';const inp=el&&el.querySelector('input');if(inp)inp.value='';}}
+  const cardEl=document.getElementById(id); if(cardEl){const ev=cardEl.querySelector('.validation-errors');if(ev)ev.classList.remove('visible');}
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-(async function init() {
-  await loadDay(todayKey());
-})();
+(async function init(){await loadDay(todayKey());})();
 
-// ─── DAY PICKER MODAL ─────────────────────────────────────────────────────────
-let dpYear = new Date().getFullYear();
-let dpMonth = new Date().getMonth();
-
-async function openDayPicker() {
-  document.getElementById('dayPickerBody').innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted)">⏳ Caricamento…</div>';
+// ─── DAY PICKER ───────────────────────────────────────────────────────────────
+let dpYear=new Date().getFullYear(), dpMonth=new Date().getMonth();
+async function openDayPicker(){
+  document.getElementById('dayPickerBody').innerHTML='<div style="text-align:center;padding:30px;color:var(--text-muted)">⏳ Caricamento…</div>';
   document.getElementById('dayPickerModal').classList.add('open');
   await buildAndShowDayPicker();
 }
-function closeDayPicker() { document.getElementById('dayPickerModal').classList.remove('open'); }
-
-async function buildAndShowDayPicker() {
-  let allDates = {};
-  try {
-    const [tRows, rRows] = await Promise.all([
-      sbGet('trucks', 'select=date_key'),
-      sbGet('resi',   'select=date_key')
-    ]);
-    tRows.forEach(r => { const k = r.date_key; if(!allDates[k]) allDates[k]={t:0,r:0}; allDates[k].t++; });
-    rRows.forEach(r => { const k = r.date_key; if(!allDates[k]) allDates[k]={t:0,r:0}; allDates[k].r++; });
-  } catch(e) { console.error(e); }
-  document.getElementById('dayPickerBody').innerHTML = buildDayPickerHTML(allDates);
+function closeDayPicker(){document.getElementById('dayPickerModal').classList.remove('open');}
+async function buildAndShowDayPicker(){
+  let allDates={};
+  try{const [tRows,rRows]=await Promise.all([sbGet('trucks','select=date_key'),sbGet('resi','select=date_key')]);
+    tRows.forEach(r=>{const k=r.date_key;if(!allDates[k])allDates[k]={t:0,r:0};allDates[k].t++;});
+    rRows.forEach(r=>{const k=r.date_key;if(!allDates[k])allDates[k]={t:0,r:0};allDates[k].r++;});
+  }catch(e){console.error(e);}
+  document.getElementById('dayPickerBody').innerHTML=buildDayPickerHTML(allDates);
 }
-
-function buildDayPickerHTML(allDates) {
-  const tk = todayKey();
-  const isCurrentlyToday = activeDay === null;
-  const now = new Date();
-  const todayY = now.getFullYear(), todayM = now.getMonth(), todayD = now.getDate();
-
-  if (dpYear > todayY || (dpYear === todayY && dpMonth > todayM)) { dpYear = todayY; dpMonth = todayM; }
-
-  const monthNames = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-  const dayNamesShort = ['Lu','Ma','Me','Gi','Ve','Sa','Do'];
-
-  const firstDay = new Date(dpYear, dpMonth, 1);
-  const daysInMonth = new Date(dpYear, dpMonth + 1, 0).getDate();
-  let startWd = firstDay.getDay() - 1;
-  if (startWd < 0) startWd = 6;
-
-  const canGoNext = !(dpYear === todayY && dpMonth === todayM);
-
-  let html = `
-  <button class="dp-today-btn ${isCurrentlyToday ? 'active-day-btn' : ''}" onclick="switchToDay(null)">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
-    <span style="flex:1">Oggi — ${formatKeyLabel(tk)}</span>
-    ${isCurrentlyToday ? `<span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--accent-cyan);background:rgba(56,232,200,0.08);border:1px solid rgba(56,232,200,0.2);border-radius:20px;padding:2px 7px;">● Attivo</span>` : ''}
-  </button>
+function buildDayPickerHTML(allDates){
+  const tk=todayKey(), isCurrentlyToday=activeDay===null, now=new Date(), todayY=now.getFullYear(), todayM=now.getMonth(), todayD=now.getDate();
+  if(dpYear>todayY||(dpYear===todayY&&dpMonth>todayM)){dpYear=todayY;dpMonth=todayM;}
+  const monthNames=['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  const dayNamesShort=['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+  const firstDay=new Date(dpYear,dpMonth,1), daysInMonth=new Date(dpYear,dpMonth+1,0).getDate();
+  let startWd=firstDay.getDay()-1; if(startWd<0)startWd=6;
+  const canGoNext=!(dpYear===todayY&&dpMonth===todayM);
+  return `<button class="dp-today-btn ${isCurrentlyToday?'active-day-btn':''}" onclick="switchToDay(null)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg><span style="flex:1">Oggi — ${formatKeyLabel(tk)}</span>${isCurrentlyToday?`<span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--accent-cyan);background:rgba(56,232,200,0.08);border:1px solid rgba(56,232,200,0.2);border-radius:20px;padding:2px 7px;">● Attivo</span>`:''}</button>
   <div style="font-size:0.69rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin:14px 0 10px;">Seleziona giorno</div>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:8px;">
-    <button class="day-nav-btn" onclick="dpNavigate(-1)" style="width:32px;height:32px;">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-    </button>
+    <button class="day-nav-btn" onclick="dpNavigate(-1)" style="width:32px;height:32px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></button>
     <span style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--accent-violet);font-weight:600;flex:1;text-align:center;">${monthNames[dpMonth]} ${dpYear}</span>
-    <button class="day-nav-btn" onclick="dpNavigate(1)" ${canGoNext?'':'disabled'} style="width:32px;height:32px;">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-    </button>
+    <button class="day-nav-btn" onclick="dpNavigate(1)" ${canGoNext?'':'disabled'} style="width:32px;height:32px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></button>
   </div>
   <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:14px;">
     ${dayNamesShort.map(d=>`<div style="text-align:center;font-size:0.58rem;color:var(--text-muted);padding:3px 0;letter-spacing:0.05em;text-transform:uppercase;font-weight:600;">${d}</div>`).join('')}
     ${Array(startWd).fill('<div></div>').join('')}
     ${Array.from({length:daysInMonth},(_,i)=>{
-      const day = i+1;
-      const k = `${dpYear}-${String(dpMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-      const isToday = dpYear===todayY && dpMonth===todayM && day===todayD;
-      const isFuture = k > tk;
-      const isSelected = activeDay === k || (isToday && activeDay === null);
-      const info = allDates[k] || null;
-      const hasData = !!(info && (info.t + info.r > 0));
-      let bg = 'rgba(255,255,255,0.03)', border = '1px solid rgba(255,255,255,0.06)', color = 'var(--text-muted)', cursor = 'pointer', shadow = '';
-      if (isFuture) { bg='transparent'; border='1px solid transparent'; color='rgba(255,255,255,0.08)'; cursor='default'; }
-      else if (isSelected) { bg='rgba(167,139,250,0.22)'; border='1px solid rgba(167,139,250,0.6)'; color='var(--accent-violet)'; shadow='0 0 0 2px rgba(167,139,250,0.15)'; }
-      else if (isToday) { bg='rgba(56,232,200,0.10)'; border='1px solid rgba(56,232,200,0.4)'; color='var(--accent-cyan)'; }
-      else if (hasData) { bg='rgba(79,142,247,0.12)'; border='1px solid rgba(79,142,247,0.3)'; color='var(--accent-blue)'; }
-      else { color='var(--text-secondary)'; }
-      const onclick = isFuture ? '' : `onclick="switchToDay('${k}')"`;
-      return `<div ${onclick} style="aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:${bg};border:${border};color:${color};cursor:${cursor};transition:all 0.15s;box-shadow:${shadow};font-weight:${isToday||isSelected?'700':'500'};font-size:0.78rem;position:relative;">
-        ${day}
-        ${hasData ? `<div style="display:flex;gap:1px;">${info.t?`<span style="width:4px;height:4px;border-radius:50%;background:var(--accent-blue);display:inline-block"></span>`:''}${info.r?`<span style="width:4px;height:4px;border-radius:50%;background:var(--accent-rose);display:inline-block"></span>`:''}</div>` : ''}
-      </div>`;
+      const day=i+1, k=`${dpYear}-${String(dpMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+      const isToday=dpYear===todayY&&dpMonth===todayM&&day===todayD, isFuture=k>tk, isSelected=activeDay===k||(isToday&&activeDay===null);
+      const info=allDates[k]||null, hasData=!!(info&&(info.t+info.r>0));
+      let bg='rgba(255,255,255,0.03)',border='1px solid rgba(255,255,255,0.06)',color='var(--text-muted)',cursor='pointer',shadow='';
+      if(isFuture){bg='transparent';border='1px solid transparent';color='rgba(255,255,255,0.08)';cursor='default';}
+      else if(isSelected){bg='rgba(167,139,250,0.22)';border='1px solid rgba(167,139,250,0.6)';color='var(--accent-violet)';shadow='0 0 0 2px rgba(167,139,250,0.15)';}
+      else if(isToday){bg='rgba(56,232,200,0.10)';border='1px solid rgba(56,232,200,0.4)';color='var(--accent-cyan)';}
+      else if(hasData){bg='rgba(79,142,247,0.12)';border='1px solid rgba(79,142,247,0.3)';color='var(--accent-blue)';}
+      else{color='var(--text-secondary)';}
+      const onclick=isFuture?'':`onclick="switchToDay('${k}')"`;
+      return `<div ${onclick} style="aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;background:${bg};border:${border};color:${color};cursor:${cursor};transition:all 0.15s;box-shadow:${shadow};font-weight:${isToday||isSelected?'700':'500'};font-size:0.78rem;position:relative;">${day}${hasData?`<div style="display:flex;gap:1px;">${info.t?`<span style="width:4px;height:4px;border-radius:50%;background:var(--accent-blue);display:inline-block"></span>`:''}${info.r?`<span style="width:4px;height:4px;border-radius:50%;background:var(--accent-rose);display:inline-block"></span>`:''}</div>`:''}</div>`;
     }).join('')}
   </div>
   <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:0.63rem;color:var(--text-muted);padding-top:8px;border-top:1px solid rgba(255,255,255,0.05);">
-    <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent-blue);display:inline-block"></span>Camion</span>
-    <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent-rose);display:inline-block"></span>Resi</span>
-    <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent-violet);display:inline-block"></span>Selezionato</span>
-    <span style="display:flex;align-items:center;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent-cyan);display:inline-block"></span>Oggi</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent-blue);display:inline-block"></span>Camion</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent-rose);display:inline-block"></span>Resi</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent-violet);display:inline-block"></span>Selezionato</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent-cyan);display:inline-block"></span>Oggi</span>
   </div>`;
-  return html;
 }
-
-async function dpNavigate(dir) {
-  dpMonth += dir;
-  if (dpMonth < 0) { dpMonth = 11; dpYear--; }
-  if (dpMonth > 11) { dpMonth = 0; dpYear++; }
+async function dpNavigate(dir){
+  dpMonth+=dir;
+  if(dpMonth<0){dpMonth=11;dpYear--;} if(dpMonth>11){dpMonth=0;dpYear++;}
   await buildAndShowDayPicker();
 }
 
 // ─── STATS MODAL ──────────────────────────────────────────────────────────────
-let activeStatsMonth = null;
-
-async function openCalendar() {
-  document.getElementById('calBody').innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted)">⏳ Caricamento statistiche…</div>';
+async function openCalendar(){
   document.getElementById('calModal').classList.add('open');
-  await buildStats();
+  document.getElementById('statsMain').innerHTML='<div style="text-align:center;padding:60px;color:var(--text-muted)">⏳ Caricamento…</div>';
+  document.getElementById('statsSidebar').innerHTML='<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:0.8rem">⏳</div>';
+  await loadStatsData();
 }
-function closeCalendar() { document.getElementById('calModal').classList.remove('open'); }
-function toggleDay(idx) {
+function closeCalendar(){document.getElementById('calModal').classList.remove('open');}
+
+async function loadStatsData(){
+  setSyncStatus('syncing','Caricamento statistiche…');
+  let hist={};
+  try{
+    const [tRows,rRows]=await Promise.all([sbGet('trucks','select=*&order=date_key.asc,created_at.asc'),sbGet('resi','select=*&order=date_key.asc,created_at.asc')]);
+    tRows.forEach(r=>{const k=r.date_key;if(!hist[k])hist[k]={trucks:[],resis:[]};hist[k].trucks.push(dbToTruck(r));});
+    rRows.forEach(r=>{const k=r.date_key;if(!hist[k])hist[k]={trucks:[],resis:[]};hist[k].resis.push(dbToResi(r));});
+    setSyncStatus('synced','Statistiche caricate ✓');
+  }catch(e){setSyncStatus('error','Errore: '+e.message);document.getElementById('statsMain').innerHTML=`<div class="no-history">❌ ${e.message}</div>`;return;}
+  statsHistCache=hist;
+  const allKeys=Object.keys(hist).sort((a,b)=>b.localeCompare(a));
+  const months={}; allKeys.forEach(k=>{const m=k.slice(0,7);months[m]=(months[m]||0)+1;});
+  const monthKeys=Object.keys(months).sort((a,b)=>b.localeCompare(a));
+  if(!activeStatsMonth||!months[activeStatsMonth])activeStatsMonth=monthKeys[0];
+  renderStatsSidebar(hist,allKeys,monthKeys);
+  renderStatsPanel(hist,allKeys,monthKeys);
+}
+
+function switchStatsTab(tab){
+  currentStatsTab=tab;
+  ['overview','monthly','suppliers','history'].forEach(t=>{
+    const btn=document.getElementById('tab-btn-'+t);
+    if(btn){btn.className='stats-tab'+(t===tab?' active':'');}
+  });
+  if(statsHistCache){
+    const allKeys=Object.keys(statsHistCache).sort((a,b)=>b.localeCompare(a));
+    const months={}; allKeys.forEach(k=>{const m=k.slice(0,7);months[m]=(months[m]||0)+1;});
+    const monthKeys=Object.keys(months).sort((a,b)=>b.localeCompare(a));
+    renderStatsPanel(statsHistCache,allKeys,monthKeys);
+  }
+}
+
+function switchStatsMonth(m){
+  activeStatsMonth=m;
+  if(statsHistCache){
+    const allKeys=Object.keys(statsHistCache).sort((a,b)=>b.localeCompare(a));
+    const months={}; allKeys.forEach(k=>{const m2=k.slice(0,7);months[m2]=(months[m2]||0)+1;});
+    const monthKeys=Object.keys(months).sort((a,b)=>b.localeCompare(a));
+    renderStatsPanel(statsHistCache,allKeys,monthKeys);
+  }
+}
+
+// ── SIDEBAR ────────────────────────────────────────────────────────────────────
+function renderStatsSidebar(hist,allKeys,monthKeys){
+  let totalTrucks=0,totalResis=0,totalBancali=0,totalColli=0,totalProg=0,totalNonProg=0,totalUnauth=0,afterNoon=0;
+  allKeys.forEach(k=>{
+    const ts=hist[k].trucks||[], rs=hist[k].resis||[];
+    totalTrucks+=ts.length; totalResis+=rs.length;
+    ts.forEach(t=>{
+      if(t.nrBancale)totalBancali+=parseInt(t.nrBancale)||0;
+      if(t.nrCutii)totalColli+=parseInt(t.nrCutii)||0;
+      if(t.programat==='programmato')totalProg++;
+      if(t.programat==='non_programmato')totalNonProg++;
+      const timeStr=t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'');
+      if(timeStr){const h=parseInt(timeStr.split(':')[0],10);if(h>=12)afterNoon++;}
+    });
+    rs.forEach(r=>{if(r.nrBancale)totalBancali+=parseInt(r.nrBancale)||0;if(r.nrCutii)totalColli+=parseInt(r.nrCutii)||0;if(r.autorizat==='non_autorizzato')totalUnauth++;});
+  });
+  const avgPerDay=allKeys.length?(totalTrucks/allKeys.length).toFixed(1):'0';
+  const unauthPct=totalResis?Math.round(totalUnauth/totalResis*100):0;
+  const progPct=totalTrucks?Math.round(totalProg/totalTrucks*100):0;
+
+  // Alerts
+  const alerts=[];
+  if(totalUnauth>0)alerts.push({type:'rose',icon:'⚠️',text:`${totalUnauth} resi non autorizzati (${unauthPct}%)`});
+  if(afterNoon>2)alerts.push({type:'amber',icon:'🕒',text:`${afterNoon} camion oltre le 12:00`});
+  if(totalNonProg>totalProg&&totalTrucks>0)alerts.push({type:'amber',icon:'📋',text:`Più arrivi non programmati (${totalNonProg})`});
+  if(totalTrucks>0&&progPct>=80)alerts.push({type:'green',icon:'✅',text:`${progPct}% camion programmati`});
+  if(alerts.length===0)alerts.push({type:'green',icon:'✅',text:'Nessuna anomalia rilevata'});
+
+  const el=document.getElementById('statsSidebar');
+  el.innerHTML=`
+    <div class="sidebar-section-title">KPI Globali</div>
+    <div class="kpi-card"><span class="kpi-icon">🚛</span><div class="kpi-info"><div class="kpi-val" style="color:var(--accent-blue)">${totalTrucks}</div><div class="kpi-label">Camion totali</div><div class="kpi-sub">${avgPerDay}/giorno media</div></div></div>
+    <div class="kpi-card"><span class="kpi-icon">↩️</span><div class="kpi-info"><div class="kpi-val" style="color:var(--accent-rose)">${totalResis}</div><div class="kpi-label">Resi totali</div><div class="kpi-sub">${unauthPct}% non autorizzati</div></div></div>
+    <div class="kpi-card"><span class="kpi-icon">📦</span><div class="kpi-info"><div class="kpi-val" style="color:var(--accent-cyan)">${totalBancali}</div><div class="kpi-label">Bancali totali</div></div></div>
+    <div class="kpi-card"><span class="kpi-icon">📫</span><div class="kpi-info"><div class="kpi-val" style="color:var(--accent-violet)">${totalColli}</div><div class="kpi-label">Colli totali</div></div></div>
+    <div class="kpi-card"><span class="kpi-icon">📅</span><div class="kpi-info"><div class="kpi-val" style="color:var(--accent-green)">${allKeys.length}</div><div class="kpi-label">Giorni registrati</div></div></div>
+    <div class="kpi-card"><span class="kpi-icon">✅</span><div class="kpi-info"><div class="kpi-val" style="color:var(--accent-amber)">${progPct}%</div><div class="kpi-label">Programmati</div><div class="kpi-sub">${totalProg} su ${totalTrucks}</div></div></div>
+    <div class="sidebar-section-title" style="margin-top:6px;">Avvisi</div>
+    ${alerts.map(a=>`<div class="alert-item alert-${a.type}"><span class="alert-icon">${a.icon}</span><span>${a.text}</span></div>`).join('')}
+  `;
+}
+
+// ── PANEL RENDERER ─────────────────────────────────────────────────────────────
+function renderStatsPanel(hist,allKeys,monthKeys){
+  const el=document.getElementById('statsMain');
+  if(currentStatsTab==='overview') el.innerHTML=buildOverviewPanel(hist,allKeys);
+  else if(currentStatsTab==='monthly') el.innerHTML=buildMonthlyPanel(hist,allKeys,monthKeys);
+  else if(currentStatsTab==='suppliers') el.innerHTML=buildSuppliersPanel(hist,allKeys);
+  else if(currentStatsTab==='history') el.innerHTML=buildHistoryPanel(hist,allKeys);
+}
+
+// ── PANEL 1: PANORAMICA ────────────────────────────────────────────────────────
+function buildOverviewPanel(hist,allKeys){
+  const tk=todayKey(), now=new Date();
+  // Totals
+  let totalT=0,totalR=0,totalB=0,totalC=0,prog=0,nonProg=0,unkn=0,auth=0,nonauth=0,authUnk=0;
+  const supplierCount={};
+  const hourBuckets=Array(24).fill(0);
+  const dayOfWeek=Array(7).fill(0); // 0=Mon
+  allKeys.forEach(k=>{
+    const ts=hist[k].trucks||[],rs=hist[k].resis||[];
+    totalT+=ts.length; totalR+=rs.length;
+    const d=new Date(k+'T12:00:00'); let dow=d.getDay()-1; if(dow<0)dow=6;
+    dayOfWeek[dow]+=ts.length;
+    ts.forEach(t=>{
+      if(t.nrBancale)totalB+=parseInt(t.nrBancale)||0;
+      if(t.nrCutii)totalC+=parseInt(t.nrCutii)||0;
+      if(t.programat==='programmato')prog++; else if(t.programat==='non_programmato')nonProg++; else unkn++;
+      if(t.firma&&t.firma.trim())supplierCount[t.firma.trim()]=(supplierCount[t.firma.trim()]||0)+1;
+      const timeStr=t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'');
+      if(timeStr){const h=parseInt(timeStr.split(':')[0],10);if(h>=0&&h<24)hourBuckets[h]++;}
+    });
+    rs.forEach(r=>{
+      if(r.nrBancale)totalB+=parseInt(r.nrBancale)||0;
+      if(r.nrCutii)totalC+=parseInt(r.nrCutii)||0;
+      if(r.autorizat==='autorizzato')auth++; else if(r.autorizat==='non_autorizzato')nonauth++; else authUnk++;
+    });
+  });
+  const totalAll=totalT+totalR||1;
+  const progPct=totalT?Math.round(prog/totalT*100):0;
+  const nonProgPct=totalT?Math.round(nonProg/totalT*100):0;
+  const unknPct=100-progPct-nonProgPct;
+  const authPct=totalR?Math.round(auth/totalR*100):0;
+  const nauthPct=totalR?Math.round(nonauth/totalR*100):0;
+  const uauthUnkPct=100-authPct-nauthPct;
+  // donut camion programmazione
+  const donutCamion=buildDonut([{val:prog,color:'#4f8ef7',label:'Programmati'},{val:nonProg,color:'#f87171',label:'Non prog.'},{val:Math.max(unkn,0),color:'#fbbf24',label:'Sconosciuto'}],totalT||1,'🚛','Camion');
+  const donutResi=buildDonut([{val:auth,color:'#4ade80',label:'Autorizzati'},{val:nonauth,color:'#f87171',label:'Non autor.'},{val:Math.max(authUnk,0),color:'#fbbf24',label:'Sconosciuto'}],totalR||1,'↩️','Resi');
+  const donutMerce=buildDonut([{val:totalB,color:'#38e8c8',label:'Bancali'},{val:totalC,color:'#a78bfa',label:'Colli'}],(totalB+totalC)||1,'📦','Merce');
+  // timeline last 30 days
+  const days30=[]; for(let i=29;i>=0;i--){const d=new Date(now);d.setDate(now.getDate()-i);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;days30.push({k,tc:(hist[k]?.trucks||[]).length,rc:(hist[k]?.resis||[]).length,isToday:i===0});}
+  const max30=Math.max(...days30.map(d=>d.tc+d.rc),1);
+  const tlH=80;
+  const timelineHTML=`<div class="panel-card">
+    <div class="panel-card-header"><span>📈 Attività ultimi 30 giorni</span><span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--text-muted)">${allKeys.length} giorni totali</span></div>
+    <div class="panel-card-body"><div class="timeline-chart" style="height:${tlH}px;align-items:flex-end;gap:2px">${days30.map(d=>{
+      const tot=d.tc+d.rc; const h=Math.max(tot/max30*tlH,tot>0?4:2);
+      const trH=tot>0?Math.round(d.tc/tot*h):0; const rH=h-trH;
+      return `<div class="tl-col"><div class="tl-bar-stack" style="height:${h}px"><div class="tl-bar-r" style="height:${rH}px"></div><div class="tl-bar-t" style="height:${trH}px"></div></div></div>`;
+    }).join('')}</div>
+    <div style="display:flex;justify-content:space-between;margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--text-muted)"><span>-30d</span><span>oggi</span></div>
+    <div style="display:flex;gap:12px;margin-top:8px;font-size:0.63rem;color:var(--text-muted)"><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:rgba(79,142,247,0.45);display:inline-block"></span>Camion</span><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:rgba(248,113,113,0.35);display:inline-block"></span>Resi</span></div>
+    </div></div>`;
+  // hour heatmap
+  const maxH=Math.max(...hourBuckets,1);
+  const hhHTML=`<div class="panel-card">
+    <div class="panel-card-header"><span>🕐 Distribuzione oraria arrivi</span></div>
+    <div class="panel-card-body">
+    <div class="hour-heatmap">${hourBuckets.map((v,i)=>{
+      const lv=v===0?0:v/maxH<0.25?1:v/maxH<0.5?2:v/maxH<0.75?3:4;
+      return `<div class="hh-cell hh-${lv}" title="${String(i).padStart(2,'0')}:00 — ${v} arrivi">${String(i).padStart(2,'0')}</div>`;
+    }).join('')}</div>
+    <div style="display:flex;gap:10px;margin-top:8px;font-size:0.63rem;color:var(--text-muted);flex-wrap:wrap">
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);display:inline-block"></span>Nessuno</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(79,142,247,0.3);display:inline-block"></span>Pochi</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(56,232,200,0.5);display:inline-block"></span>Picco</span>
+    </div>
+    </div></div>`;
+  // day of week perf
+  const dowNames=['Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
+  const maxDow=Math.max(...dayOfWeek,1);
+  const dowHTML=`<div class="panel-card">
+    <div class="panel-card-header"><span>📅 Media per giorno settimana</span></div>
+    <div class="panel-card-body">${dayOfWeek.map((v,i)=>`<div class="perf-row"><span class="perf-label">${dowNames[i]}</span><div class="perf-bar-wrap"><div class="perf-bar-fill" style="width:${Math.round(v/maxDow*100)}%;background:linear-gradient(90deg,var(--accent-blue),var(--accent-cyan))"></div></div><span class="perf-val">${v}</span></div>`).join('')}
+    </div></div>`;
+  return `<div style="font-size:0.62rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px">📊 Panoramica Globale</div>
+  <div class="overview-grid">
+    <div class="overview-col">
+      ${donutCamion}
+      ${hhHTML}
+    </div>
+    <div class="overview-col">
+      ${donutResi}
+      ${donutMerce}
+    </div>
+    <div class="overview-col">
+      ${timelineHTML}
+      ${dowHTML}
+    </div>
+  </div>`;
+}
+
+function buildDonut(segments,total,icon,label){
+  const R=44, cx=54, cy=54, r=R, strokeW=14;
+  const circumference=2*Math.PI*r;
+  let offset=0, arcs='';
+  const filtered=segments.filter(s=>s.val>0);
+  if(filtered.length===0){arcs=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="${strokeW}"/>`;}
+  else{
+    filtered.forEach(s=>{
+      const pct=s.val/total;
+      const dash=circumference*pct; const gap=circumference-dash;
+      const rot=-90+offset*360;
+      arcs+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="${strokeW}" stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}" stroke-dashoffset="0" transform="rotate(${rot.toFixed(2)},${cx},${cy})" opacity="0.8"/>`;
+      offset+=pct;
+    });
+  }
+  const mainVal=filtered.length>0?filtered[0].val:0;
+  return `<div class="panel-card"><div class="panel-card-header"><span>${icon} ${label}</span><span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--text-muted)">totale: ${total}</span></div>
+  <div class="panel-card-body"><div class="donut-wrap">
+    <div class="donut-svg-wrap" style="position:relative;width:108px;height:108px;flex-shrink:0">
+      <svg width="108" height="108" viewBox="0 0 108 108"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="${strokeW}"/>${arcs}</svg>
+      <div class="donut-center-label"><div class="donut-center-val" style="color:${filtered[0]?.color||'#fff'}">${total}</div><div class="donut-center-sub">${label.toLowerCase()}</div></div>
+    </div>
+    <div class="donut-legend">${segments.map(s=>{const pct=total?Math.round(s.val/total*100):0;return `<div class="legend-row"><span class="legend-dot" style="background:${s.color}"></span><span class="legend-label">${s.label}</span><span class="legend-val" style="color:${s.color}">${s.val}</span><span class="legend-pct">${pct}%</span></div>`;}).join('')}</div>
+  </div></div></div>`;
+}
+
+// ── PANEL 2: MENSILE ───────────────────────────────────────────────────────────
+function buildMonthlyPanel(hist,allKeys,monthKeys){
+  const monthNamesShort=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  const tabs=monthKeys.map(m=>{const[yr,mo]=m.split('-');return `<span class="month-tab ${m===activeStatsMonth?'active':''}" onclick="switchStatsMonth('${m}')">${monthNamesShort[parseInt(mo)-1]} ${yr}</span>`;}).join('');
+  const mKeys=allKeys.filter(k=>k.startsWith(activeStatsMonth));
+  const [mY,mM]=activeStatsMonth.split('-').map(Number);
+  let mT=0,mR=0,mB=0,mC=0,mProg=0,mNonProg=0,mUnkn=0,mUnauth=0,mAfter12=0,mBefore8=0,maxDay=0,maxDayKey='';
+  mKeys.forEach(k=>{
+    const ts=hist[k].trucks||[],rs=hist[k].resis||[];
+    mT+=ts.length; mR+=rs.length;
+    const dayTotal=ts.length+rs.length; if(dayTotal>maxDay){maxDay=dayTotal;maxDayKey=k;}
+    ts.forEach(t=>{
+      if(t.nrBancale)mB+=parseInt(t.nrBancale)||0;
+      if(t.nrCutii)mC+=parseInt(t.nrCutii)||0;
+      if(t.programat==='programmato')mProg++; else if(t.programat==='non_programmato')mNonProg++; else mUnkn++;
+      const ts2=t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'');
+      if(ts2){const h=parseInt(ts2.split(':')[0],10);if(h>=12)mAfter12++;if(h<8&&h>=0)mBefore8++;}
+    });
+    rs.forEach(r=>{if(r.nrBancale)mB+=parseInt(r.nrBancale)||0;if(r.nrCutii)mC+=parseInt(r.nrCutii)||0;if(r.autorizat==='non_autorizzato')mUnauth++;});
+  });
+  const mAvg=mKeys.length?(mT/mKeys.length).toFixed(1):'0';
+  const tk=todayKey();
+  // heatmap
+  const daysInMonth=new Date(mY,mM,0).getDate();
+  const firstDay=new Date(mY,mM-1,1);
+  let startWd=firstDay.getDay()-1; if(startWd<0)startWd=6;
+  const dayNamesShort=['Lu','Ma','Me','Gi','Ve','Sa','Do'];
+  let heatHTML=`<div class="panel-card"><div class="panel-card-header"><span>🗓 Mappa attività mensile</span><span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--text-muted)">${daysInMonth} giorni</span></div><div class="panel-card-body">
+  <div class="heatmap-grid" style="margin-bottom:8px">${dayNamesShort.map(d=>`<div class="heatmap-day-label">${d}</div>`).join('')}
+  ${Array(startWd).fill('<div class="heatmap-cell empty-cell"></div>').join('')}
+  ${Array.from({length:daysInMonth},(_,i)=>{
+    const day=i+1, k=`${mY}-${String(mM).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const cnt=(hist[k]?.trucks||[]).length+(hist[k]?.resis||[]).length;
+    const isToday=k===tk;
+    let lv='no-data'; if(cnt>0&&cnt<=2)lv='level-1'; else if(cnt<=5)lv='level-2'; else if(cnt<=8)lv='level-3'; else if(cnt>8)lv='level-4';
+    const ca=cnt>0?`onclick="closeCalendar();switchToDay('${k}')"`:'' ;
+    return `<div class="heatmap-cell ${lv} ${cnt>0?'has-data':''} ${isToday?'is-today-cell':''}" ${ca} title="${day}/${mM}: ${cnt} attività"><span class="heatmap-date-num">${day}</span></div>`;
+  }).join('')}
+  </div>
+  <div style="display:flex;gap:10px;font-size:0.62rem;color:var(--text-muted);flex-wrap:wrap">
+    <span style="display:flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);display:inline-block"></span>Vuoto</span>
+    <span style="display:flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:rgba(79,142,247,0.2);display:inline-block"></span>1-2</span>
+    <span style="display:flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:rgba(79,142,247,0.4);display:inline-block"></span>3-5</span>
+    <span style="display:flex;align-items:center;gap:3px"><span style="width:9px;height:9px;border-radius:2px;background:rgba(56,232,200,0.5);display:inline-block"></span>6+</span>
+  </div>
+  </div></div>`;
+  // 7-day bar
+  const today=new Date(), dayNames7=['Do','Lu','Ma','Me','Gi','Ve','Sa'];
+  const chartDays=[];
+  for(let i=6;i>=0;i--){const d=new Date(today);d.setDate(today.getDate()-i);const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;chartDays.push({k,day:dayNames7[d.getDay()],tc:(hist[k]?.trucks||[]).length,rc:(hist[k]?.resis||[]).length,isToday:i===0});}
+  const maxC=Math.max(...chartDays.map(d=>d.tc+d.rc),1);
+  const barH=90;
+  const barHTML=`<div class="panel-card"><div class="panel-card-header"><span>📊 Ultimi 7 giorni</span></div><div class="panel-card-body">
+  <div class="week-bars" style="height:${barH}px">${chartDays.map(d=>{const tot=d.tc+d.rc;const h=Math.max(tot/maxC*barH,tot>0?5:2);const trH=tot>0?Math.round(d.tc/tot*h):0;const rH=h-trH;return `<div class="week-bar-wrap"><div class="week-bar-count">${tot>0?tot:''}</div><div class="bar-stack" style="height:${h}px"><div class="bar-resi" style="height:${rH}px"></div><div class="bar-truck" style="height:${trH}px"></div></div><div class="week-bar-day ${d.isToday?'today-bar-day':''}">${d.day}</div></div>`;}).join('')}</div>
+  </div></div>`;
+  // stats grid
+  const statsGrid=`<div class="panel-card"><div class="panel-card-header"><span>📋 Riepilogo ${activeStatsMonth}</span></div><div class="panel-card-body">
+  <div class="month-stats-grid">
+    <div class="ms-cell"><div class="ms-label">Camion</div><div class="ms-val" style="color:var(--accent-blue)">${mT}</div><div class="ms-sub">media ${mAvg}/giorno</div></div>
+    <div class="ms-cell"><div class="ms-label">Resi</div><div class="ms-val" style="color:var(--accent-rose)">${mR}</div></div>
+    <div class="ms-cell"><div class="ms-label">Bancali</div><div class="ms-val" style="color:var(--accent-cyan)">${mB}</div></div>
+    <div class="ms-cell"><div class="ms-label">Colli</div><div class="ms-val" style="color:var(--accent-violet)">${mC}</div></div>
+    <div class="ms-cell"><div class="ms-label">Programmati</div><div class="ms-val" style="color:var(--accent-green)">${mProg}</div></div>
+    <div class="ms-cell"><div class="ms-label">Non programmati</div><div class="ms-val" style="color:var(--accent-rose)">${mNonProg}</div></div>
+    <div class="ms-cell"><div class="ms-label">Sconosciuto</div><div class="ms-val" style="color:var(--accent-amber)">${mUnkn}</div></div>
+    <div class="ms-cell"><div class="ms-label">Resi non aut.</div><div class="ms-val" style="color:var(--accent-rose)">${mUnauth}</div></div>
+    <div class="ms-cell"><div class="ms-label">Dopo 12:00</div><div class="ms-val" style="color:#f87171">${mAfter12}</div><div class="ms-sub">ritardi</div></div>
+    <div class="ms-cell"><div class="ms-label">Prima 08:00</div><div class="ms-val" style="color:var(--accent-cyan)">${mBefore8}</div><div class="ms-sub">anticipi</div></div>
+    <div class="ms-cell"><div class="ms-label">Giorni attivi</div><div class="ms-val" style="color:var(--accent-green)">${mKeys.length}</div></div>
+    <div class="ms-cell"><div class="ms-label">Giorno picco</div><div class="ms-val" style="color:var(--accent-amber);font-size:0.8rem">${maxDayKey?maxDayKey.split('-').slice(1).reverse().join('/'):'—'}</div><div class="ms-sub">${maxDay} attività</div></div>
+  </div>
+  </div></div>`;
+  return `
+  <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">Seleziona mese</div>
+  <div class="month-tabs-row">${tabs}</div>
+  <div class="monthly-layout">
+    <div class="monthly-main">${heatHTML}${statsGrid}</div>
+    <div class="monthly-side">${barHTML}</div>
+  </div>`;
+}
+
+// ── PANEL 3: FORNITORI ─────────────────────────────────────────────────────────
+function buildSuppliersPanel(hist,allKeys){
+  const supplierStats={};
+  allKeys.forEach(k=>{
+    const ts=hist[k].trucks||[];
+    ts.forEach(t=>{
+      if(!t.firma||!t.firma.trim())return;
+      const f=t.firma.trim();
+      if(!supplierStats[f])supplierStats[f]={count:0,bancali:0,colli:0,prog:0,nonProg:0,dates:[]};
+      supplierStats[f].count++;
+      supplierStats[f].bancali+=parseInt(t.nrBancale)||0;
+      supplierStats[f].colli+=parseInt(t.nrCutii)||0;
+      if(t.programat==='programmato')supplierStats[f].prog++; else if(t.programat==='non_programmato')supplierStats[f].nonProg++;
+      supplierStats[f].dates.push(k);
+    });
+  });
+  const sorted=Object.entries(supplierStats).sort((a,b)=>b[1].count-a[1].count);
+  const maxCount=sorted.length?sorted[0][1].count:1;
+  const rankColors=['top-rank-gold','top-rank-silver','top-rank-bronze'];
+  const totalDeliveries=allKeys.reduce((s,k)=>s+(hist[k].trucks||[]).length,0)||1;
+  const topListHTML=sorted.slice(0,15).map(([name,s],i)=>{
+    const pct=Math.round(s.count/totalDeliveries*100);
+    const rankC=i<3?rankColors[i]:'';
+    return `<div class="top-item"><span class="top-rank ${rankC}">#${i+1}</span><span class="top-name">${name}</span><div class="top-bar-wrap"><div class="top-bar-fill" style="width:${Math.round(s.count/maxCount*100)}%"></div></div><span class="top-count">${s.count}×</span><span class="top-pct">${pct}%</span></div>`;
+  }).join('');
+  const tableHTML=sorted.slice(0,20).map(([name,s],i)=>`<tr>
+    <td class="td-mono" style="color:var(--text-muted)">${i+1}</td>
+    <td class="td-firma">${name}</td>
+    <td class="td-mono td-blue">${s.count}</td>
+    <td class="td-mono" style="color:var(--accent-cyan)">${s.bancali}</td>
+    <td class="td-mono" style="color:var(--accent-violet)">${s.colli}</td>
+    <td class="td-mono" style="color:var(--accent-green)">${s.prog}</td>
+    <td class="td-mono" style="color:var(--accent-rose)">${s.nonProg}</td>
+  </tr>`).join('');
+  return `<div style="font-size:0.62rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px">🏭 Analisi Fornitori — ${sorted.length} fornitori unici</div>
+  <div class="suppliers-layout">
+    <div>
+      <div class="panel-card" style="margin-bottom:14px"><div class="panel-card-header"><span>🏆 Top Fornitori per volume</span></div><div class="panel-card-body"><div class="top-list">${topListHTML}</div></div></div>
+    </div>
+    <div>
+      <div class="panel-card"><div class="panel-card-header"><span>📊 Dettaglio completo</span></div><div class="panel-card-body" style="overflow-x:auto">
+      <table class="rec-table">
+        <thead><tr><th>#</th><th>Fornitore</th><th>Consegne</th><th>Bancali</th><th>Colli</th><th>Prog.</th><th>Non prog.</th></tr></thead>
+        <tbody>${tableHTML}</tbody>
+      </table>
+      </div></div>
+    </div>
+  </div>`;
+}
+
+// ── PANEL 4: CRONOLOGIA ────────────────────────────────────────────────────────
+let histFilter='all', histSearch='';
+function buildHistoryPanel(hist,allKeys){
+  const monthNamesShort=['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
+  const tk=todayKey(), busiestKey=allKeys.reduce((bk,k)=>{const c=(hist[k].trucks||[]).length+(hist[k].resis||[]).length;const bc=(hist[bk]?.trucks||[]).length+(hist[bk]?.resis||[]).length;return c>bc?k:bk;},allKeys[0]||'');
+  const dayLabels=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+  let filteredKeys=allKeys;
+  if(histFilter==='trucks')filteredKeys=allKeys.filter(k=>(hist[k].trucks||[]).length>0);
+  else if(histFilter==='resi')filteredKeys=allKeys.filter(k=>(hist[k].resis||[]).length>0);
+  if(histSearch.trim()){const s=histSearch.trim().toLowerCase();filteredKeys=filteredKeys.filter(k=>{const ts=hist[k].trucks||[],rs=hist[k].resis||[];return ts.some(t=>(t.firma||'').toLowerCase().includes(s)||(t.semnatura||'').toLowerCase().includes(s))||rs.some(r=>(r.descriere||'').toLowerCase().includes(s)||(r.semnatura||'').toLowerCase().includes(s))||k.includes(s);});}
+  const daysHTML=filteredKeys.map((k,idx)=>{
+    const {trucks:ts=[],resis:rs=[]}=hist[k];
+    const d=new Date(k+'T12:00:00'), isToday=k===tk, isBusiest=k===busiestKey;
+    const dateLabel=`${dayLabels[d.getDay()]}, ${d.getDate()} ${monthNamesShort[d.getMonth()]} ${d.getFullYear()}`;
+    let hs=''; if(isToday)hs='border-color:rgba(56,232,200,0.4);background:rgba(56,232,200,0.05);'; else if(isBusiest)hs='border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.04);';
+    return `<div class="day-section"><div class="day-header" id="dh-${idx}" onclick="toggleDay(${idx})" style="${hs}"><div class="day-header-left"><span class="day-date-label">${dateLabel}${isToday?' (Oggi)':''}</span><div class="day-badges">${ts.length?`<span class="day-badge badge-truck">${ts.length} cam</span>`:''} ${rs.length?`<span class="day-badge badge-resi">${rs.length} resi</span>`:''} ${isBusiest?`<span class="day-badge badge-hot">🔥 Picco</span>`:''}</div></div><span class="day-chevron">▼</span></div>
+    <div class="day-entries" id="de-${idx}">
+      ${ts.map(t=>`<div class="entry-row"><span class="entry-type" style="background:rgba(79,142,247,0.12);color:var(--accent-blue)">CAMION</span><span class="entry-time">${t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'–')||'–'}</span><span class="entry-firma">${t.firma||'Fornitore sconosciuto'}</span><span class="entry-qty">${[t.bancal&&t.nrBancale?`${t.nrBancale} B`:'',t.cutii&&t.nrCutii?`${t.nrCutii} C`:''].filter(Boolean).join('·')}</span>${t.semnatura?`<span class="entry-sig">✍ ${t.semnatura}</span>`:''} ${t.comentariu?`<div class="entry-note">${t.comentariu}</div>`:''}</div>`).join('')}
+      ${rs.map(r=>`<div class="entry-row"><span class="entry-type" style="background:rgba(248,113,113,0.12);color:var(--accent-rose)">RESO</span><span class="entry-time" style="color:var(--accent-rose)">${r.ts?r.ts.split(' ')[1]:'–'}</span><span class="entry-firma">${r.descriere||'Nessuna descrizione'}</span><span class="entry-qty">${[r.bancal&&r.nrBancale?`${r.nrBancale} B`:'',r.cutii&&r.nrCutii?`${r.nrCutii} C`:''].filter(Boolean).join('·')}</span>${r.semnatura?`<span class="entry-sig">✍ ${r.semnatura}</span>`:''} ${r.comentariu?`<div class="entry-note">${r.comentariu}</div>`:''}</div>`).join('')}
+    </div></div>`;
+  }).join('')||`<div class="no-history">Nessun risultato trovato.</div>`;
+  return `<div class="history-controls">
+    <div class="hist-search"><input type="text" placeholder="🔍 Cerca fornitore, firma, data…" value="${histSearch}" oninput="histSearch=this.value;switchStatsTab('history')" style="font-size:0.78rem;padding:7px 12px"></div>
+    <button class="hist-filter-btn ${histFilter==='all'?'active':''}" onclick="histFilter='all';switchStatsTab('history')">Tutti</button>
+    <button class="hist-filter-btn ${histFilter==='trucks'?'active':''}" onclick="histFilter='trucks';switchStatsTab('history')">Solo camion</button>
+    <button class="hist-filter-btn ${histFilter==='resi'?'active-rose active':''}" onclick="histFilter='resi';switchStatsTab('history')">Solo resi</button>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--text-muted);margin-left:auto">${filteredKeys.length} giorni</span>
+  </div>
+  ${daysHTML}`;
+}
+
+function toggleDay(idx){
   document.getElementById('dh-'+idx).classList.toggle('open');
   document.getElementById('de-'+idx).classList.toggle('open');
 }
 
-async function switchStatsMonth(m) {
-  activeStatsMonth = m;
-  await buildStats();
-}
-
-async function buildStats() {
-  setSyncStatus('syncing', 'Caricamento statistiche…');
-  let hist = {};
-  try {
-    const [tRows, rRows] = await Promise.all([
-      sbGet('trucks', 'select=*&order=date_key.asc,created_at.asc'),
-      sbGet('resi',   'select=*&order=date_key.asc,created_at.asc')
-    ]);
-    tRows.forEach(r => { const k=r.date_key; if(!hist[k]) hist[k]={trucks:[],resis:[]}; hist[k].trucks.push(dbToTruck(r)); });
-    rRows.forEach(r => { const k=r.date_key; if(!hist[k]) hist[k]={trucks:[],resis:[]}; hist[k].resis.push(dbToResi(r)); });
-    setSyncStatus('synced', 'Statistiche caricate ✓');
-  } catch(e) {
-    setSyncStatus('error', 'Errore: ' + e.message);
-    document.getElementById('calBody').innerHTML = `<div class="no-history">❌ Errore caricamento: ${e.message}</div>`;
-    return;
-  }
-  const tk = todayKey();
-  const allKeys = Object.keys(hist).sort((a,b) => b.localeCompare(a));
-  if (allKeys.length === 0) { document.getElementById('calBody').innerHTML = '<div class="no-history">📭 Nessuno storico salvato ancora.</div>'; return; }
-  const months = {};
-  allKeys.forEach(k => { const m=k.slice(0,7); months[m]=(months[m]||0)+1; });
-  const monthKeys = Object.keys(months).sort((a,b)=>b.localeCompare(a));
-  if (!activeStatsMonth || !months[activeStatsMonth]) activeStatsMonth = monthKeys[0];
-  document.getElementById('calBody').innerHTML = buildCalendarHTML(hist, allKeys, monthKeys, tk);
-}
-
-function buildHeatmap(hist, year, month, daysInMonth, startWd, tk) {
-  let html = `<div class="month-heatmap"><div class="chart-title">Mappa attività</div><div class="heatmap-grid">`;
-  const shortDays = ['Do', 'Lu', 'Ma', 'Me', 'Gi', 'Ve', 'Sa'];
-  for(let i=0; i<7; i++) html += `<div class="heatmap-day-label">${shortDays[i]}</div>`;
-  for(let i=0; i<startWd; i++) html += `<div class="heatmap-cell empty-cell"></div>`;
-  for(let day=1; day<=daysInMonth; day++) {
-    const k = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    const count = (hist[k]?.trucks||[]).length + (hist[k]?.resis||[]).length;
-    const isToday = k === tk;
-    let level = 'no-data';
-    if(count > 0 && count <= 2) level = 'level-1';
-    else if(count > 2 && count <= 5) level = 'level-2';
-    else if(count > 5 && count <= 8) level = 'level-3';
-    else if(count > 8) level = 'level-4';
-    const clickAttr = count > 0 ? `onclick="closeCalendar(); switchToDay('${k}')"` : '';
-    const hasDataClass = count > 0 ? 'has-data' : '';
-    const todayClass = isToday ? 'is-today-cell' : '';
-    html += `<div class="heatmap-cell ${level} ${hasDataClass} ${todayClass}" ${clickAttr} title="${formatKeyLabel(k)}: ${count} attività"><span class="heatmap-date-num">${day}</span></div>`;
-  }
-  html += `</div></div>`;
-  return html;
-}
-
-function buildCalendarHTML(hist, allKeys, monthKeys, tk) {
-  const monthNames = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
-
-  let totalTrucks=0, totalResis=0, totalBancali=0, totalColli=0;
-  const supplierCount = {};
-  allKeys.forEach(k => {
-    const ts=hist[k].trucks||[], rs=hist[k].resis||[];
-    totalTrucks+=ts.length; totalResis+=rs.length;
-    ts.forEach(t => {
-      if(t.nrBancale) totalBancali+=parseInt(t.nrBancale)||0;
-      if(t.nrCutii)   totalColli+=parseInt(t.nrCutii)||0;
-      if(t.firma&&t.firma.trim()) supplierCount[t.firma.trim()]=(supplierCount[t.firma.trim()]||0)+1;
-    });
-    rs.forEach(r => {
-      if(r.nrBancale) totalBancali+=parseInt(r.nrBancale)||0;
-      if(r.nrCutii)   totalColli+=parseInt(r.nrCutii)||0;
-    });
+// ── EXPORT CSV ─────────────────────────────────────────────────────────────────
+function exportCSV(){
+  if(!statsHistCache){toast('⚠ Nessun dato da esportare',true);return;}
+  const allKeys=Object.keys(statsHistCache).sort();
+  let rows=['Data,Tipo,Ora,Azienda/Descrizione,Stato,Bancali,Colli,Segnatura,Note'];
+  allKeys.forEach(k=>{
+    const ts=statsHistCache[k].trucks||[], rs=statsHistCache[k].resis||[];
+    ts.forEach(t=>rows.push(`${k},Camion,${t.arrivalTime||''},${(t.firma||'').replace(/,/g,' ')},${t.programat||''},${t.nrBancale||0},${t.nrCutii||0},${(t.semnatura||'').replace(/,/g,' ')},${(t.comentariu||'').replace(/,/g,' ')}`));
+    rs.forEach(r=>rows.push(`${k},Reso,${r.ts?r.ts.split(' ')[1]:''},${(r.descriere||'').replace(/,/g,' ')},${r.autorizat||''},${r.nrBancale||0},${r.nrCutii||0},${(r.semnatura||'').replace(/,/g,' ')},${(r.comentariu||'').replace(/,/g,' ')}`));
   });
-  const avgPerDay = allKeys.length ? (totalTrucks/allKeys.length).toFixed(1) : 0;
-  let busiestKey='', busiestCount=0;
-  allKeys.forEach(k => { const c=(hist[k].trucks||[]).length+(hist[k].resis||[]).length; if(c>busiestCount){busiestCount=c;busiestKey=k;} });
-  const topSuppliers = Object.entries(supplierCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
-  const maxSup = topSuppliers.length ? topSuppliers[0][1] : 1;
-
-  const tabsHTML = monthKeys.map(m => {
-    const [yr,mo] = m.split('-');
-    return `<span class="month-tab ${m===activeStatsMonth?'active':''}" onclick="switchStatsMonth('${m}')">${monthNames[parseInt(mo)-1]} ${yr}</span>`;
-  }).join('');
-
-  const mKeys = allKeys.filter(k => k.startsWith(activeStatsMonth));
-  const [mY, mM] = activeStatsMonth.split('-').map(Number);
-  let mTrucks=0, mResis=0, mBancali=0, mColli=0, mUnauth=0, mProg=0, mNonProg=0, mUnknown=0, mAfter12=0;
-
-  mKeys.forEach(k => {
-    const ts=hist[k].trucks||[], rs=hist[k].resis||[];
-    mTrucks+=ts.length; mResis+=rs.length;
-    ts.forEach(t => {
-      if(t.nrBancale) mBancali+=parseInt(t.nrBancale)||0;
-      if(t.nrCutii) mColli+=parseInt(t.nrCutii)||0;
-      if(t.programat==='programmato') mProg++;
-      if(t.programat==='non_programmato') mNonProg++;
-      if(t.programat==='sconosciuto' || !t.programat) mUnknown++;
-      const timeStr = t.arrivalTime || (t.ts ? t.ts.split(' ')[1] : '');
-      if(timeStr) { const parts = timeStr.split(':'); const h=parseInt(parts[0],10), m=parseInt(parts[1]||'0',10); if(h>12||(h===12&&m>0)) mAfter12++; }
-    });
-    rs.forEach(r => {
-      if(r.nrBancale) mBancali+=parseInt(r.nrBancale)||0;
-      if(r.nrCutii) mColli+=parseInt(r.nrCutii)||0;
-      if(r.autorizat==='non_autorizzato') mUnauth++;
-    });
-  });
-
-  const today = new Date();
-  const dayNames7 = ['Do','Lu','Ma','Me','Gi','Ve','Sa'];
-  const chartDays = [];
-  for(let i=6;i>=0;i--) {
-    const d=new Date(today); d.setDate(today.getDate()-i);
-    const k=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    chartDays.push({k, day:dayNames7[d.getDay()], tc:(hist[k]?.trucks||[]).length, rc:(hist[k]?.resis||[]).length, isToday:i===0});
-  }
-  const maxC = Math.max(...chartDays.map(d=>d.tc+d.rc),1);
-
-  const daysInMonth = new Date(mY, mM, 0).getDate();
-  const firstDay = new Date(mY, mM-1, 1);
-  const startWd = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
-  const totalCells = 7 + startWd + daysInMonth;
-  const numRows = Math.ceil(totalCells / 7);
-  const calculatedHeight = (numRows * 40) + ((numRows - 1) * 4) + 20;
-
-  const weekHTML = `<div class="chart-section"><div class="chart-title">Attività ultimi 7 giorni</div><div class="week-bars" style="height:${calculatedHeight}px">${chartDays.map(d=>{
-    const total=d.tc+d.rc; const h=Math.max(total/maxC*calculatedHeight,total>0?6:3);
-    const trH=total>0?Math.round(d.tc/total*h):0; const rH=h-trH;
-    return `<div class="week-bar-wrap"><div class="week-bar-count">${total>0?total:''}</div><div class="bar-stack" style="height:${h}px"><div class="bar-resi" style="height:${rH}px"></div><div class="bar-truck" style="height:${trH}px"></div></div><div class="week-bar-day ${d.isToday?'today-bar-day':''}">${d.day}</div></div>`;
-  }).join('')}</div><div style="display:flex;gap:12px;margin-top:8px;font-size:0.64rem;color:var(--text-muted)"><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:rgba(79,142,247,0.4);display:inline-block"></span>Camion</span><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:rgba(248,113,113,0.3);display:inline-block"></span>Resi</span></div></div>`;
-
-  const heatHTML = buildHeatmap(hist, mY, mM, daysInMonth, startWd, tk);
-
-  const mAvg = mKeys.length ? (mTrucks/mKeys.length).toFixed(1) : '0';
-  const monthSummaryHTML = `<div class="month-summary-grid">
-    <div class="month-stat-row"><span class="month-stat-icon">🚛</span><span class="month-stat-label">Camion</span><span class="month-stat-val" style="color:var(--accent-blue)">${mTrucks}</span></div>
-    <div class="month-stat-row"><span class="month-stat-icon">↩️</span><span class="month-stat-label">Resi</span><span class="month-stat-val" style="color:var(--accent-rose)">${mResis}</span></div>
-    <div class="month-stat-row"><span class="month-stat-icon">📦</span><span class="month-stat-label">Bancali</span><span class="month-stat-val">${mBancali}</span></div>
-    <div class="month-stat-row"><span class="month-stat-icon">📫</span><span class="month-stat-label">Colli</span><span class="month-stat-val">${mColli}</span></div>
-    <div class="month-stat-row"><span class="month-stat-icon">✅</span><span class="month-stat-label">Programmati</span><span class="month-stat-val" style="color:var(--accent-green)">${mProg}</span></div>
-    <div class="month-stat-row"><span class="month-stat-icon">❌</span><span class="month-stat-label">Non programmati</span><span class="month-stat-val" style="color:var(--accent-rose)">${mNonProg}</span></div>
-    <div class="month-stat-row"><span class="month-stat-icon">❓</span><span class="month-stat-label">Sconosciuto</span><span class="month-stat-val" style="color:var(--accent-amber)">${mUnknown}</span></div>
-    <div class="month-stat-row"><span class="month-stat-icon">⚠️</span><span class="month-stat-label">Resi non aut.</span><span class="month-stat-val" style="color:var(--accent-rose)">${mUnauth}</span></div>
-    <div class="month-stat-row"><span class="month-stat-icon">🕒</span><span class="month-stat-label">Dopo le 12:00 (Ritardi)</span><span class="month-stat-val" style="color:#f87171;font-weight:700;">${mAfter12}</span></div>
-    <div class="month-stat-row"><span class="month-stat-icon">📅</span><span class="month-stat-label">Giorni attivi</span><span class="month-stat-val">${mKeys.length}</span></div>
-    <div class="month-stat-row"><span class="month-stat-icon">📊</span><span class="month-stat-label">Media / giorno</span><span class="month-stat-val" style="color:var(--accent-amber)">${mAvg}</span></div>
-  </div>`;
-
-  const globalHTML = `<div class="stats-grid">
-    <div class="stat-card"><div class="stat-val" style="color:var(--accent-blue)">${totalTrucks}</div><div class="stat-label">Totale camion</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--accent-rose)">${totalResis}</div><div class="stat-label">Totale resi</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--accent-amber)">${avgPerDay}</div><div class="stat-label">Media cam/g</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--accent-cyan)">${totalBancali}</div><div class="stat-label">Bancali totali</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--accent-violet)">${totalColli}</div><div class="stat-label">Colli totali</div></div>
-    <div class="stat-card"><div class="stat-val" style="color:var(--accent-green)">${allKeys.length}</div><div class="stat-label">Giorni registrati</div></div>
-  </div>`;
-
-  const topHTML = topSuppliers.length ? `<div class="chart-section"><div class="chart-title" style="margin-bottom:10px">Top fornitori (tutti i tempi)</div><div class="top-list">${topSuppliers.map(([name,count],i)=>`<div class="top-item"><span class="top-rank">#${i+1}</span><span class="top-name">${name}</span><div class="top-bar-wrap"><div class="top-bar-fill" style="width:${Math.round(count/maxSup*100)}%"></div></div><span class="top-count">${count}×</span></div>`).join('')}</div></div>` : '';
-
-  const dayLabels = ['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
-  const daysHTML = mKeys.map((k,idx) => {
-    const { trucks:ts=[], resis:rs=[] } = hist[k];
-    const d = new Date(k+'T12:00:00');
-    const dateLabel = `${dayLabels[d.getDay()]}, ${d.getDate()} ${monthNames[d.getMonth()]} ${d.getFullYear()}`;
-    const isToday = k === tk;
-    const isBusiest = k === busiestKey && busiestCount > 0;
-    let headStyle = '';
-    if (isToday) headStyle = 'border-color:rgba(56,232,200,0.4);background:rgba(56,232,200,0.06);color:var(--accent-cyan);';
-    else if (isBusiest) headStyle = 'border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.05);';
-    return `
-    <div class="day-section" style="margin-bottom:10px;">
-      <div class="day-header" id="dh-${idx}" onclick="toggleDay(${idx})" style="${headStyle}">
-        <div class="day-header-left">
-          <span class="day-date-label">${dateLabel} ${isToday?'(Oggi)':''}</span>
-          <div class="day-badges">
-            ${ts.length?`<span class="day-badge badge-truck">${ts.length} cam</span>`:''}
-            ${rs.length?`<span class="day-badge badge-resi">${rs.length} resi</span>`:''}
-            ${isBusiest?`<span class="day-badge badge-hot">🔥 Picco</span>`:''}
-          </div>
-        </div>
-        <span class="day-chevron">▼</span>
-      </div>
-      <div class="day-entries" id="de-${idx}">
-        ${ts.map(t=>`
-          <div class="entry-row">
-            <span class="entry-type" style="background:rgba(79,142,247,0.12);color:var(--accent-blue)">CAMION</span>
-            <span class="entry-time">${t.arrivalTime || (t.ts?t.ts.split(' ')[1]:'–') || '–'}</span>
-            <span class="entry-firma">${t.firma || 'Fornitore sconosciuto'}</span>
-            <span class="entry-qty">${[t.bancal&&t.nrBancale?`${t.nrBancale} B`:'',t.cutii&&t.nrCutii?`${t.nrCutii} C`:''].filter(Boolean).join(' · ')}</span>
-            ${t.semnatura?`<span class="entry-sig">✍ ${t.semnatura}</span>`:''}
-            ${t.comentariu?`<div class="entry-note">${t.comentariu}</div>`:''}
-          </div>
-        `).join('')}
-        ${rs.map(r=>`
-          <div class="entry-row">
-            <span class="entry-type" style="background:rgba(248,113,113,0.12);color:var(--accent-rose)">RESO</span>
-            <span class="entry-time" style="color:var(--accent-rose)">${r.ts?r.ts.split(' ')[1]:'–'}</span>
-            <span class="entry-firma">${r.descriere || 'Nessuna descrizione'}</span>
-            <span class="entry-qty">${[r.bancal&&r.nrBancale?`${r.nrBancale} B`:'',r.cutii&&r.nrCutii?`${r.nrCutii} C`:''].filter(Boolean).join(' · ')}</span>
-            ${r.semnatura?`<span class="entry-sig">✍ ${r.semnatura}</span>`:''}
-            ${r.comentariu?`<div class="entry-note">${r.comentariu}</div>`:''}
-          </div>
-        `).join('')}
-      </div>
-    </div>`;
-  }).join('');
-
-  return `
-    <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px">Statistiche globali</div>
-    ${globalHTML}
-    ${topHTML}
-    <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:16px;margin-top:16px;margin-bottom:14px">
-      <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px">Filtra mese</div>
-      <div class="month-tabs">${tabsHTML}</div>
-    </div>
-    <div style="font-size:0.8rem;font-weight:700;color:var(--accent-violet);margin-bottom:14px;letter-spacing:0.03em;text-transform:uppercase;">Resoconto Mese: ${activeStatsMonth}</div>
-    ${monthSummaryHTML}
-    ${weekHTML}
-    ${heatHTML}
-    <div style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;margin-top:20px;">Cronologia dettagliata</div>
-    <div style="max-height:380px;overflow-y:auto;padding-right:4px;">${daysHTML}</div>
-  `;
+  const blob=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url; a.download=`registro_magazzino_${todayKey()}.csv`; a.click();
+  URL.revokeObjectURL(url); toast('📥 CSV esportato!');
 }
 </script>
 </body>
