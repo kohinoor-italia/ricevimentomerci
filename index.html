@@ -420,6 +420,7 @@ input[type="number"]:focus { border-color: rgba(56,232,200,0.45); background: rg
 .entry-time { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-cyan); flex-shrink: 0; min-width: 42px; }
 .entry-firma { color: var(--text-primary); flex: 1; font-weight: 600; }
 .entry-sig { color: var(--text-muted); font-size: 0.72rem; }
+.entry-type { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; padding: 2px 7px; border-radius: 4px; flex-shrink: 0; font-weight: 600; }
 .entry-qty { color: var(--text-secondary); font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; }
 .entry-note { width: 100%; font-size: 0.73rem; color: var(--text-muted); padding-left: 0; line-height: 1.4; font-style: italic; }
 .entry-meta { display: flex; gap: 5px; flex-wrap: wrap; }
@@ -810,6 +811,9 @@ function maybeCollapseCard(id, type) {
     }
   }
 }
+
+// ─── HEATMAP CELL CLICK ATTR REPLACEMENT HINT ───
+// inside buildHeatmap: count > 0 -> onclick="closeCalendar(); switchToDay('${k}')"
 
 function expandCard(id, type) {
   if (type === 'truck') {
@@ -1376,7 +1380,7 @@ function buildCalendarHTML(hist, allKeys, monthKeys, tk) {
 
   const mKeys = allKeys.filter(k => k.startsWith(activeStatsMonth));
   const [mY, mM] = activeStatsMonth.split('-').map(Number);
-  let mTrucks=0, mResis=0, mBancali=0, mColli=0, mUnauth=0, mProg=0, mUnknown=0, mAfter12=0;
+  let mTrucks=0, mResis=0, mBancali=0, mColli=0, mUnauth=0, mProg=0, mNonProg=0, mUnknown=0, mAfter12=0;
   
   mKeys.forEach(k => {
     const ts=hist[k].trucks||[], rs=hist[k].resis||[];
@@ -1385,6 +1389,7 @@ function buildCalendarHTML(hist, allKeys, monthKeys, tk) {
       if(t.nrBancale) mBancali+=parseInt(t.nrBancale)||0; 
       if(t.nrCutii) mColli+=parseInt(t.nrCutii)||0; 
       if(t.programat==='programmato') mProg++;
+      if(t.programat==='non_programmato') mNonProg++;
       if(t.programat==='sconosciuto' || !t.programat) mUnknown++;
       
       // Verifică dacă venirea este după ora 12:00
@@ -1427,15 +1432,21 @@ function buildCalendarHTML(hist, allKeys, monthKeys, tk) {
   }
   const maxC = Math.max(...chartDays.map(d=>d.tc+d.rc),1);
 
-  const weekHTML = `<div class="chart-section"><div class="chart-title">Attività ultimi 7 giorni</div><div class="week-bars">${chartDays.map(d=>{
-    const total=d.tc+d.rc; const h=Math.max(total/maxC*70,total>0?6:3);
+  const daysInMonth = new Date(mY, mM, 0).getDate();
+  const firstDay = new Date(mY, mM-1, 1);
+  const startWd = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // corectare index săptămână (luni=0)
+  
+  // Calculare dinamică a numărului de rânduri pentru înălțimea graficului (7 label + startWd + zile) / 7 col
+  const totalCells = 7 + startWd + daysInMonth;
+  const numRows = Math.ceil(totalCells / 7);
+  const calculatedHeight = (numRows * 40) + ((numRows - 1) * 4) + 20; // 40px celula aspect-ratio + 4px grid-gap + label-semnalistica-margin
+
+  const weekHTML = `<div class="chart-section"><div class="chart-title">Attività ultimi 7 giorni</div><div class="week-bars" style="height:${calculatedHeight}px">${chartDays.map(d=>{
+    const total=d.tc+d.rc; const h=Math.max(total/maxC*calculatedHeight,total>0?6:3);
     const trH=total>0?Math.round(d.tc/total*h):0; const rH=h-trH;
     return `<div class="week-bar-wrap"><div class="week-bar-count">${total>0?total:''}</div><div class="bar-stack" style="height:${h}px"><div class="bar-resi" style="height:${rH}px"></div><div class="bar-truck" style="height:${trH}px"></div></div><div class="week-bar-day ${d.isToday?'today-bar-day':''}">${d.day}</div></div>`;
   }).join('')}</div><div style="display:flex;gap:12px;margin-top:8px;font-size:0.64rem;color:var(--text-muted)"><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:rgba(79,142,247,0.4);display:inline-block"></span>Camion</span><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:rgba(248,113,113,0.3);display:inline-block"></span>Resi</span></div></div>`;
 
-  const daysInMonth = new Date(mY, mM, 0).getDate();
-  const firstDay = new Date(mY, mM-1, 1);
-  const startWd = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1; // corectare index săptămână (luni=0)
   const heatHTML = buildHeatmap(hist, mY, mM, daysInMonth, startWd, tk);
 
   const mAvg = mKeys.length ? (mTrucks/mKeys.length).toFixed(1) : '0';
@@ -1445,6 +1456,7 @@ function buildCalendarHTML(hist, allKeys, monthKeys, tk) {
     <div class="month-stat-row"><span class="month-stat-icon">📦</span><span class="month-stat-label">Bancali</span><span class="month-stat-val">${mBancali}</span></div>
     <div class="month-stat-row"><span class="month-stat-icon">📫</span><span class="month-stat-label">Colli</span><span class="month-stat-val">${mColli}</span></div>
     <div class="month-stat-row"><span class="month-stat-icon">✅</span><span class="month-stat-label">Programmati</span><span class="month-stat-val" style="color:var(--accent-green)">${mProg}</span></div>
+    <div class="month-stat-row"><span class="month-stat-icon">❌</span><span class="month-stat-label">Non programmati</span><span class="month-stat-val" style="color:var(--accent-rose)">${mNonProg}</span></div>
     <div class="month-stat-row"><span class="month-stat-icon">❓</span><span class="month-stat-label">Sconosciuto</span><span class="month-stat-val" style="color:var(--accent-amber)">${mUnknown}</span></div>
     <div class="month-stat-row"><span class="month-stat-icon">⚠️</span><span class="month-stat-label">Resi non aut.</span><span class="month-stat-val" style="color:var(--accent-rose)">${mUnauth}</span></div>
     <div class="month-stat-row"><span class="month-stat-icon">🕒</span><span class="month-stat-label">Dopo le 12:00 (Ritardi)</span><span class="month-stat-val" style="color:#f87171;font-weight:700;">${mAfter12}</span></div>
@@ -1470,59 +1482,71 @@ function buildCalendarHTML(hist, allKeys, monthKeys, tk) {
     const dateLabel = `${dayLabels[d.getDay()]}, ${d.getDate()} ${monthNames[d.getMonth()]} ${d.getFullYear()}`;
     const isToday = k === tk;
     const isBusiest = k === busiestKey && busiestCount > 0;
-    const rows = [
-      ...ts.map(t => {
-        const qty=[t.bancal&&t.nrBancale?`${t.nrBancale} bancali`:t.bancal?'bancali':'', t.cutii&&t.nrCutii?`${t.nrCutii} colli`:t.cutii?'colli':''].filter(Boolean).join(' · ');
-        const progLabel=t.programat==='programmato'?'✓ Prog.':t.programat==='non_programmato'?'✗ Non prog.':'';
-        return `<div class="entry-row"><span class="entry-type badge-truck">CAM</span><span class="entry-time">${t.arrivalTime||'–'}</span><span class="entry-firma">${t.firma||'<span style="opacity:.4">Sconosciuta</span>'}</span>${qty?`<span class="entry-qty">${qty}</span>`:''}<div class="entry-meta">${progLabel?`<span style="font-size:0.62rem;padding:1px 6px;border-radius:20px;background:rgba(79,142,247,0.12);color:var(--accent-blue);border:1px solid rgba(79,142,247,0.25)">${progLabel}</span>`:''}</div>${t.semnatura?`<span class="entry-sig">✍ ${t.semnatura}</span>`:''}</div>`;
-      }),
-      ...rs.map(r => {
-        const qty=[r.bancal&&r.nrBancale?`${r.nrBancale} bancali`:r.bancal?'bancali':'', r.cutii&&r.nrCutii?`${r.nrCutii} colli`:r.cutii?'colli':''].filter(Boolean).join(' · ');
-        const authLabel=r.autorizat==='autorizzato'?'✓ Aut.':r.autorizat==='non_autorizzato'?'✗ Non aut.':'';
-        return `<div class="entry-row"><span class="entry-type badge-resi">RESI</span><span class="entry-time" style="color:var(--accent-rose)">${r.ts?r.ts.split(' ')[1]:'–'}</span><span class="entry-firma">${r.descriere||'<span style="opacity:.4">Nessuna descrizione</span>'}</span>${qty?`<span class="entry-qty">${qty}</span>`:''}<div class="entry-meta">${authLabel?`<span style="font-size:0.62rem;padding:1px 6px;border-radius:20px;background:rgba(248,113,113,0.10);color:var(--accent-rose);border:1px solid rgba(248,113,113,0.22)">${authLabel}</span>`:''}</div>${r.semnatura?`<span class="entry-sig">✍ ${r.semnatura}</span>`:''}</div>`;
-      })
-    ].join('');
 
-    return `<div class="day-section">
-      <div class="day-header" id="dh-${idx}" onclick="toggleDay(${idx})">
+    let rowStyle = 'margin-bottom:10px;';
+    let headStyle = '';
+    if (isToday) headStyle = 'border-color:rgba(56,232,200,0.4);background:rgba(56,232,200,0.06);color:var(--accent-cyan);';
+    else if (isBusiest) headStyle = 'border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.05);';
+
+    return `
+    <div class="day-section" style="${rowStyle}">
+      <div class="day-header" id="dh-${idx}" onclick="toggleDay(${idx})" style="${headStyle}">
         <div class="day-header-left">
           <span class="day-chevron">▼</span>
           <span class="day-date-label">${dateLabel}</span>
-          ${isToday?`<span class="day-badge" style="background:rgba(56,232,200,0.12);color:var(--accent-cyan);border:1px solid rgba(56,232,200,0.3)">Oggi</span>`:''}
-          ${isBusiest?`<span class="day-badge badge-hot">🔥 Picco</span>`:''}
+          ${isToday ? `<span style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;background:rgba(56,232,200,0.12);padding:1px 7px;border-radius:20px;font-weight:700;">OGGI</span>` : ''}
+          ${isBusiest ? `<span class="day-badge badge-hot" title="Giorno con più attività nel mese">🔥 Picco</span>` : ''}
         </div>
         <div class="day-badges">
-          ${ts.length?`<span class="day-badge badge-truck">${ts.length} cam</span>`:''}
-          ${rs.length?`<span class="day-badge badge-resi">${rs.length} resi</span>`:''}
+          ${ts.length ? `<span class="day-badge badge-truck">${ts.length} cam</span>` : ''}
+          ${rs.length ? `<span class="day-badge badge-resi">${rs.length} resi</span>` : ''}
         </div>
       </div>
-      <div class="day-entries" id="de-${idx}">${rows}</div>
+      <div class="day-entries" id="de-${idx}">
+        ${ts.map((t,ti)=>`
+          <div class="entry-row">
+            <span class="entry-type" style="background:rgba(79,142,247,0.12);color:var(--accent-blue);">CAMION #${ti+1}</span>
+            <span class="entry-time">${t.arrivalTime || (t.ts?t.ts.split(' ')[1]:'–')}</span>
+            <span class="entry-firma">${t.firma || 'Fornitore sconosciuto'}</span>
+            ${t.semnatura ? `<span class="entry-sig">✍️ ${t.semnatura}</span>` : ''}
+            <div class="entry-meta">
+              ${t.bancal&&t.nrBancale?`<span class="compact-pill">${t.nrBancale} bancali</span>`:t.bancal?`<span class="compact-pill">bancali</span>`:''}
+              ${t.cutii&&t.nrCutii?`<span class="compact-pill">${t.nrCutii} colli</span>`:t.cutii?`<span class="compact-pill">colli</span>`:''}
+              ${t.programat==='programmato'?`<span class="compact-meta-pill meta-prog">✓ Prog.</span>`:t.programat==='non_programmato'?`<span class="compact-meta-pill meta-nonprog">✗ Non prog.</span>`:``}
+            </div>
+            ${t.comentariu ? `<div class="entry-note">“ ${t.comentariu} ”</div>` : ''}
+          </div>
+        `).join('')}
+        ${rs.map((r,ri)=>`
+          <div class="entry-row">
+            <span class="entry-type" style="background:rgba(248,113,113,0.12);color:var(--accent-rose);">RESO #${ri+1}</span>
+            <span class="entry-time">${r.ts?r.ts.split(' ')[1]:'–'}</span>
+            <span class="entry-firma">${r.descriere || 'Nessuna descrizione'}</span>
+            ${r.semnatura ? `<span class="entry-sig">✍️ ${r.semnatura}</span>` : ''}
+            <div class="entry-meta">
+              ${r.bancal&&r.nrBancale?`<span class="compact-pill">${r.nrBancale} bancali</span>`:r.bancal?`<span class="compact-pill">bancali</span>`:''}
+              ${r.cutii&&r.nrCutii?`<span class="compact-pill">${r.nrCutii} colli</span>`:r.cutii?`<span class="compact-pill">colli</span>`:''}
+              ${r.autorizat==='autorizzato'?`<span class="compact-meta-pill meta-auth">✓ Aut.</span>`:r.autorizat==='non_autorizzato'?`<span class="compact-meta-pill meta-noauth">✗ Non aut.</span>`:''}
+            </div>
+            ${r.comentariu ? `<div class="entry-note">“ ${r.comentariu} ”</div>` : ''}
+          </div>
+        `).join('')}
+      </div>
     </div>`;
   }).join('');
 
   return `
-    <div style="margin-bottom:22px;">
-      <div class="chart-title" style="margin-bottom:8px">Panoramica globale</div>
-      ${globalHTML}
+    ${globalHTML}
+    <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin:24px 0 12px;">Visualizzazione Mensile</div>
+    <div class="month-tabs">${tabsHTML}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;" class="main-layout">
+      <div style="grid-column:1;">${heatHTML}</div>
+      <div style="grid-column:2;">${weekHTML}</div>
     </div>
-    
-    <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:20px;margin-bottom:20px;">
-      <div class="chart-title" style="margin-bottom:10px">Visualizzazione mensile</div>
-      <div class="month-tabs">${tabsHTML}</div>
-      ${monthSummaryHTML}
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;" class="stats-middle-row">
-      ${heatHTML}
-      ${weekHTML}
-    </div>
-
+    ${monthSummaryHTML}
     ${topHTML}
-
-    <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:20px;">
-      <div class="chart-title" style="margin-bottom:12px">Dettaglio giorni registro</div>
-      ${daysHTML}
-    </div>
+    <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin:24px 0 12px;">Dettaglio Giornaliero (${monthNames[mM-1]} ${mY})</div>
+    <div style="max-height:450px;overflow-y:auto;padding-right:4px;scrollbar-width:thin;">${daysHTML}</div>
   `;
 }
 </script>
