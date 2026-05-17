@@ -192,7 +192,6 @@
 .compact-pills { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; }
 .compact-pill { font-size: 0.66rem; padding: 2px 7px; border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
 .compact-sig { font-size: 0.70rem; color: var(--text-muted); flex-shrink: 0; }
-.compact-expand-hint { font-size: 0.61rem; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-left: auto; flex-shrink: 0; opacity: 0.6; }
 .compact-desc {
   margin-top: 6px; padding-top: 6px;
   border-top: 1px solid rgba(255,255,255,0.05);
@@ -694,7 +693,6 @@ function toast(msg, isError = false) {
 }
 
 function updateCounts() {
-  // Count only confirmed (non-draft) cards
   const tc = trucks.filter(t => !t.isDraft).length;
   const rc = resis.filter(r => !r.isDraft).length;
   document.getElementById('count-trucks').textContent = tc === 0 ? 'nessuna' : tc === 1 ? '1 registrazione' : `${tc} registrazioni`;
@@ -746,10 +744,6 @@ function showCardErrors(cardEl, errors) {
   if (errors.length === 0) { errDiv.classList.remove('visible'); return; }
   errDiv.innerHTML = '<ul>' + errors.map(e => `<li>${e}</li>`).join('') + '</ul>';
   errDiv.classList.add('visible');
-
-  // Highlight fields
-  const firma = cardEl.querySelector('input[type="text"]');
-  // reset all field errors
   cardEl.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
   cardEl.querySelectorAll('.group-error').forEach(el => el.classList.remove('group-error'));
 }
@@ -817,7 +811,7 @@ function expandCard(id, type) {
   }
 }
 
-// ─── CONFIRM EDIT: validate first, then save ─────────────────────────────────
+// ─── CONFIRM EDIT ─────────────────────────────────────────────────────────────
 async function confirmEdit(id, type) {
   if (type === 'truck') {
     const t = trucks.find(x => x.id === id);
@@ -876,13 +870,12 @@ async function confirmEdit(id, type) {
   updateCounts();
 }
 
-// ─── CANCEL EDIT: if draft → remove entirely, else just collapse ──────────────
+// ─── CANCEL EDIT ─────────────────────────────────────────────────────────────
 function cancelEdit(id, type) {
   if (type === 'truck') {
     const t = trucks.find(x => x.id === id);
     if (!t) return;
     if (t.isDraft) {
-      // Never saved → just remove from memory
       trucks = trucks.filter(x => x.id !== id);
       renderTrucks(); updateCounts();
       toast('🗑 Bozza annullata');
@@ -911,7 +904,6 @@ function addTruck() {
   truckCount++;
   const id = 'truck-' + Date.now() + '-' + truckCount;
   const dKey = activeDay || todayKey();
-  // isDraft: true → NOT saved to DB yet
   const entry = {
     id, ts: nowStamp(), firma:'', programat:'', bancal:false, nrBancale:'',
     cutii:false, nrCutii:'', comentariu:'', semnatura:'', arrivalTime:'',
@@ -919,7 +911,6 @@ function addTruck() {
   };
   trucks.push(entry);
   renderTrucks(); updateCounts();
-  // Scroll to new card
   setTimeout(() => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -930,7 +921,6 @@ async function removeTruck(id) {
   const t = trucks.find(x => x.id === id);
   if (!t) return;
   if (t.isDraft) {
-    // Draft: just remove from memory, no DB call needed
     trucks = trucks.filter(x => x.id !== id);
     renderTrucks(); updateCounts();
     toast('🗑️ Bozza eliminata');
@@ -956,7 +946,6 @@ function renderTrucks() {
     list.innerHTML = `<div class="empty-state"><span class="emoji">🚛</span>Nessun camion registrato.<br>Clicca "Aggiungi camion" per iniziare.</div>`;
     return;
   }
-  // For display numbering, count only confirmed ones among all, drafts show as pending
   let confirmedIdx = 0;
   trucks.forEach((t) => {
     if (!t.isDraft) confirmedIdx++;
@@ -981,12 +970,11 @@ function renderTrucks() {
           <span class="compact-badge compact-badge-blue">CAM #${displayNum}</span>
           <span class="compact-time">${t.arrivalTime || (t.ts ? t.ts.split(' ')[1] : '–') || '–'}</span>
           <span class="compact-firma">${t.firma || 'Azienda sconosciuta'}</span>
+          ${t.semnatura ? `<span class="compact-sig">✍ ${t.semnatura}</span>` : ''}
           <div class="compact-pills">
             ${qty ? `<span class="compact-pill">${qty}</span>` : ''}
-            ${progLabel ? `<span class="compact-meta-pill ${progClass}">${progLabel}</span>` : ''}
           </div>
-          ${t.semnatura ? `<span class="compact-sig">✍ ${t.semnatura}</span>` : ''}
-          <span class="compact-expand-hint">✎ modifica</span>
+          ${progLabel ? `<span class="compact-meta-pill ${progClass}">${progLabel}</span>` : ''}
         </div>
         ${t.comentariu ? `<div class="compact-desc">${t.comentariu}</div>` : ''}
       </div>
@@ -1058,7 +1046,6 @@ function renderTrucks() {
     `;
     list.appendChild(card);
 
-    // Wire up validation-errors div reference
     const verrEl = card.querySelector('.validation-errors');
     if (verrEl) verrEl.id = 'verr-' + t.id;
   });
@@ -1080,7 +1067,6 @@ function updateTruck(id, field, val) {
     if (el) el.classList.toggle('hidden', !val);
     if (!val) { t.nrCutii = ''; const inp = el && el.querySelector('input'); if(inp) inp.value = ''; }
   }
-  // Clear errors on change
   const cardEl = document.getElementById(id);
   if (cardEl) { const ev = cardEl.querySelector('.validation-errors'); if (ev) ev.classList.remove('visible'); }
 }
@@ -1157,12 +1143,11 @@ function renderResis() {
           <span class="compact-badge compact-badge-rose">RESI #${displayNum}</span>
           <span class="compact-time" style="color:var(--accent-rose)">${r.ts ? r.ts.split(' ')[1] : '–'}</span>
           <span class="compact-firma">${r.descriere || 'Senza descrizione'}</span>
+          ${r.semnatura ? `<span class="compact-sig">✍ ${r.semnatura}</span>` : ''}
           <div class="compact-pills">
             ${qty ? `<span class="compact-pill">${qty}</span>` : ''}
-            ${authLabel ? `<span class="compact-meta-pill ${authClass}">${authLabel}</span>` : ''}
           </div>
-          ${r.semnatura ? `<span class="compact-sig">✍ ${r.semnatura}</span>` : ''}
-          <span class="compact-expand-hint">✎ modifica</span>
+          ${authLabel ? `<span class="compact-meta-pill ${authClass}">${authLabel}</span>` : ''}
         </div>
         ${r.comentariu ? `<div class="compact-desc">${r.comentariu}</div>` : ''}
       </div>
@@ -1248,7 +1233,6 @@ function updateResi(id, field, val) {
     if (el) el.classList.toggle('hidden', !val);
     if (!val) { r.nrCutii = ''; const inp = el && el.querySelector('input'); if(inp) inp.value = ''; }
   }
-  // Clear errors on change
   const cardEl = document.getElementById(id);
   if (cardEl) { const ev = cardEl.querySelector('.validation-errors'); if (ev) ev.classList.remove('visible'); }
 }
