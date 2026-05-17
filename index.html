@@ -403,6 +403,7 @@ input[type="number"]:focus { border-color: rgba(56,232,200,0.45); background: rg
 .day-section { margin-bottom: 10px; }
 .day-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-radius: var(--radius-md) var(--radius-md) 0 0; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); cursor: pointer; user-select: none; transition: background 0.18s; }
 .day-header:hover { background: rgba(255,255,255,0.07); }
+.day-header.open .day-chevron { transform: rotate(180deg); }
 .day-header-left { display: flex; align-items: center; gap: 10px; }
 .day-date-label { font-weight: 700; font-size: 0.85rem; }
 .day-badges { display: flex; gap: 6px; }
@@ -411,7 +412,6 @@ input[type="number"]:focus { border-color: rgba(56,232,200,0.45); background: rg
 .badge-resi  { background: rgba(248,113,113,0.12); color: var(--accent-rose); border: 1px solid rgba(248,113,113,0.22); }
 .badge-hot   { background: rgba(251,191,36,0.12); color: var(--accent-amber); border: 1px solid rgba(251,191,36,0.25); }
 .day-chevron { font-size: 0.7rem; color: var(--text-muted); transition: transform 0.2s; }
-.day-header.open .day-chevron { transform: rotate(180deg); }
 .day-entries { border: 1px solid var(--glass-border); border-top: none; border-radius: 0 0 var(--radius-md) var(--radius-md); overflow: hidden; display: none; }
 .day-entries.open { display: block; }
 .entry-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.8rem; flex-wrap: wrap; }
@@ -899,11 +899,13 @@ function renderTrucks() {
           <span class="compact-badge compact-badge-blue">CAM #${String(i+1).padStart(2,'0')}</span>
           <span class="compact-time">${t.arrivalTime || (t.ts ? t.ts.split(' ')[1] : '–') || '–'}</span>
           <span class="compact-firma">${t.firma || 'Azienda sconosciuta'}</span>
-          <div class="compact-pills">${qty ? `<span class="compact-pill">${qty}</span>` : ''}</div>
+          <div class="compact-pills">
+            ${qty ? `<span class="compact-pill">${qty}</span>` : ''}
+            ${progLabel ? `<span class="compact-meta-pill ${progClass}">${progLabel}</span>` : ''}
+          </div>
           ${t.semnatura ? `<span class="compact-sig">✍ ${t.semnatura}</span>` : ''}
           <span class="compact-expand-hint">✎ modifica</span>
         </div>
-        ${progLabel ? `<div class="compact-meta"><span class="compact-meta-pill ${progClass}">${progLabel}</span></div>` : ''}
         ${t.comentariu ? `<div class="compact-desc">${t.comentariu}</div>` : ''}
       </div>
       <div class="card-header">
@@ -1056,11 +1058,13 @@ function renderResis() {
           <span class="compact-badge compact-badge-rose">RESI #${String(i+1).padStart(2,'0')}</span>
           <span class="compact-time" style="color:var(--accent-rose)">${r.ts ? r.ts.split(' ')[1] : '–'}</span>
           <span class="compact-firma">${r.descriere || 'Senza descrizione'}</span>
-          <div class="compact-pills">${qty ? `<span class="compact-pill">${qty}</span>` : ''}</div>
+          <div class="compact-pills">
+            ${qty ? `<span class="compact-pill">${qty}</span>` : ''}
+            ${authLabel ? `<span class="compact-meta-pill ${authClass}">${authLabel}</span>` : ''}
+          </div>
           ${r.semnatura ? `<span class="compact-sig">✍ ${r.semnatura}</span>` : ''}
           <span class="compact-expand-hint">✎ modifica</span>
         </div>
-        ${authLabel ? `<div class="compact-meta"><span class="compact-meta-pill ${authClass}">${authLabel}</span></div>` : ''}
         ${r.comentariu ? `<div class="compact-desc">${r.comentariu}</div>` : ''}
       </div>
       <div class="card-header">
@@ -1167,7 +1171,6 @@ async function openDayPicker() {
 function closeDayPicker() { document.getElementById('dayPickerModal').classList.remove('open'); }
 
 async function buildAndShowDayPicker() {
-  // Fetch all distinct date_keys from DB
   let allDates = {};
   try {
     const [tRows, rRows] = await Promise.all([
@@ -1306,9 +1309,44 @@ async function buildStats() {
   document.getElementById('calBody').innerHTML = buildCalendarHTML(hist, allKeys, monthKeys, tk);
 }
 
+function buildHeatmap(hist, year, month, daysInMonth, startWd, tk) {
+  let html = `<div class="month-heatmap"><div class="chart-title">Mappa attività</div><div class="heatmap-grid">`;
+  const shortDays = ['Do', 'Lu', 'Ma', 'Me', 'Gi', 'Ve', 'Sa'];
+  
+  for(let i=0; i<7; i++) {
+    html += `<div class="heatmap-day-label">${shortDays[i]}</div>`;
+  }
+  
+  for(let i=0; i<startWd; i++) {
+    html += `<div class="heatmap-cell empty-cell"></div>`;
+  }
+  
+  for(let day=1; day<=daysInMonth; day++) {
+    const k = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const count = (hist[k]?.trucks||[]).length + (hist[k]?.resis||[]).length;
+    const isToday = k === tk;
+    
+    let level = 'no-data';
+    if(count > 0 && count <= 2) level = 'level-1';
+    else if(count > 2 && count <= 5) level = 'level-2';
+    else if(count > 5 && count <= 8) level = 'level-3';
+    else if(count > 8) level = 'level-4';
+    
+    const clickAttr = count > 0 ? `onclick="closeCalendar(); switchToDay('${k}')"` : '';
+    const hasDataClass = count > 0 ? 'has-data' : '';
+    const todayClass = isToday ? 'is-today-cell' : '';
+    
+    html += `<div class="heatmap-cell ${level} ${hasDataClass} ${todayClass}" ${clickAttr} title="${formatKeyLabel(k)}: ${count} attività">
+      <span class="heatmap-date-num">${day}</span>
+    </div>`;
+  }
+  
+  html += `</div></div>`;
+  return html;
+}
+
 function buildCalendarHTML(hist, allKeys, monthKeys, tk) {
   const monthNames = ['gen','feb','mar','apr','mag','giu','lug','ago','set','ott','nov','dic'];
-  const monthNamesFull = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 
   let totalTrucks=0, totalResis=0, totalBancali=0, totalColli=0;
   const supplierCount = {};
@@ -1362,8 +1400,8 @@ function buildCalendarHTML(hist, allKeys, monthKeys, tk) {
     return `<div class="week-bar-wrap"><div class="week-bar-count">${total>0?total:''}</div><div class="bar-stack" style="height:${h}px"><div class="bar-resi" style="height:${rH}px"></div><div class="bar-truck" style="height:${trH}px"></div></div><div class="week-bar-day ${d.isToday?'today-bar-day':''}">${d.day}</div></div>`;
   }).join('')}</div><div style="display:flex;gap:12px;margin-top:8px;font-size:0.64rem;color:var(--text-muted)"><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:rgba(79,142,247,0.4);display:inline-block"></span>Camion</span><span style="display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:rgba(248,113,113,0.3);display:inline-block"></span>Resi</span></div></div>`;
 
-  const firstDay = new Date(mY, mM-1, 1);
   const daysInMonth = new Date(mY, mM, 0).getDate();
+  const firstDay = new Date(mY, mM-1, 1);
   const startWd = firstDay.getDay();
   const heatHTML = buildHeatmap(hist, mY, mM, daysInMonth, startWd, tk);
 
@@ -1411,27 +1449,21 @@ function buildCalendarHTML(hist, allKeys, monthKeys, tk) {
         return `<div class="entry-row"><span class="entry-type badge-resi">RESI</span><span class="entry-time" style="color:var(--accent-rose)">${timeStr}</span><span class="entry-firma">${r.descriere||'<span style="opacity:.4">Senza descrizione</span>'}</span>${qty?`<span class="entry-qty">${qty}</span>`:''} ${authLabel?`<div class="entry-meta"><span style="font-size:0.62rem;padding:1px 6px;border-radius:20px;background:rgba(74,222,128,0.08);color:${authColor};border:1px solid ${authColor}33">${authLabel}</span></div>`:''}${r.semnatura?`<span class="entry-sig">✍ ${r.semnatura}</span>`:''}${r.comentariu?`<div class="entry-note">💬 ${r.comentariu}</div>`:''}</div>`;
       })
     ].join('');
-    return `<div class="day-section"><div class="day-header ${isToday?'open':''}" id="dh-${idx}" onclick="toggleDay(${idx})"><div class="day-header-left"><span class="day-date-label" style="${isToday?'color:var(--accent-cyan)':''}">${dateLabel}</span><div class="day-badges">${ts.length?`<span class="day-badge badge-truck">🚛 ${ts.length}</span>`:''}${rs.length?`<span class="day-badge badge-resi">↩ ${rs.length}</span>`:''}${isBusiest?`<span class="day-badge badge-hot">🔥</span>`:''}</div></div><span class="day-chevron">▼</span></div><div class="day-entries ${isToday?'open':''}" id="de-${idx}">${rows||'<div class="entry-row" style="color:var(--text-muted);font-size:0.78rem">Nessuna registrazione</div>'}</div></div>`;
+    return `<div class="day-section"><div class="day-header ${isToday?'open':''}" id="dh-${idx}" onclick="toggleDay(${idx})"><div class="day-header-left"><span class="day-date-label" style="${isToday?'color:var(--accent-cyan)':''}">${dateLabel}</span><div class="day-badges">${ts.length?`<span class="day-badge badge-truck">🚛 ${ts.length}</span>`:''}${rs.length?`<span class="day-badge badge-resi">↩ ${rs.length}</span>`:''}${isBusiest?`<span class="day-badge badge-hot">🔥 Principal</span>`:''}</div></div><span class="day-chevron">▼</span></div><div class="day-entries ${isToday?'open':''}" id="de-${idx}">${rows||'<div class="no-history">Nessuna registrazione in questo giorno.</div>'}</div></div>`;
   }).join('');
 
-  return `<div class="chart-title" style="margin-bottom:8px">Statistiche globali</div>${globalHTML}${weekHTML}${topHTML}<div class="chart-title" style="margin-bottom:8px;margin-top:4px">Vista mensile</div><div class="month-tabs">${tabsHTML}</div>${heatHTML}${monthSummaryHTML}<div class="chart-title" style="margin-bottom:10px">Registrazioni — ${monthNamesFull[mM-1]} ${mY}</div>${mKeys.length===0?'<div class="no-history">Nessuna registrazione per questo mese.</div>':daysHTML}`;
-}
-
-function buildHeatmap(hist, mY, mM, daysInMonth, startWd, tk) {
-  const dayNamesShort = ['Do','Lu','Ma','Me','Gi','Ve','Sa'];
-  let html = `<div class="month-heatmap"><div class="heatmap-grid">${dayNamesShort.map(d=>`<div class="heatmap-day-label">${d}</div>`).join('')}`;
-  for(let i=0;i<startWd;i++) html+=`<div class="heatmap-cell empty-cell"></div>`;
-  for(let day=1;day<=daysInMonth;day++) {
-    const k=`${mY}-${String(mM).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-    const d=hist[k]||null;
-    const total=d?((d.trucks||[]).length+(d.resis||[]).length):0;
-    const isToday=k===tk;
-    let lvl='no-data';
-    if(total===1) lvl='level-1'; else if(total<=3) lvl='level-2'; else if(total<=6) lvl='level-3'; else if(total>6) lvl='level-4';
-    html+=`<div class="heatmap-cell ${lvl} ${total>0?'has-data':''} ${isToday?'is-today-cell':''}" title="${k}: ${total} registrazioni"><span class="heatmap-date-num">${day}</span></div>`;
-  }
-  html+=`</div><div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:0.62rem;color:var(--text-muted)"><span>Attività:</span><div style="width:10px;height:10px;border-radius:2px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08)"></div><span>0</span><div style="width:10px;height:10px;border-radius:2px;background:rgba(79,142,247,0.15)"></div><span>1</span><div style="width:10px;height:10px;border-radius:2px;background:rgba(79,142,247,0.30)"></div><span>2–3</span><div style="width:10px;height:10px;border-radius:2px;background:rgba(79,142,247,0.45)"></div><span>4–6</span><div style="width:10px;height:10px;border-radius:2px;background:rgba(56,232,200,0.45)"></div><span>7+</span></div></div>`;
-  return html;
+  return `
+    <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Statistiche Generali</div>
+    ${globalHTML}
+    ${weekHTML}
+    <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin:24px 0 12px;">Visualizzazione Mensile</div>
+    <div class="month-tabs">${tabsHTML}</div>
+    ${monthSummaryHTML}
+    ${heatHTML}
+    ${topHTML}
+    <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin:24px 0 12px;">Dettaglio Giornaliero</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">${daysHTML}</div>
+  `;
 }
 </script>
 </body>
