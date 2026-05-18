@@ -56,7 +56,7 @@
   }
 
   /* ═══════════════════════════════════════
-     LOGIN SCREEN
+     LOGIN SCREEN — FIX 1: no keypad, just text input
   ═══════════════════════════════════════ */
   #login-screen {
     position: fixed; inset: 0; z-index: 9999;
@@ -89,7 +89,7 @@
     border: 1px solid rgba(255,255,255,0.10);
     border-radius: 28px;
     padding: 52px 48px 44px;
-    width: 100%; max-width: 440px;
+    width: 100%; max-width: 400px;
     backdrop-filter: blur(30px);
     box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.07) inset;
     animation: loginCardIn 0.6s cubic-bezier(0.34,1.3,0.64,1);
@@ -123,77 +123,38 @@
     text-transform: uppercase; color: var(--text-muted);
     margin-bottom: 10px;
   }
-  .login-input-wrap {
-    position: relative; margin-bottom: 14px;
-  }
-  .login-input-dots {
-    position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    gap: 10px; pointer-events: none;
-    transition: opacity 0.2s;
-  }
-  .login-dot {
-    width: 12px; height: 12px; border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.15);
-    background: transparent;
-    transition: all 0.2s cubic-bezier(0.34,1.5,0.64,1);
-  }
-  .login-dot.filled {
-    background: var(--accent-cyan);
-    border-color: var(--accent-cyan);
-    box-shadow: 0 0 10px rgba(56,232,200,0.5);
-    transform: scale(1.2);
-  }
-  .login-dot.error {
-    background: var(--accent-rose);
-    border-color: var(--accent-rose);
-    box-shadow: 0 0 10px rgba(248,113,113,0.5);
-    animation: dotError 0.4s ease;
-  }
-  @keyframes dotError { 0%,100%{transform:scale(1)} 30%{transform:scale(0.8)} 60%{transform:scale(1.3)} }
-  #login-input-hidden {
-    position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;
-  }
-  .login-keypad-zone {
-    background: rgba(255,255,255,0.025);
-    border: 1px solid rgba(255,255,255,0.07);
+  /* Simple password input */
+  .login-input-wrap { position: relative; margin-bottom: 14px; }
+  .login-pw-input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.10);
     border-radius: var(--radius-md);
-    padding: 20px;
-    display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
-    cursor: text;
-    transition: border-color 0.2s;
-  }
-  .login-keypad-zone:focus-within {
-    border-color: rgba(56,232,200,0.35);
-    box-shadow: 0 0 0 3px rgba(56,232,200,0.07);
-  }
-  .login-keypad-zone.shake {
-    animation: loginShake 0.4s ease;
-    border-color: rgba(248,113,113,0.5) !important;
-  }
-  @keyframes loginShake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px)} 40%,80%{transform:translateX(8px)} }
-  .login-key {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: var(--radius-sm);
-    padding: 14px 10px;
-    text-align: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.1rem; font-weight: 500;
     color: var(--text-primary);
-    cursor: pointer;
-    transition: all 0.12s ease;
-    user-select: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.05rem;
+    letter-spacing: 0.15em;
+    padding: 14px 48px 14px 18px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   }
-  .login-key:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.15); }
-  .login-key:active { transform: scale(0.93); background: rgba(56,232,200,0.15); border-color: rgba(56,232,200,0.4); }
-  .login-key.key-clear { color: var(--accent-rose); border-color: rgba(248,113,113,0.15); background: rgba(248,113,113,0.05); }
-  .login-key.key-clear:hover { background: rgba(248,113,113,0.12); border-color: rgba(248,113,113,0.3); }
-  .login-key.key-wide { grid-column: span 2; }
-  .login-dot-row {
-    display: flex; align-items: center; justify-content: center; gap: 12px;
-    padding: 12px; margin-bottom: 4px;
+  .login-pw-input:focus {
+    border-color: rgba(56,232,200,0.5);
+    background: rgba(56,232,200,0.04);
+    box-shadow: 0 0 0 3px rgba(56,232,200,0.09);
   }
+  .login-pw-input.shake { animation: loginShake 0.4s ease; border-color: rgba(248,113,113,0.6) !important; }
+  @keyframes loginShake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-8px)} 40%,80%{transform:translateX(8px)} }
+  .login-pw-input.success {
+    border-color: rgba(56,232,200,0.7) !important;
+    box-shadow: 0 0 0 3px rgba(56,232,200,0.12) !important;
+  }
+  .login-pw-toggle {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; color: var(--text-muted);
+    padding: 4px; transition: color 0.2s; display: flex; align-items: center;
+  }
+  .login-pw-toggle:hover { color: var(--text-secondary); }
   .login-error-msg {
     text-align: center; font-size: 0.75rem; color: var(--accent-rose);
     min-height: 20px; margin-top: 8px;
@@ -202,7 +163,7 @@
   .login-error-msg.visible { opacity: 1; }
   .login-hint {
     text-align: center; font-size: 0.68rem; color: var(--text-muted);
-    margin-top: 20px; line-height: 1.6; padding-top: 16px;
+    margin-top: 24px; line-height: 1.6; padding-top: 16px;
     border-top: 1px solid rgba(255,255,255,0.05);
   }
   .login-hint strong { color: var(--text-secondary); }
@@ -212,17 +173,8 @@
   .lp { position: absolute; border-radius: 50%; animation: lpFloat linear infinite; opacity: 0; }
   @keyframes lpFloat { 0%{opacity:0;transform:translateY(0) scale(0)} 10%{opacity:1} 90%{opacity:0.5} 100%{opacity:0;transform:translateY(-120px) scale(1)} }
 
-  /* Access type badge */
-  .access-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 12px; border-radius: 20px; font-size: 0.70rem; font-weight: 700;
-    letter-spacing: 0.06em; text-transform: uppercase;
-    background: rgba(56,232,200,0.10); border: 1px solid rgba(56,232,200,0.3);
-    color: var(--accent-cyan); margin: 0 auto 20px; display: flex; justify-content: center;
-  }
-
   /* ═══════════════════════════════════════
-     MAIN APP (hidden until login)
+     MAIN APP
   ═══════════════════════════════════════ */
   #app { display: none; }
   #app.visible { display: block; animation: appIn 0.5s ease; }
@@ -237,9 +189,7 @@
   }
   .readonly-banner.visible { display: flex; }
 
-  /* ═══════════════════════════════════════
-     TODAY ARRIVAL ALERT
-  ═══════════════════════════════════════ */
+  /* TODAY ARRIVAL ALERT */
   .today-arrival-alert {
     display: none; align-items: center; gap: 12px;
     padding: 11px 18px; border-radius: var(--radius-md);
@@ -292,6 +242,9 @@
     animation: cardIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
   }
   .pian-item:hover { border-color: rgba(251,191,36,0.25); }
+  /* past items slightly dimmed */
+  .pian-item.past-item { opacity: 0.55; }
+  .pian-item.past-item:hover { opacity: 0.80; border-color: rgba(255,255,255,0.15); }
   .pian-item-inner { display: flex; flex-direction: column; gap: 5px; }
   .pian-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); }
   .pian-value { font-size: 0.85rem; color: var(--text-primary); font-weight: 600; }
@@ -329,7 +282,9 @@
   .pian-separator { font-size: 0.60rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px; }
   .pian-ordma { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-violet); }
 
-  /* FAB Pianificazione */
+  /* ═══════════════════════════════════════
+     FAB — FIX 3: centred icon, nicer style
+  ═══════════════════════════════════════ */
   .fab-pian {
     position: fixed; bottom: 96px; right: 28px;
     width: 52px; height: 52px; border-radius: 50%;
@@ -338,6 +293,11 @@
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 8px 28px rgba(251,191,36,0.2);
     transition: all 0.22s ease; z-index: 100; backdrop-filter: blur(12px);
+    padding: 0; /* ensure no padding throws off centering */
+  }
+  .fab-pian svg {
+    display: block; /* remove inline gaps */
+    flex-shrink: 0;
   }
   .fab-pian:hover { background: rgba(251,191,36,0.28); border-color: rgba(251,191,36,0.7); box-shadow: 0 12px 36px rgba(251,191,36,0.3); transform: translateY(-2px) scale(1.05); }
   .fab-pian .fab-badge {
@@ -350,6 +310,84 @@
     opacity: 0; transition: opacity 0.2s;
   }
   .fab-pian .fab-badge.visible { opacity: 1; }
+
+  /* ═══════════════════════════════════════
+     USER BADGE — FIX 4: redesigned elegant badge
+  ═══════════════════════════════════════ */
+  .user-badge {
+    display: flex; align-items: center; gap: 0;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    overflow: hidden;
+    position: relative;
+  }
+  .user-badge-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; font-weight: 700; flex-shrink: 0;
+    position: relative; z-index: 1;
+  }
+  .user-badge-info {
+    display: flex; flex-direction: column; gap: 1px;
+    padding: 6px 14px 6px 10px;
+  }
+  .user-badge-name {
+    font-size: 0.74rem; font-weight: 700; line-height: 1; letter-spacing: 0.01em;
+  }
+  .user-badge-role {
+    font-size: 0.60rem; font-weight: 500; letter-spacing: 0.07em;
+    text-transform: uppercase; opacity: 0.65; line-height: 1;
+  }
+  .user-badge-logout {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-right: 6px; flex-shrink: 0;
+    background: rgba(255,255,255,0.08);
+    transition: all 0.18s;
+  }
+  .user-badge:hover .user-badge-logout {
+    background: rgba(248,113,113,0.25);
+    color: var(--accent-rose);
+  }
+  /* Magazziniere style */
+  .user-badge.magaz {
+    background: rgba(56,232,200,0.07);
+    border: 1px solid rgba(56,232,200,0.22);
+  }
+  .user-badge.magaz .user-badge-avatar {
+    background: linear-gradient(135deg, rgba(56,232,200,0.3) 0%, rgba(79,142,247,0.3) 100%);
+    color: var(--accent-cyan);
+    border: 1.5px solid rgba(56,232,200,0.35);
+    margin: 4px 0 4px 4px;
+  }
+  .user-badge.magaz .user-badge-name { color: var(--accent-cyan); }
+  .user-badge.magaz .user-badge-role { color: var(--accent-cyan); }
+  .user-badge.magaz .user-badge-logout { color: rgba(56,232,200,0.5); }
+  .user-badge.magaz:hover {
+    background: rgba(56,232,200,0.12);
+    border-color: rgba(56,232,200,0.4);
+    box-shadow: 0 4px 20px rgba(56,232,200,0.12);
+  }
+  /* Acquisti style */
+  .user-badge.aquisti {
+    background: rgba(251,191,36,0.07);
+    border: 1px solid rgba(251,191,36,0.22);
+  }
+  .user-badge.aquisti .user-badge-avatar {
+    background: linear-gradient(135deg, rgba(251,191,36,0.3) 0%, rgba(251,146,60,0.3) 100%);
+    color: var(--accent-amber);
+    border: 1.5px solid rgba(251,191,36,0.35);
+    margin: 4px 0 4px 4px;
+  }
+  .user-badge.aquisti .user-badge-name { color: var(--accent-amber); }
+  .user-badge.aquisti .user-badge-role { color: var(--accent-amber); }
+  .user-badge.aquisti .user-badge-logout { color: rgba(251,191,36,0.5); }
+  .user-badge.aquisti:hover {
+    background: rgba(251,191,36,0.12);
+    border-color: rgba(251,191,36,0.4);
+    box-shadow: 0 4px 20px rgba(251,191,36,0.12);
+  }
 
   /* ═══════════════════════════════════════
      EXISTING STYLES (unchanged)
@@ -379,15 +417,6 @@
   .header-left h1{font-size:clamp(1.4rem,3vw,2rem);font-weight:700;letter-spacing:-0.03em;background:linear-gradient(135deg,#e8edf8 0%,var(--accent-cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;}
   .header-left p{color:var(--text-secondary);font-size:0.82rem;margin-top:5px;font-weight:300;}
   .header-right { display: flex; align-items: center; gap: 12px; }
-  .user-badge {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 14px; border-radius: var(--radius-sm);
-    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
-    cursor: pointer; transition: all 0.18s;
-  }
-  .user-badge.magaz { background: rgba(56,232,200,0.08); border: 1px solid rgba(56,232,200,0.25); color: var(--accent-cyan); }
-  .user-badge.aquisti { background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25); color: var(--accent-amber); }
-  .user-badge:hover { opacity: 0.8; }
   .clock-card{background:var(--glass-bg);border:1px solid var(--glass-border);border-radius:var(--radius-md);padding:12px 20px;text-align:right;backdrop-filter:blur(16px);box-shadow:var(--shadow-glass);}
   .clock-time{font-family:'JetBrains Mono',monospace;font-size:clamp(1.4rem,2.5vw,2rem);font-weight:500;color:var(--accent-cyan);letter-spacing:0.04em;text-shadow:0 0 20px rgba(56,232,200,0.3);}
   .clock-date{font-size:0.75rem;color:var(--text-secondary);margin-top:3px;letter-spacing:0.06em;text-transform:uppercase;}
@@ -684,7 +713,7 @@
 <body>
 
 <!-- ═══════════════════════════════════════════════════════════
-     LOGIN SCREEN
+     LOGIN SCREEN — FIX 1: simple password input, no keypad
 ═══════════════════════════════════════════════════════════ -->
 <div id="login-screen">
   <div class="login-card">
@@ -701,26 +730,19 @@
     </div>
 
     <div class="login-input-wrap">
-      <input id="login-input-hidden" type="password" autocomplete="off" maxlength="20"
-        oninput="onLoginInput(this.value)" onkeydown="onLoginKeydown(event)">
-      <div class="login-keypad-zone" id="loginKeypadZone" onclick="document.getElementById('login-input-hidden').focus()">
-        <div class="login-dot-row" style="grid-column:span 3" id="loginDotRow">
-          <!-- dots rendered by JS -->
-        </div>
-        <!-- Keypad -->
-        <div class="login-key" onclick="loginKeyPress('1')">1</div>
-        <div class="login-key" onclick="loginKeyPress('2')">2</div>
-        <div class="login-key" onclick="loginKeyPress('3')">3</div>
-        <div class="login-key" onclick="loginKeyPress('4')">4</div>
-        <div class="login-key" onclick="loginKeyPress('5')">5</div>
-        <div class="login-key" onclick="loginKeyPress('6')">6</div>
-        <div class="login-key" onclick="loginKeyPress('7')">7</div>
-        <div class="login-key" onclick="loginKeyPress('8')">8</div>
-        <div class="login-key" onclick="loginKeyPress('9')">9</div>
-        <div class="login-key key-clear" onclick="loginKeyPress('clear')">⌫</div>
-        <div class="login-key" onclick="loginKeyPress('0')">0</div>
-        <div class="login-key key-clear" onclick="loginKeyPress('clearAll')">✕</div>
-      </div>
+      <input
+        id="login-pw"
+        class="login-pw-input"
+        type="password"
+        autocomplete="off"
+        placeholder="Inserisci il codice…"
+        oninput="onLoginInput(this.value)"
+        onkeydown="onLoginKeydown(event)"
+        autofocus
+      >
+      <button class="login-pw-toggle" type="button" onclick="toggleLoginVisibility()" title="Mostra/Nascondi">
+        <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
     </div>
     <div class="login-error-msg" id="loginErrorMsg">Codice non valido. Riprova.</div>
 
@@ -742,8 +764,16 @@
       <p id="header-desc">Registrazione degli ingressi giornalieri &amp; resi</p>
     </div>
     <div class="header-right">
+      <!-- FIX 4: redesigned user badge -->
       <div class="user-badge" id="userBadge" onclick="doLogout()" title="Clicca per uscire">
-        <!-- set by JS -->
+        <div class="user-badge-avatar" id="userBadgeAvatar"></div>
+        <div class="user-badge-info">
+          <div class="user-badge-name" id="userBadgeName"></div>
+          <div class="user-badge-role" id="userBadgeRole"></div>
+        </div>
+        <div class="user-badge-logout">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </div>
       </div>
       <div class="clock-card">
         <div class="clock-time" id="clock">--:--:--</div>
@@ -820,9 +850,16 @@
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
 </button>
 
-<!-- FAB: Pianificazione (🆕) -->
+<!-- FAB: Pianificazione — FIX 3: centred icon -->
 <button class="fab-pian" id="fabPian" onclick="openPianificazione()" title="Pianificazione arrivi camion">
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block">
+    <rect x="3" y="4" width="18" height="18" rx="2"/>
+    <line x1="16" y1="2" x2="16" y2="6"/>
+    <line x1="8" y1="2" x2="8" y2="6"/>
+    <line x1="3" y1="10" x2="21" y2="10"/>
+    <line x1="8" y1="15" x2="16" y2="15"/>
+    <line x1="8" y1="19" x2="12" y2="19"/>
+  </svg>
   <span class="fab-badge" id="fabPianBadge">0</span>
 </button>
 
@@ -836,16 +873,14 @@
   <div class="modal-pian">
     <div class="pian-header">
       <div class="pian-title">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Pianificazione Arrivi Camion
       </div>
       <button class="modal-close" onclick="closePianificazione()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
-    <div class="pian-body" id="pianBody">
-      <!-- Rendered by JS -->
-    </div>
+    <div class="pian-body" id="pianBody"></div>
   </div>
 </div>
 
@@ -913,20 +948,16 @@ const PASSWORDS={
   'aquisti':  { role:'acquisti',    label:'Ufficio Acquisti', readOnly:true  }
 };
 let currentUser=null;
-let loginBuffer='';
 
-function renderLoginDots(count, errorMode=false){
-  const row=document.getElementById('loginDotRow');
-  const maxDots=10;
-  // Show dots for current buffer length (or 8 empty for unknown length)
-  const displayLen=Math.max(8, count);
-  let html='';
-  for(let i=0;i<displayLen;i++){
-    let cls='login-dot';
-    if(i<count)cls+= errorMode?' error':' filled';
-    html+=`<span class="${cls}"></span>`;
-  }
-  row.innerHTML=`<div style="display:flex;gap:10px;align-items:center;justify-content:center;padding:8px 0">${html}</div>`;
+// FIX 1: toggle visibility
+let loginVisible=false;
+function toggleLoginVisibility(){
+  loginVisible=!loginVisible;
+  const inp=document.getElementById('login-pw');
+  inp.type=loginVisible?'text':'password';
+  document.getElementById('eye-icon').innerHTML=loginVisible
+    ? '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
+    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
 }
 
 function initLoginParticles(){
@@ -941,54 +972,30 @@ function initLoginParticles(){
   }
 }
 
-function loginKeyPress(k){
-  const inp=document.getElementById('login-input-hidden');
-  if(k==='clear'){
-    loginBuffer=loginBuffer.slice(0,-1);
-  } else if(k==='clearAll'){
-    loginBuffer='';
-  } else {
-    loginBuffer+=k;
-  }
-  inp.value=loginBuffer;
-  renderLoginDots(loginBuffer.length);
-  document.getElementById('loginErrorMsg').classList.remove('visible');
-  checkAutoLogin();
-}
-
 function onLoginInput(val){
-  loginBuffer=val;
-  renderLoginDots(val.length);
   document.getElementById('loginErrorMsg').classList.remove('visible');
-  checkAutoLogin();
-}
-
-function onLoginKeydown(e){
-  if(e.key==='Enter'){
-    loginBuffer=document.getElementById('login-input-hidden').value;
-    attemptLogin(loginBuffer);
-  }
-}
-
-function checkAutoLogin(){
-  // Auto-enter: check if any password matches current buffer
+  document.getElementById('login-pw').classList.remove('shake');
+  // Auto-login check
   for(const [pw,info] of Object.entries(PASSWORDS)){
-    if(loginBuffer===pw){
-      setTimeout(()=>attemptLogin(loginBuffer), 80); // slight delay for UX
+    if(val===pw){
+      setTimeout(()=>attemptLogin(val), 80);
       return;
     }
   }
 }
 
+function onLoginKeydown(e){
+  if(e.key==='Enter'){
+    attemptLogin(document.getElementById('login-pw').value);
+  }
+}
+
 function attemptLogin(pw){
   const match=PASSWORDS[pw];
+  const inp=document.getElementById('login-pw');
   if(match){
     currentUser=match;
-    // Success flash
-    renderLoginDots(pw.length, false);
-    const zone=document.getElementById('loginKeypadZone');
-    zone.style.borderColor='rgba(56,232,200,0.7)';
-    zone.style.boxShadow='0 0 0 3px rgba(56,232,200,0.12)';
+    inp.classList.add('success');
     setTimeout(()=>{
       document.getElementById('login-screen').style.animation='loginBgOut 0.4s ease forwards';
       setTimeout(()=>{
@@ -999,48 +1006,52 @@ function attemptLogin(pw){
       }, 380);
     }, 300);
   } else {
-    // Error
-    renderLoginDots(pw.length, true);
-    const zone=document.getElementById('loginKeypadZone');
-    zone.classList.add('shake');
+    inp.classList.add('shake');
     document.getElementById('loginErrorMsg').classList.add('visible');
-    setTimeout(()=>zone.classList.remove('shake'),500);
-    loginBuffer='';
-    document.getElementById('login-input-hidden').value='';
-    setTimeout(()=>renderLoginDots(0),600);
+    setTimeout(()=>{inp.classList.remove('shake');inp.value='';},500);
   }
 }
 
+// FIX 4: apply role with new badge structure
 function applyUserRole(){
   const badge=document.getElementById('userBadge');
+  const avatar=document.getElementById('userBadgeAvatar');
+  const name=document.getElementById('userBadgeName');
+  const role=document.getElementById('userBadgeRole');
+
   if(currentUser.readOnly){
     badge.className='user-badge aquisti';
-    badge.innerHTML=`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>${currentUser.label} · Solo lettura`;
+    avatar.textContent='🛒';
+    name.textContent='Ufficio Acquisti';
+    role.textContent='Sola lettura';
     document.getElementById('readonlyBanner').classList.add('visible');
-    // Disable add buttons
     document.getElementById('btnAddTruck').disabled=true;
     document.getElementById('btnAddResi').disabled=true;
     document.getElementById('header-desc').textContent='Visualizzazione registrazioni & pianificazione arrivi';
   } else {
     badge.className='user-badge magaz';
-    badge.innerHTML=`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>${currentUser.label}`;
+    avatar.textContent='📦';
+    name.textContent='Magazziniere';
+    role.textContent='Accesso completo';
   }
 }
 
 function doLogout(){
   if(!confirm('Uscire dall\'applicazione?'))return;
-  currentUser=null; loginBuffer='';
+  currentUser=null;
   document.getElementById('app').classList.remove('visible');
-  document.getElementById('login-screen').style.display='flex';
-  document.getElementById('login-screen').style.animation='loginBgIn 0.4s ease';
-  document.getElementById('login-input-hidden').value='';
-  renderLoginDots(0);
-  document.getElementById('loginKeypadZone').style.borderColor='';
-  document.getElementById('loginKeypadZone').style.boxShadow='';
+  const ls=document.getElementById('login-screen');
+  ls.style.display='flex';
+  ls.style.animation='loginBgIn 0.4s ease';
+  const inp=document.getElementById('login-pw');
+  inp.value='';
+  inp.classList.remove('success','shake');
+  inp.type='password';
+  loginVisible=false;
   document.getElementById('loginErrorMsg').classList.remove('visible');
+  setTimeout(()=>inp.focus(),100);
 }
 
-// CSS for login fade out
 const styleEl=document.createElement('style');
 styleEl.textContent=`@keyframes loginBgOut{from{opacity:1}to{opacity:0}}`;
 document.head.appendChild(styleEl);
@@ -1050,8 +1061,6 @@ function dbToTruck(row){return{id:row.id,ts:row.ts||'',firma:row.firma||'',progr
 function truckToDb(t,dateKey){return{id:t.id,date_key:dateKey||t.dateKey||todayKey(),ts:t.ts||'',firma:t.firma||'',programat:t.programat||'',bancal:!!t.bancal,nr_bancale:t.nrBancale||'',cutii:!!t.cutii,nr_cutii:t.nrCutii||'',comentariu:t.comentariu||'',semnatura:t.semnatura||'',arrival_time:t.arrivalTime||'',collapsed:!!t.collapsed};}
 function dbToResi(row){return{id:row.id,ts:row.ts||'',descriere:row.descriere||'',autorizat:row.autorizat||'',bancal:!!row.bancal,nrBancale:row.nr_bancale||'',cutii:!!row.cutii,nrCutii:row.nr_cutii||'',comentariu:row.comentariu||'',semnatura:row.semnatura||'',collapsed:!!row.collapsed,editing:false,isDraft:false,dateKey:row.date_key};}
 function resiToDb(r,dateKey){return{id:r.id,date_key:dateKey||r.dateKey||todayKey(),ts:r.ts||'',descriere:r.descriere||'',autorizat:r.autorizat||'',bancal:!!r.bancal,nr_bancale:r.nrBancale||'',cutii:!!r.cutii,nr_cutii:r.nrCutii||'',comentariu:r.comentariu||'',semnatura:r.semnatura||'',collapsed:!!r.collapsed};}
-
-// Pianificazione uses trucks table with programat='pianificato'
 function dbToPian(row){return{id:row.id,dateKey:row.date_key,firma:row.firma||'',ordma:row.comentariu||'',ora:row.arrival_time||''};}
 function pianToDb(p){return{id:p.id,date_key:p.dateKey,ts:nowStamp(),firma:p.firma||'',programat:'pianificato',bancal:false,nr_bancale:'',cutii:false,nr_cutii:'',comentariu:p.ordma||'',semnatura:'ufficio_acquisti',arrival_time:p.ora||'',collapsed:true};}
 
@@ -1101,7 +1110,6 @@ function updateFabPianBadge(){
 async function loadDay(key){
   setSyncStatus('syncing','Caricamento…');
   try{
-    // Load normal trucks (exclude pianificato)
     const [tRows,rRows]=await Promise.all([
       sbGet('trucks',`date_key=eq.${key}&programat=neq.pianificato&order=created_at.asc`),
       sbGet('resi',`date_key=eq.${key}&order=created_at.asc`)
@@ -1165,7 +1173,6 @@ function cancelEdit(id,type){
   else{const r=resis.find(x=>x.id===id);if(!r)return;if(r.isDraft){resis=resis.filter(x=>x.id!==id);renderResis();updateCounts();toast('🗑 Bozza annullata');}else{r.editing=false;r.collapsed=isResiComplete(r);renderResis();}}
 }
 
-// ─── SCROLL TO CARD CENTER ────────────────────────────────────────────────────
 function scrollToCardCenter(id){
   setTimeout(()=>{
     const el=document.getElementById(id);
@@ -1173,8 +1180,7 @@ function scrollToCardCenter(id){
     const rect=el.getBoundingClientRect();
     const elCenter=rect.top+rect.height/2;
     const viewportCenter=window.innerHeight/2;
-    const scrollDelta=elCenter-viewportCenter;
-    window.scrollBy({top:scrollDelta,behavior:'smooth'});
+    window.scrollBy({top:elCenter-viewportCenter,behavior:'smooth'});
   },120);
 }
 
@@ -1184,8 +1190,7 @@ function addTruck(){
   truckCount++;
   const id='truck-'+Date.now()+'-'+truckCount,dKey=activeDay||todayKey();
   trucks.push({id,ts:nowStamp(),firma:'',programat:'',bancal:false,nrBancale:'',cutii:false,nrCutii:'',comentariu:'',semnatura:'',arrivalTime:'',collapsed:false,editing:true,isDraft:true,dateKey:dKey});
-  renderTrucks();updateCounts();
-  scrollToCardCenter(id);
+  renderTrucks();updateCounts();scrollToCardCenter(id);
 }
 async function removeTruck(id){
   if(currentUser&&currentUser.readOnly){toast('⛔ Accesso in sola lettura',true);return;}
@@ -1259,8 +1264,7 @@ function addResi(){
   resiCount++;
   const id='resi-'+Date.now()+'-'+resiCount,dKey=activeDay||todayKey();
   resis.push({id,ts:nowStamp(),descriere:'',autorizat:'',bancal:false,nrBancale:'',cutii:false,nrCutii:'',comentariu:'',semnatura:'',collapsed:false,editing:true,isDraft:true,dateKey:dKey});
-  renderResis();updateCounts();
-  scrollToCardCenter(id);
+  renderResis();updateCounts();scrollToCardCenter(id);
 }
 async function removeResi(id){
   if(currentUser&&currentUser.readOnly){toast('⛔ Accesso in sola lettura',true);return;}
@@ -1324,7 +1328,7 @@ function updateResi(id,field,val){
   const cardEl=document.getElementById(id);if(cardEl){const ev=cardEl.querySelector('.validation-errors');if(ev)ev.classList.remove('visible');}
 }
 
-// ─── PIANIFICAZIONE MODAL ────────────────────────────────────────────────────
+// ─── PIANIFICAZIONE MODAL — FIX 2: show past entries in history ──────────────
 let pianNewFirma='',pianNewOrdma='',pianNewOra='',pianNewData='';
 
 function openPianificazione(){
@@ -1339,11 +1343,15 @@ function renderPianModal(){
   const tk=todayKey();
   const todayPians=pianificazioni.filter(p=>p.dateKey===tk);
   const futurePians=pianificazioni.filter(p=>p.dateKey>tk).sort((a,b)=>a.dateKey.localeCompare(b.dateKey)||a.ora.localeCompare(b.ora));
+  // FIX 2: past items now shown fully (not hidden behind details)
   const pastPians=pianificazioni.filter(p=>p.dateKey<tk).sort((a,b)=>b.dateKey.localeCompare(a.dateKey));
 
   const formatDate=k=>{const d=new Date(k+'T12:00:00');return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;};
-  const renderPianItem=(p,idx)=>`
-    <div class="pian-item" style="animation-delay:${idx*0.04}s">
+  const dayNames=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
+  const formatDateFull=k=>{const d=new Date(k+'T12:00:00');return `${dayNames[d.getDay()]} ${formatDate(k)}`;};
+
+  const renderPianItem=(p,idx,isPast=false)=>`
+    <div class="pian-item${isPast?' past-item':''}" style="animation-delay:${idx*0.04}s">
       <div class="pian-item-inner">
         <div class="pian-label">Azienda</div>
         <div class="pian-value">${p.firma||'—'}</div>
@@ -1351,7 +1359,7 @@ function renderPianModal(){
       </div>
       <div class="pian-item-inner">
         <div class="pian-label">Data</div>
-        <div class="pian-value">${formatDate(p.dateKey)}</div>
+        <div class="pian-value">${formatDateFull(p.dateKey)}</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <div class="pian-time-badge ${!p.ora?'unknown':''}">${p.ora||'Ora N/D'}</div>
@@ -1362,9 +1370,14 @@ function renderPianModal(){
   const listToday=todayPians.length>0
     ? todayPians.map((p,i)=>renderPianItem(p,i)).join('')
     : `<div class="pian-empty">🕐 Nessun camion pianificato per oggi</div>`;
+
   const listFuture=futurePians.length>0
     ? futurePians.map((p,i)=>renderPianItem(p,i)).join('')
     : `<div class="pian-empty" style="padding:12px">Nessun arrivo futuro pianificato</div>`;
+
+  const listPast=pastPians.length>0
+    ? pastPians.map((p,i)=>renderPianItem(p,i,true)).join('')
+    : `<div class="pian-empty" style="padding:12px;opacity:0.5">Nessun arrivo passato in archivio</div>`;
 
   body.innerHTML=`
     <div class="pian-separator">🔔 Oggi — ${formatDate(tk)}</div>
@@ -1405,11 +1418,8 @@ function renderPianModal(){
       </div>
     </div>
 
-    ${pastPians.length>0?`
-    <details style="margin-top:4px">
-      <summary style="font-size:0.64rem;color:var(--text-muted);cursor:pointer;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;padding:8px 0;border-top:1px solid rgba(255,255,255,0.05)">🕰 Passati (${pastPians.length})</summary>
-      <div class="pian-list" style="margin-top:8px;opacity:0.5">${pastPians.slice(0,5).map((p,i)=>renderPianItem(p,i)).join('')}</div>
-    </details>`:''}
+    <div class="pian-separator" style="margin-top:6px">🕰 Storico arrivi passati (${pastPians.length})</div>
+    <div class="pian-list">${listPast}</div>
   `;
 }
 
@@ -1454,8 +1464,8 @@ async function init(){
 // ─── LOGIN INIT ───────────────────────────────────────────────────────────────
 (function(){
   initLoginParticles();
-  renderLoginDots(0);
-  document.getElementById('login-input-hidden').focus();
+  const inp=document.getElementById('login-pw');
+  if(inp)inp.focus();
 })();
 
 // ─── DAY PICKER ──────────────────────────────────────────────────────────────
