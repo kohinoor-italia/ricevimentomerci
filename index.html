@@ -55,9 +55,7 @@
     pointer-events: none; z-index: 0;
   }
 
-  /* ═══════════════════════════════════════
-     LOGIN SCREEN — FIX 1: no keypad, just text input
-  ═══════════════════════════════════════ */
+  /* LOGIN */
   #login-screen {
     position: fixed; inset: 0; z-index: 9999;
     display: flex; align-items: center; justify-content: center;
@@ -95,14 +93,9 @@
     animation: loginCardIn 0.6s cubic-bezier(0.34,1.3,0.64,1);
   }
   @keyframes loginCardIn { from{opacity:0;transform:translateY(28px) scale(0.96)} to{opacity:1;transform:translateY(0) scale(1)} }
-  .login-logo {
-    text-align: center;
-    margin-bottom: 10px;
-  }
+  .login-logo { text-align: center; margin-bottom: 10px; }
   .login-logo-icon {
-    font-size: 3rem;
-    display: block;
-    margin-bottom: 4px;
+    font-size: 3rem; display: block; margin-bottom: 4px;
     filter: drop-shadow(0 0 18px rgba(56,232,200,0.4));
     animation: logoPulse 3s ease-in-out infinite;
   }
@@ -123,7 +116,6 @@
     text-transform: uppercase; color: var(--text-muted);
     margin-bottom: 10px;
   }
-  /* Simple password input */
   .login-input-wrap { position: relative; margin-bottom: 14px; }
   .login-pw-input {
     width: 100%;
@@ -167,15 +159,11 @@
     border-top: 1px solid rgba(255,255,255,0.05);
   }
   .login-hint strong { color: var(--text-secondary); }
-
-  /* Particles */
   .login-particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: 28px; }
   .lp { position: absolute; border-radius: 50%; animation: lpFloat linear infinite; opacity: 0; }
   @keyframes lpFloat { 0%{opacity:0;transform:translateY(0) scale(0)} 10%{opacity:1} 90%{opacity:0.5} 100%{opacity:0;transform:translateY(-120px) scale(1)} }
 
-  /* ═══════════════════════════════════════
-     MAIN APP
-  ═══════════════════════════════════════ */
+  /* MAIN APP */
   #app { display: none; }
   #app.visible { display: block; animation: appIn 0.5s ease; }
   @keyframes appIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -189,7 +177,7 @@
   }
   .readonly-banner.visible { display: flex; }
 
-  /* TODAY ARRIVAL ALERT */
+  /* TODAY ARRIVAL ALERT — FIX 3: hidden when viewing past day */
   .today-arrival-alert {
     display: none; align-items: center; gap: 12px;
     padding: 11px 18px; border-radius: var(--radius-md);
@@ -200,7 +188,9 @@
   }
   @keyframes alertPulseIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
   .today-arrival-alert:hover { background: rgba(251,191,36,0.14); border-color: rgba(251,191,36,0.55); }
+  /* Only show when BOTH .visible AND .today-only classes are present and activeDay is null */
   .today-arrival-alert.visible { display: flex; }
+  .today-arrival-alert.hidden-past { display: none !important; }
   .taa-icon { font-size: 1.1rem; animation: bellRing 2s ease-in-out infinite; flex-shrink:0; }
   @keyframes bellRing { 0%,100%{transform:rotate(0)} 10%,30%{transform:rotate(-12deg)} 20%,40%{transform:rotate(12deg)} 50%{transform:rotate(0)} }
   .taa-content { flex: 1; }
@@ -213,9 +203,7 @@
     border-radius: var(--radius-sm); padding: 4px 12px; flex-shrink: 0;
   }
 
-  /* ═══════════════════════════════════════
-     PIANIFICAZIONE MODAL
-  ═══════════════════════════════════════ */
+  /* PIANIFICAZIONE MODAL */
   .modal-pian {
     background: #0e1628;
     border: 1px solid rgba(255,255,255,0.12);
@@ -242,7 +230,6 @@
     animation: cardIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
   }
   .pian-item:hover { border-color: rgba(251,191,36,0.25); }
-  /* past items slightly dimmed */
   .pian-item.past-item { opacity: 0.55; }
   .pian-item.past-item:hover { opacity: 0.80; border-color: rgba(255,255,255,0.15); }
   .pian-item-inner { display: flex; flex-direction: column; gap: 5px; }
@@ -282,9 +269,7 @@
   .pian-separator { font-size: 0.60rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px; }
   .pian-ordma { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-violet); }
 
-  /* ═══════════════════════════════════════
-     FAB — FIX 3: centred icon, nicer style
-  ═══════════════════════════════════════ */
+  /* FAB */
   .fab-pian {
     position: fixed; bottom: 96px; right: 28px;
     width: 52px; height: 52px; border-radius: 50%;
@@ -293,12 +278,9 @@
     display: flex; align-items: center; justify-content: center;
     box-shadow: 0 8px 28px rgba(251,191,36,0.2);
     transition: all 0.22s ease; z-index: 100; backdrop-filter: blur(12px);
-    padding: 0; /* ensure no padding throws off centering */
+    padding: 0;
   }
-  .fab-pian svg {
-    display: block; /* remove inline gaps */
-    flex-shrink: 0;
-  }
+  .fab-pian svg { display: block; flex-shrink: 0; }
   .fab-pian:hover { background: rgba(251,191,36,0.28); border-color: rgba(251,191,36,0.7); box-shadow: 0 12px 36px rgba(251,191,36,0.3); transform: translateY(-2px) scale(1.05); }
   .fab-pian .fab-badge {
     position: absolute; top: -4px; right: -4px;
@@ -311,9 +293,7 @@
   }
   .fab-pian .fab-badge.visible { opacity: 1; }
 
-  /* ═══════════════════════════════════════
-     USER BADGE — FIX 4: redesigned elegant badge
-  ═══════════════════════════════════════ */
+  /* USER BADGE */
   .user-badge {
     display: flex; align-items: center; gap: 0;
     border-radius: 50px;
@@ -328,17 +308,9 @@
     font-size: 0.85rem; font-weight: 700; flex-shrink: 0;
     position: relative; z-index: 1;
   }
-  .user-badge-info {
-    display: flex; flex-direction: column; gap: 1px;
-    padding: 6px 14px 6px 10px;
-  }
-  .user-badge-name {
-    font-size: 0.74rem; font-weight: 700; line-height: 1; letter-spacing: 0.01em;
-  }
-  .user-badge-role {
-    font-size: 0.60rem; font-weight: 500; letter-spacing: 0.07em;
-    text-transform: uppercase; opacity: 0.65; line-height: 1;
-  }
+  .user-badge-info { display: flex; flex-direction: column; gap: 1px; padding: 6px 14px 6px 10px; }
+  .user-badge-name { font-size: 0.74rem; font-weight: 700; line-height: 1; letter-spacing: 0.01em; }
+  .user-badge-role { font-size: 0.60rem; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.65; line-height: 1; }
   .user-badge-logout {
     width: 26px; height: 26px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
@@ -346,11 +318,7 @@
     background: rgba(255,255,255,0.08);
     transition: all 0.18s;
   }
-  .user-badge:hover .user-badge-logout {
-    background: rgba(248,113,113,0.25);
-    color: var(--accent-rose);
-  }
-  /* Magazziniere style */
+  .user-badge:hover .user-badge-logout { background: rgba(248,113,113,0.25); color: var(--accent-rose); }
   .user-badge.magaz {
     background: rgba(56,232,200,0.07);
     border: 1px solid rgba(56,232,200,0.22);
@@ -364,12 +332,7 @@
   .user-badge.magaz .user-badge-name { color: var(--accent-cyan); }
   .user-badge.magaz .user-badge-role { color: var(--accent-cyan); }
   .user-badge.magaz .user-badge-logout { color: rgba(56,232,200,0.5); }
-  .user-badge.magaz:hover {
-    background: rgba(56,232,200,0.12);
-    border-color: rgba(56,232,200,0.4);
-    box-shadow: 0 4px 20px rgba(56,232,200,0.12);
-  }
-  /* Acquisti style */
+  .user-badge.magaz:hover { background: rgba(56,232,200,0.12); border-color: rgba(56,232,200,0.4); box-shadow: 0 4px 20px rgba(56,232,200,0.12); }
   .user-badge.aquisti {
     background: rgba(251,191,36,0.07);
     border: 1px solid rgba(251,191,36,0.22);
@@ -383,15 +346,9 @@
   .user-badge.aquisti .user-badge-name { color: var(--accent-amber); }
   .user-badge.aquisti .user-badge-role { color: var(--accent-amber); }
   .user-badge.aquisti .user-badge-logout { color: rgba(251,191,36,0.5); }
-  .user-badge.aquisti:hover {
-    background: rgba(251,191,36,0.12);
-    border-color: rgba(251,191,36,0.4);
-    box-shadow: 0 4px 20px rgba(251,191,36,0.12);
-  }
+  .user-badge.aquisti:hover { background: rgba(251,191,36,0.12); border-color: rgba(251,191,36,0.4); box-shadow: 0 4px 20px rgba(251,191,36,0.12); }
 
-  /* ═══════════════════════════════════════
-     EXISTING STYLES (unchanged)
-  ═══════════════════════════════════════ */
+  /* MAIN LAYOUT */
   .page {
     position: relative; z-index: 1;
     display: flex; flex-direction: column;
@@ -441,6 +398,14 @@
   .card.is-compact{cursor:pointer;}
   .card.is-compact:hover{border-color:rgba(79,142,247,0.4);}
   .card.is-compact.resi-card:hover{border-color:rgba(248,113,113,0.4);}
+
+  /* FIX 4: readonly expanded card style */
+  .card.is-readonly-expanded { cursor: default; border-color: rgba(251,191,36,0.2); }
+  .card.is-readonly-expanded:hover { border-color: rgba(251,191,36,0.35); box-shadow: var(--shadow-hover); }
+  .card.is-readonly-expanded .card-compact-view { display: none; }
+  .card.is-readonly-expanded .card-header { display: flex; }
+  .card.is-readonly-expanded .card-body { display: flex; }
+
   .draft-banner{display:flex;align-items:center;gap:8px;padding:7px 16px;background:rgba(251,191,36,0.07);border-bottom:1px solid rgba(251,191,36,0.18);font-size:0.70rem;color:var(--accent-amber);font-weight:600;letter-spacing:0.04em;}
   .draft-banner-dot{width:6px;height:6px;border-radius:50%;background:var(--accent-amber);animation:syncPulse 1.2s ease-in-out infinite;flex-shrink:0;}
   .card-compact-view{display:none;padding:11px 16px;gap:0;flex-direction:column;}
@@ -451,7 +416,8 @@
   .compact-badge-blue{background:rgba(79,142,247,0.15);color:var(--accent-blue);border:1px solid rgba(79,142,247,0.3);}
   .compact-badge-rose{background:rgba(248,113,113,0.12);color:var(--accent-rose);border:1px solid rgba(248,113,113,0.25);}
   .compact-time{font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--accent-cyan);flex-shrink:0;}
-  .compact-firma{font-size:0.85rem;font-weight:700;color:var(--text-primary);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  /* FIX 1: firma with title tooltip for overflow */
+  .compact-firma{font-size:0.85rem;font-weight:700;color:var(--text-primary);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:default;}
   .compact-pills{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;}
   .compact-pill{font-size:0.66rem;padding:2px 7px;border-radius:20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);color:var(--text-secondary);font-family:'JetBrains Mono',monospace;}
   .compact-sig{font-size:0.70rem;color:var(--text-muted);flex-shrink:0;}
@@ -712,9 +678,6 @@
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════════
-     LOGIN SCREEN — FIX 1: simple password input, no keypad
-═══════════════════════════════════════════════════════════ -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-particles" id="loginParticles"></div>
@@ -753,9 +716,6 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     MAIN APP
-═══════════════════════════════════════════════════════════ -->
 <div id="app">
 <div class="page">
   <div class="header">
@@ -764,7 +724,6 @@
       <p id="header-desc">Registrazione degli ingressi giornalieri &amp; resi</p>
     </div>
     <div class="header-right">
-      <!-- FIX 4: redesigned user badge -->
       <div class="user-badge" id="userBadge" onclick="doLogout()" title="Clicca per uscire">
         <div class="user-badge-avatar" id="userBadgeAvatar"></div>
         <div class="user-badge-info">
@@ -782,13 +741,11 @@
     </div>
   </div>
 
-  <!-- Read-only banner -->
   <div class="readonly-banner" id="readonlyBanner">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
     Modalità <strong style="margin:0 4px">SOLA LETTURA</strong> — Ufficio Acquisti. Puoi solo pianificare i camion.
   </div>
 
-  <!-- Today arrivals alert -->
   <div class="today-arrival-alert" id="todayArrivalAlert" onclick="openPianificazione()">
     <span class="taa-icon">🔔</span>
     <div class="taa-content">
@@ -845,12 +802,10 @@
   </div>
 </div>
 
-<!-- FAB: Statistiche -->
 <button class="fab-cal" onclick="openCalendar()" title="Storico e statistiche">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
 </button>
 
-<!-- FAB: Pianificazione — FIX 3: centred icon -->
 <button class="fab-pian" id="fabPian" onclick="openPianificazione()" title="Pianificazione arrivi camion">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block">
     <rect x="3" y="4" width="18" height="18" rx="2"/>
@@ -863,12 +818,11 @@
   <span class="fab-badge" id="fabPianBadge">0</span>
 </button>
 
-<!-- FAB: Giorno -->
 <button class="fab-day" id="fab-day-btn" onclick="openDayPicker()" title="Seleziona giorno">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
 </button>
 
-<!-- ═══ MODAL: PIANIFICAZIONE ═══ -->
+<!-- MODAL: PIANIFICAZIONE -->
 <div class="modal-overlay" id="pianModal" onclick="if(event.target===this)closePianificazione()">
   <div class="modal-pian">
     <div class="pian-header">
@@ -884,7 +838,7 @@
   </div>
 </div>
 
-<!-- ═══ MODAL: DAY PICKER ═══ -->
+<!-- MODAL: DAY PICKER -->
 <div class="modal-overlay modal-overlay-left" id="dayPickerModal" onclick="if(event.target===this)closeDayPicker()">
   <div class="modal-day" style="margin:20px">
     <div class="modal-header">
@@ -900,7 +854,7 @@
   </div>
 </div>
 
-<!-- ═══ MODAL: STATISTICHE ═══ -->
+<!-- MODAL: STATISTICHE -->
 <div class="modal-overlay" id="calModal" onclick="if(event.target===this)closeCalendar()">
   <div class="modal-stats">
     <div class="stats-topbar">
@@ -934,7 +888,7 @@
 </div><!-- end #app -->
 
 <script>
-// ─── SUPABASE CONFIG ─────────────────────────────────────────────────────────
+// ─── SUPABASE CONFIG ──────────────────────────────────────────────────────────
 const SUPABASE_URL='https://wvqopsvqmemkxhllajqb.supabase.co';
 const SUPABASE_KEY='sb_publishable_8-Zs8sEHZtFnQr4lE_W5Eg_kEhMiEGf';
 const sbHeaders={'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'};
@@ -942,14 +896,13 @@ async function sbGet(table,params=''){const res=await fetch(`${SUPABASE_URL}/res
 async function sbUpsert(table,data){const res=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:{...sbHeaders,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(data)});if(!res.ok)throw new Error(await res.text());}
 async function sbDelete(table,id){const res=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`,{method:'DELETE',headers:sbHeaders});if(!res.ok)throw new Error(await res.text());}
 
-// ─── AUTH ────────────────────────────────────────────────────────────────────
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
 const PASSWORDS={
   'kin2026': { role:'magazziniere', label:'Magazziniere', readOnly:false },
   'aquisti':  { role:'acquisti',    label:'Ufficio Acquisti', readOnly:true  }
 };
 let currentUser=null;
 
-// FIX 1: toggle visibility
 let loginVisible=false;
 function toggleLoginVisibility(){
   loginVisible=!loginVisible;
@@ -975,20 +928,11 @@ function initLoginParticles(){
 function onLoginInput(val){
   document.getElementById('loginErrorMsg').classList.remove('visible');
   document.getElementById('login-pw').classList.remove('shake');
-  // Auto-login check
   for(const [pw,info] of Object.entries(PASSWORDS)){
-    if(val===pw){
-      setTimeout(()=>attemptLogin(val), 80);
-      return;
-    }
+    if(val===pw){setTimeout(()=>attemptLogin(val),80);return;}
   }
 }
-
-function onLoginKeydown(e){
-  if(e.key==='Enter'){
-    attemptLogin(document.getElementById('login-pw').value);
-  }
-}
+function onLoginKeydown(e){if(e.key==='Enter')attemptLogin(document.getElementById('login-pw').value);}
 
 function attemptLogin(pw){
   const match=PASSWORDS[pw];
@@ -1003,8 +947,8 @@ function attemptLogin(pw){
         document.getElementById('app').classList.add('visible');
         applyUserRole();
         init();
-      }, 380);
-    }, 300);
+      },380);
+    },300);
   } else {
     inp.classList.add('shake');
     document.getElementById('loginErrorMsg').classList.add('visible');
@@ -1012,19 +956,26 @@ function attemptLogin(pw){
   }
 }
 
-// FIX 4: apply role with new badge structure
+// FIX 2: Full reset on logout — clear readonlyBanner and all role state
 function applyUserRole(){
   const badge=document.getElementById('userBadge');
   const avatar=document.getElementById('userBadgeAvatar');
   const name=document.getElementById('userBadgeName');
   const role=document.getElementById('userBadgeRole');
+  const banner=document.getElementById('readonlyBanner');
+
+  // Always reset first
+  banner.classList.remove('visible');
+  document.getElementById('btnAddTruck').disabled=false;
+  document.getElementById('btnAddResi').disabled=false;
+  document.getElementById('header-desc').textContent='Registrazione degli ingressi giornalieri & resi';
 
   if(currentUser.readOnly){
     badge.className='user-badge aquisti';
     avatar.textContent='🛒';
     name.textContent='Ufficio Acquisti';
     role.textContent='Sola lettura';
-    document.getElementById('readonlyBanner').classList.add('visible');
+    banner.classList.add('visible');
     document.getElementById('btnAddTruck').disabled=true;
     document.getElementById('btnAddResi').disabled=true;
     document.getElementById('header-desc').textContent='Visualizzazione registrazioni & pianificazione arrivi';
@@ -1039,6 +990,10 @@ function applyUserRole(){
 function doLogout(){
   if(!confirm('Uscire dall\'applicazione?'))return;
   currentUser=null;
+  // FIX 2: fully reset state including readonlyBanner
+  document.getElementById('readonlyBanner').classList.remove('visible');
+  // Reset expanded readonly cards
+  readonlyExpandedId=null;
   document.getElementById('app').classList.remove('visible');
   const ls=document.getElementById('login-screen');
   ls.style.display='flex';
@@ -1064,14 +1019,16 @@ function resiToDb(r,dateKey){return{id:r.id,date_key:dateKey||r.dateKey||todayKe
 function dbToPian(row){return{id:row.id,dateKey:row.date_key,firma:row.firma||'',ordma:row.comentariu||'',ora:row.arrival_time||''};}
 function pianToDb(p){return{id:p.id,date_key:p.dateKey,ts:nowStamp(),firma:p.firma||'',programat:'pianificato',bancal:false,nr_bancale:'',cutii:false,nr_cutii:'',comentariu:p.ordma||'',semnatura:'ufficio_acquisti',arrival_time:p.ora||'',collapsed:true};}
 
-// ─── SYNC STATUS ─────────────────────────────────────────────────────────────
+// ─── SYNC STATUS ──────────────────────────────────────────────────────────────
 function setSyncStatus(state,msg){const bar=document.getElementById('sync-bar'),dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-text');bar.className='sync-bar '+state;dot.className='sync-dot'+(state==='syncing'?' pulse':'');txt.textContent=msg;}
 
-// ─── STATE ───────────────────────────────────────────────────────────────────
+// ─── STATE ────────────────────────────────────────────────────────────────────
 let trucks=[],resis=[],pianificazioni=[],truckCount=0,resiCount=0,activeDay=null;
 let currentStatsTab='overview',activeStatsMonth=null,statsHistCache=null;
+// FIX 4: track which readonly card is expanded (only one at a time)
+let readonlyExpandedId=null;
 
-// ─── CLOCK ───────────────────────────────────────────────────────────────────
+// ─── CLOCK ────────────────────────────────────────────────────────────────────
 function updateClock(){const now=new Date();const gi=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'][now.getDay()];const mese=['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'][now.getMonth()];document.getElementById('clock').textContent=now.toLocaleTimeString('it-IT',{hour12:false});document.getElementById('clock-date').textContent=`${gi}, ${now.getDate()} ${mese} ${now.getFullYear()}`;}
 setInterval(updateClock,1000);updateClock();
 function nowStamp(){const d=new Date();return d.toLocaleString('it-IT',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false});}
@@ -1085,7 +1042,7 @@ function validateTruck(t){const e=[];if(!t.firma||!t.firma.trim())e.push('Aziend
 function validateResi(r){const e=[];if(!r.descriere||!r.descriere.trim())e.push('Descrizione pacchi restituiti obbligatoria');if(!r.bancal&&!r.cutii)e.push('Tipo merce obbligatorio');if(r.bancal&&(!r.nrBancale||parseInt(r.nrBancale)<1))e.push('Numero bancali obbligatorio (≥ 1)');if(r.cutii&&(!r.nrCutii||parseInt(r.nrCutii)<1))e.push('Numero colli obbligatorio (≥ 1)');if(!r.autorizat)e.push('Autorizzazione reso obbligatoria');if(!r.semnatura||!r.semnatura.trim())e.push('Firma responsabile obbligatoria');return e;}
 function showCardErrors(cardEl,errors){let errDiv=cardEl.querySelector('.validation-errors');if(!errDiv)return;if(errors.length===0){errDiv.classList.remove('visible');return;}errDiv.innerHTML='<ul>'+errors.map(e=>`<li>${e}</li>`).join('')+'</ul>';errDiv.classList.add('visible');}
 
-// ─── TODAY ARRIVAL ALERT ─────────────────────────────────────────────────────
+// FIX 3: update today alert considering activeDay
 function updateTodayAlert(){
   const tk=todayKey();
   const todayPians=pianificazioni.filter(p=>p.dateKey===tk);
@@ -1093,11 +1050,25 @@ function updateTodayAlert(){
   const taaList=document.getElementById('taaList');
   const taaCount=document.getElementById('taaCount');
   updateFabPianBadge();
-  if(todayPians.length===0){alert.classList.remove('visible');return;}
+
+  if(todayPians.length===0){
+    alert.classList.remove('visible');
+    alert.classList.remove('hidden-past');
+    return;
+  }
+  // Has plans — show only if on today's view
   alert.classList.add('visible');
   taaCount.textContent=todayPians.length;
   taaList.textContent=todayPians.map(p=>`${p.firma||'?'}${p.ora?' alle '+p.ora:''}`).join(' · ');
+
+  // FIX 3: hide when viewing a past day
+  if(activeDay && activeDay !== tk){
+    alert.classList.add('hidden-past');
+  } else {
+    alert.classList.remove('hidden-past');
+  }
 }
+
 function updateFabPianBadge(){
   const tk=todayKey();
   const todayCount=pianificazioni.filter(p=>p.dateKey===tk).length;
@@ -1106,7 +1077,7 @@ function updateFabPianBadge(){
   badge.classList.toggle('visible',todayCount>0);
 }
 
-// ─── LOAD DAY ────────────────────────────────────────────────────────────────
+// ─── LOAD DAY ─────────────────────────────────────────────────────────────────
 async function loadDay(key){
   setSyncStatus('syncing','Caricamento…');
   try{
@@ -1114,11 +1085,13 @@ async function loadDay(key){
       sbGet('trucks',`date_key=eq.${key}&programat=neq.pianificato&order=created_at.asc`),
       sbGet('resi',`date_key=eq.${key}&order=created_at.asc`)
     ]);
-    trucks=tRows.map(dbToTruck); resis=rRows.map(dbToResi);
-    truckCount=trucks.length; resiCount=resis.length;
+    trucks=tRows.map(dbToTruck);resis=rRows.map(dbToResi);
+    truckCount=trucks.length;resiCount=resis.length;
+    // FIX 4: reset expanded readonly card on day change
+    readonlyExpandedId=null;
     renderAll();
     setSyncStatus('synced',`Caricato: ${formatKeyLabel(key)} ✓`);
-  } catch(e){setSyncStatus('error','Errore caricamento: '+e.message);}
+  }catch(e){setSyncStatus('error','Errore caricamento: '+e.message);}
 }
 
 async function loadPianificazioni(){
@@ -1127,19 +1100,39 @@ async function loadPianificazioni(){
     pianificazioni=rows.map(dbToPian);
     updateTodayAlert();
     updateFabPianBadge();
-  } catch(e){console.error('Pianificazioni load error:',e);}
+  }catch(e){console.error('Pianificazioni load error:',e);}
 }
 
-async function switchToDay(key){if(key===null||key===todayKey()){returnToToday();return;}activeDay=key;await loadDay(key);updateBanner();updateFabDay();closeDayPicker();toast('📅 '+formatKeyLabel(key));}
-async function returnToToday(){activeDay=null;await loadDay(todayKey());updateBanner();updateFabDay();closeDayPicker();}
+async function switchToDay(key){if(key===null||key===todayKey()){returnToToday();return;}activeDay=key;await loadDay(key);updateBanner();updateFabDay();updateTodayAlert();closeDayPicker();toast('📅 '+formatKeyLabel(key));}
+async function returnToToday(){activeDay=null;await loadDay(todayKey());updateBanner();updateFabDay();updateTodayAlert();closeDayPicker();}
 function updateBanner(){const banner=document.getElementById('active-day-banner'),label=document.getElementById('adb-date-label');if(activeDay){banner.classList.add('visible');label.textContent=formatKeyLabel(activeDay);}else banner.classList.remove('visible');}
 function updateFabDay(){const fab=document.getElementById('fab-day-btn');if(activeDay)fab.classList.add('is-active');else fab.classList.remove('is-active');}
 function renderAll(){renderTrucks();renderResis();updateCounts();}
 function isTruckComplete(t){return !!(t.firma&&t.firma.trim()&&t.semnatura&&t.semnatura.trim());}
 function isResiComplete(r){return !!(r.descriere&&r.descriere.trim()&&r.semnatura&&r.semnatura.trim());}
 
+// FIX 4: Click outside handler to collapse readonly expanded card
+document.addEventListener('click',function(e){
+  if(!readonlyExpandedId) return;
+  // If click is inside a card that has the expanded id, do nothing
+  const expandedCard=document.getElementById(readonlyExpandedId);
+  if(expandedCard && expandedCard.contains(e.target)) return;
+  // Otherwise collapse
+  readonlyExpandedId=null;
+  renderAll();
+});
+
 function expandCard(id,type){
-  if(currentUser&&currentUser.readOnly){toast('⛔ Accesso in sola lettura',true);return;}
+  if(currentUser&&currentUser.readOnly){
+    // FIX 4: readonly expand — toggle
+    if(readonlyExpandedId===id){
+      readonlyExpandedId=null;
+    } else {
+      readonlyExpandedId=id;
+    }
+    renderAll();
+    return;
+  }
   if(type==='truck'){const t=trucks.find(x=>x.id===id);if(t){t.collapsed=false;t.editing=true;renderTrucks();}}
   else{const r=resis.find(x=>x.id===id);if(r){r.collapsed=false;r.editing=true;renderResis();}}
 }
@@ -1207,23 +1200,30 @@ function renderTrucks(){
   const list=document.getElementById('trucks-list');list.innerHTML='';
   if(trucks.length===0){list.innerHTML=`<div class="empty-state"><span class="emoji">🚛</span>Nessun camion registrato.<br>Clicca "Aggiungi camion" per iniziare.</div>`;return;}
   let ci=0;
+  const isReadOnly=currentUser&&currentUser.readOnly;
   trucks.forEach(t=>{
     if(!t.isDraft)ci++;
     const dn=t.isDraft?'—':String(ci).padStart(2,'0');
     const card=document.createElement('div');
-    card.className='card'+(t.collapsed?' is-compact':'')+(t.editing?' is-editing':'');
+
+    // FIX 4: readonly expanded state
+    const isROExpanded=isReadOnly&&readonlyExpandedId===t.id;
+    const isCollapsed=t.collapsed&&!isROExpanded;
+
+    card.className='card'+(isCollapsed?' is-compact':'')+(t.editing?' is-editing':'')+(isROExpanded?' is-readonly-expanded':'');
     card.id=t.id;
     const qty=[t.bancal&&t.nrBancale?`${t.nrBancale} bancali`:t.bancal?'bancali':'',t.cutii&&t.nrCutii?`${t.nrCutii} colli`:t.cutii?'colli':''].filter(Boolean).join(' · ');
     const progLabel=t.programat==='programmato'?'✓ Prog.':t.programat==='non_programmato'?'✗ Non prog.':t.programat==='sconosciuto'?'? Sconosciuto':'';
     const progClass=t.programat==='programmato'?'meta-prog':t.programat==='non_programmato'?'meta-nonprog':'meta-unknown';
-    const isReadOnly=currentUser&&currentUser.readOnly;
+
+    // FIX 1: add title attribute to compact-firma for tooltip on hover
     card.innerHTML=`
       ${t.isDraft?`<div class="draft-banner"><span class="draft-banner-dot"></span>Bozza non salvata — completa e conferma per registrare</div>`:''}
-      <div class="card-compact-view" onclick="${isReadOnly?'':` expandCard('${t.id}','truck')`}">
+      <div class="card-compact-view" onclick="expandCard('${t.id}','truck')">
         <div class="compact-top">
           <span class="compact-badge compact-badge-blue">CAM #${dn}</span>
           <span class="compact-time">${t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'–')||'–'}</span>
-          <span class="compact-firma">${t.firma||'Azienda sconosciuta'}</span>
+          <span class="compact-firma" title="${(t.firma||'Azienda sconosciuta').replace(/"/g,'&quot;')}">${t.firma||'Azienda sconosciuta'}</span>
           ${t.semnatura?`<span class="compact-sig">✍ ${t.semnatura}</span>`:''}
           <div class="compact-pills">${qty?`<span class="compact-pill">${qty}</span>`:''}</div>
           ${progLabel?`<span class="compact-meta-pill ${progClass}">${progLabel}</span>`:''}
@@ -1233,22 +1233,56 @@ function renderTrucks(){
       <div class="card-header">
         <span class="card-number">CAM #${dn}</span>
         <span class="card-timestamp">${t.ts}</span>
+        ${isROExpanded?`<button class="btn-icon" title="Chiudi" onclick="event.stopPropagation();readonlyExpandedId=null;renderAll()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`:''}
         ${!isReadOnly?`<button class="btn-icon delete" title="Elimina" onclick="removeTruck('${t.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>`:''}
       </div>
       <div class="card-body">
-        <div class="field"><label class="field-required-label">Azienda / Fornitore</label><input type="text" placeholder="es: KOH-I-NOOR, Bic…" value="${t.firma}" class="${!t.firma?'field-required-pulse':''}" ${isReadOnly?'readonly':''} oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateTruck('${t.id}','firma',this.value)"></div>
-        <div class="field"><label class="field-required-label">Stato consegna</label><div class="radio-group"><label class="radio-pill opt-yes"><input type="radio" name="prog-${t.id}" value="programmato" ${t.programat==='programmato'?'checked':''} ${isReadOnly?'disabled':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Programmato</span></label><label class="radio-pill opt-no"><input type="radio" name="prog-${t.id}" value="non_programmato" ${t.programat==='non_programmato'?'checked':''} ${isReadOnly?'disabled':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Non programmato</span></label><label class="radio-pill opt-unknown"><input type="radio" name="prog-${t.id}" value="sconosciuto" ${t.programat==='sconosciuto'?'checked':''} ${isReadOnly?'disabled':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Sconosciuto</span></label></div></div>
-        <div class="field"><label class="field-required-label">Tipo merce</label><div class="check-group"><label class="check-label bancal"><input type="checkbox" ${t.bancal?'checked':''} ${isReadOnly?'disabled':''} onchange="updateTruck('${t.id}','bancal',this.checked)"><span class="check-box">${t.bancal?'✓':''}</span><span>Bancale</span></label><label class="check-label bancal"><input type="checkbox" ${t.cutii?'checked':''} ${isReadOnly?'disabled':''} onchange="updateTruck('${t.id}','cutii',this.checked)"><span class="check-box">${t.cutii?'✓':''}</span><span>Colli</span></label></div>
-          <div class="qty-row"><div class="qty-block ${t.bancal?'':'hidden'}" id="qty-bancal-${t.id}"><label class="field-required-label">N° bancali</label><input type="number" min="1" placeholder="0" value="${t.nrBancale}" ${isReadOnly?'readonly':''} onchange="updateTruck('${t.id}','nrBancale',this.value)"></div><div class="qty-block ${t.cutii?'':'hidden'}" id="qty-cutii-${t.id}"><label class="field-required-label">N° colli</label><input type="number" min="1" placeholder="0" value="${t.nrCutii}" ${isReadOnly?'readonly':''} onchange="updateTruck('${t.id}','nrCutii',this.value)"></div></div></div>
-        <div class="field"><label>Note</label><textarea placeholder="Osservazioni, danni, mancanze…" ${isReadOnly?'readonly':''} onchange="updateTruck('${t.id}','comentariu',this.value)">${t.comentariu}</textarea></div>
-        <div class="field"><label class="field-required-label">Firma responsabile</label><div class="signature-wrap"><input type="text" placeholder="Nome di chi ha ritirato" value="${t.semnatura}" class="${!t.semnatura?'field-required-pulse':''}" ${isReadOnly?'readonly':''} oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateTruck('${t.id}','semnatura',this.value)"><span class="signature-icon">✍️</span></div>${t.arrivalTime?`<div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--accent-cyan);opacity:0.7;margin-top:4px;">⏱ Arrivato: ${t.arrivalTime}</div>`:''}</div>
+        <div class="field"><label>Azienda / Fornitore</label><input type="text" value="${t.firma}" readonly style="cursor:default;opacity:0.85" ${!isReadOnly?`oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateTruck('${t.id}','firma',this.value)"`:''}></div>
+        <div class="field"><label>Stato consegna</label><div class="radio-group"><label class="radio-pill opt-yes"><input type="radio" name="prog-${t.id}" value="programmato" ${t.programat==='programmato'?'checked':''} disabled><span class="radio-dot"></span><span>Programmato</span></label><label class="radio-pill opt-no"><input type="radio" name="prog-${t.id}" value="non_programmato" ${t.programat==='non_programmato'?'checked':''} disabled><span class="radio-dot"></span><span>Non programmato</span></label><label class="radio-pill opt-unknown"><input type="radio" name="prog-${t.id}" value="sconosciuto" ${t.programat==='sconosciuto'?'checked':''} disabled><span class="radio-dot"></span><span>Sconosciuto</span></label></div></div>
+        <div class="field"><label>Tipo merce</label><div class="check-group"><label class="check-label bancal"><input type="checkbox" ${t.bancal?'checked':''} disabled><span class="check-box">${t.bancal?'✓':''}</span><span>Bancale</span></label><label class="check-label bancal"><input type="checkbox" ${t.cutii?'checked':''} disabled><span class="check-box">${t.cutii?'✓':''}</span><span>Colli</span></label></div>
+          <div class="qty-row"><div class="qty-block ${t.bancal?'':'hidden'}"><label>N° bancali</label><input type="number" value="${t.nrBancale}" readonly style="cursor:default;opacity:0.85"></div><div class="qty-block ${t.cutii?'':'hidden'}"><label>N° colli</label><input type="number" value="${t.nrCutii}" readonly style="cursor:default;opacity:0.85"></div></div></div>
+        ${t.comentariu?`<div class="field"><label>Note</label><textarea readonly style="cursor:default;opacity:0.85">${t.comentariu}</textarea></div>`:''}
+        <div class="field"><label>Firma responsabile</label><div class="signature-wrap"><input type="text" value="${t.semnatura}" readonly style="cursor:default;opacity:0.85"><span class="signature-icon">✍️</span></div>${t.arrivalTime?`<div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--accent-cyan);opacity:0.7;margin-top:4px;">⏱ Arrivato: ${t.arrivalTime}</div>`:''}</div>
         <div class="validation-errors" id="verr-${t.id}"></div>
       </div>
-      ${!isReadOnly?`<div class="confirm-bar"><span class="editing-label">${t.isDraft?'⚡ Nuova registrazione':'✎ Modalità modifica'}</span><button class="btn-cancel-edit" onclick="cancelEdit('${t.id}','truck')">Annulla</button><button class="btn-confirm" onclick="confirmEdit('${t.id}','truck')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${t.isDraft?'Registra':'Conferma'}</button></div>`:''}
     `;
+
+    // If not readonly, override with editable version
+    if(!isReadOnly){
+      card.innerHTML=`
+        ${t.isDraft?`<div class="draft-banner"><span class="draft-banner-dot"></span>Bozza non salvata — completa e conferma per registrare</div>`:''}
+        <div class="card-compact-view" onclick="expandCard('${t.id}','truck')">
+          <div class="compact-top">
+            <span class="compact-badge compact-badge-blue">CAM #${dn}</span>
+            <span class="compact-time">${t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'–')||'–'}</span>
+            <span class="compact-firma" title="${(t.firma||'Azienda sconosciuta').replace(/"/g,'&quot;')}">${t.firma||'Azienda sconosciuta'}</span>
+            ${t.semnatura?`<span class="compact-sig">✍ ${t.semnatura}</span>`:''}
+            <div class="compact-pills">${qty?`<span class="compact-pill">${qty}</span>`:''}</div>
+            ${progLabel?`<span class="compact-meta-pill ${progClass}">${progLabel}</span>`:''}
+          </div>
+          ${t.comentariu?`<div class="compact-desc">${t.comentariu}</div>`:''}
+        </div>
+        <div class="card-header">
+          <span class="card-number">CAM #${dn}</span>
+          <span class="card-timestamp">${t.ts}</span>
+          <button class="btn-icon delete" title="Elimina" onclick="removeTruck('${t.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+        </div>
+        <div class="card-body">
+          <div class="field"><label class="field-required-label">Azienda / Fornitore</label><input type="text" placeholder="es: KOH-I-NOOR, Bic…" value="${t.firma}" class="${!t.firma?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateTruck('${t.id}','firma',this.value)"></div>
+          <div class="field"><label class="field-required-label">Stato consegna</label><div class="radio-group"><label class="radio-pill opt-yes"><input type="radio" name="prog-${t.id}" value="programmato" ${t.programat==='programmato'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Programmato</span></label><label class="radio-pill opt-no"><input type="radio" name="prog-${t.id}" value="non_programmato" ${t.programat==='non_programmato'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Non programmato</span></label><label class="radio-pill opt-unknown"><input type="radio" name="prog-${t.id}" value="sconosciuto" ${t.programat==='sconosciuto'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Sconosciuto</span></label></div></div>
+          <div class="field"><label class="field-required-label">Tipo merce</label><div class="check-group"><label class="check-label bancal"><input type="checkbox" ${t.bancal?'checked':''} onchange="updateTruck('${t.id}','bancal',this.checked)"><span class="check-box">${t.bancal?'✓':''}</span><span>Bancale</span></label><label class="check-label bancal"><input type="checkbox" ${t.cutii?'checked':''} onchange="updateTruck('${t.id}','cutii',this.checked)"><span class="check-box">${t.cutii?'✓':''}</span><span>Colli</span></label></div>
+            <div class="qty-row"><div class="qty-block ${t.bancal?'':'hidden'}" id="qty-bancal-${t.id}"><label class="field-required-label">N° bancali</label><input type="number" min="1" placeholder="0" value="${t.nrBancale}" onchange="updateTruck('${t.id}','nrBancale',this.value)"></div><div class="qty-block ${t.cutii?'':'hidden'}" id="qty-cutii-${t.id}"><label class="field-required-label">N° colli</label><input type="number" min="1" placeholder="0" value="${t.nrCutii}" onchange="updateTruck('${t.id}','nrCutii',this.value)"></div></div></div>
+          <div class="field"><label>Note</label><textarea placeholder="Osservazioni, danni, mancanze…" onchange="updateTruck('${t.id}','comentariu',this.value)">${t.comentariu}</textarea></div>
+          <div class="field"><label class="field-required-label">Firma responsabile</label><div class="signature-wrap"><input type="text" placeholder="Nome di chi ha ritirato" value="${t.semnatura}" class="${!t.semnatura?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateTruck('${t.id}','semnatura',this.value)"><span class="signature-icon">✍️</span></div>${t.arrivalTime?`<div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--accent-cyan);opacity:0.7;margin-top:4px;">⏱ Arrivato: ${t.arrivalTime}</div>`:''}</div>
+          <div class="validation-errors" id="verr-${t.id}"></div>
+        </div>
+        <div class="confirm-bar"><span class="editing-label">${t.isDraft?'⚡ Nuova registrazione':'✎ Modalità modifica'}</span><button class="btn-cancel-edit" onclick="cancelEdit('${t.id}','truck')">Annulla</button><button class="btn-confirm" onclick="confirmEdit('${t.id}','truck')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${t.isDraft?'Registra':'Conferma'}</button></div>
+      `;
+    }
     list.appendChild(card);
   });
 }
+
 function updateTruck(id,field,val){
   const t=trucks.find(x=>x.id===id);if(!t)return;
   t[field]=val;
@@ -1258,7 +1292,7 @@ function updateTruck(id,field,val){
   const cardEl=document.getElementById(id);if(cardEl){const ev=cardEl.querySelector('.validation-errors');if(ev)ev.classList.remove('visible');}
 }
 
-// ─── RESI ────────────────────────────────────────────────────────────────────
+// ─── RESI ─────────────────────────────────────────────────────────────────────
 function addResi(){
   if(currentUser&&currentUser.readOnly){toast('⛔ Accesso in sola lettura',true);return;}
   resiCount++;
@@ -1286,40 +1320,69 @@ function renderResis(){
     if(!r.isDraft)ci++;
     const dn=r.isDraft?'—':String(ci).padStart(2,'0');
     const card=document.createElement('div');
-    card.className='card resi-card'+(r.collapsed?' is-compact':'')+(r.editing?' is-editing':'');
+    const isROExpanded=isReadOnly&&readonlyExpandedId===r.id;
+    const isCollapsed=r.collapsed&&!isROExpanded;
+    card.className='card resi-card'+(isCollapsed?' is-compact':'')+(r.editing?' is-editing':'')+(isROExpanded?' is-readonly-expanded':'');
     card.id=r.id;
-    if(!r.collapsed)card.style.borderColor='rgba(248,113,113,0.11)';
+    if(!isCollapsed&&!isROExpanded)card.style.borderColor='rgba(248,113,113,0.11)';
     const qty=[r.bancal&&r.nrBancale?`${r.nrBancale} bancali`:r.bancal?'bancali':'',r.cutii&&r.nrCutii?`${r.nrCutii} colli`:r.cutii?'colli':''].filter(Boolean).join(' · ');
     const authLabel=r.autorizat==='autorizzato'?'✓ Autorizzato':r.autorizat==='non_autorizzato'?'✗ Non autor.':r.autorizat==='sconosciuto'?'? Sconosciuto':'';
     const authClass=r.autorizat==='autorizzato'?'meta-auth':r.autorizat==='non_autorizzato'?'meta-noauth':'meta-unknown';
-    card.innerHTML=`
-      ${r.isDraft?`<div class="draft-banner"><span class="draft-banner-dot"></span>Bozza non salvata — completa e conferma per registrare</div>`:''}
-      <div class="card-compact-view" onclick="${isReadOnly?'':` expandCard('${r.id}','resi')`}">
-        <div class="compact-top">
-          <span class="compact-badge compact-badge-rose">RESI #${dn}</span>
-          <span class="compact-time" style="color:var(--accent-rose)">${r.ts?r.ts.split(' ')[1]:'–'}</span>
-          <span class="compact-firma">${r.descriere||'Senza descrizione'}</span>
-          ${r.semnatura?`<span class="compact-sig">✍ ${r.semnatura}</span>`:''}
-          <div class="compact-pills">${qty?`<span class="compact-pill">${qty}</span>`:''}</div>
-          ${authLabel?`<span class="compact-meta-pill ${authClass}">${authLabel}</span>`:''}
+
+    if(isReadOnly){
+      card.innerHTML=`
+        <div class="card-compact-view" onclick="expandCard('${r.id}','resi')">
+          <div class="compact-top">
+            <span class="compact-badge compact-badge-rose">RESI #${dn}</span>
+            <span class="compact-time" style="color:var(--accent-rose)">${r.ts?r.ts.split(' ')[1]:'–'}</span>
+            <span class="compact-firma" title="${(r.descriere||'Senza descrizione').replace(/"/g,'&quot;')}">${r.descriere||'Senza descrizione'}</span>
+            ${r.semnatura?`<span class="compact-sig">✍ ${r.semnatura}</span>`:''}
+            <div class="compact-pills">${qty?`<span class="compact-pill">${qty}</span>`:''}</div>
+            ${authLabel?`<span class="compact-meta-pill ${authClass}">${authLabel}</span>`:''}
+          </div>
+          ${r.comentariu?`<div class="compact-desc">${r.comentariu}</div>`:''}
         </div>
-        ${r.comentariu?`<div class="compact-desc">${r.comentariu}</div>`:''}
-      </div>
-      <div class="card-header"><span class="card-number" style="color:var(--accent-rose);border-color:rgba(248,113,113,0.2);background:rgba(248,113,113,0.06)">RESI #${dn}</span><span class="card-timestamp">${r.ts}</span>${!isReadOnly?`<button class="btn-icon delete" title="Elimina" onclick="removeResi('${r.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>`:''}</div>
-      <div class="card-body">
-        <div class="field"><label class="field-required-label">Descrizione pacchi restituiti</label><input type="text" placeholder="es: 3 colli Bic, riferimento…" value="${r.descriere}" class="${!r.descriere?'field-required-pulse':''}" ${isReadOnly?'readonly':''} oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateResi('${r.id}','descriere',this.value)"></div>
-        <div class="field"><label class="field-required-label">Tipo merce</label><div class="check-group"><label class="check-label bancal"><input type="checkbox" ${r.bancal?'checked':''} ${isReadOnly?'disabled':''} onchange="updateResi('${r.id}','bancal',this.checked)"><span class="check-box">${r.bancal?'✓':''}</span><span>Bancale</span></label><label class="check-label bancal"><input type="checkbox" ${r.cutii?'checked':''} ${isReadOnly?'disabled':''} onchange="updateResi('${r.id}','cutii',this.checked)"><span class="check-box">${r.cutii?'✓':''}</span><span>Colli</span></label></div>
-          <div class="qty-row"><div class="qty-block ${r.bancal?'':'hidden'}" id="qty-bancal-${r.id}"><label class="field-required-label">N° bancali</label><input type="number" min="1" placeholder="0" value="${r.nrBancale}" ${isReadOnly?'readonly':''} onchange="updateResi('${r.id}','nrBancale',this.value)"></div><div class="qty-block ${r.cutii?'':'hidden'}" id="qty-cutii-${r.id}"><label class="field-required-label">N° colli</label><input type="number" min="1" placeholder="0" value="${r.nrCutii}" ${isReadOnly?'readonly':''} onchange="updateResi('${r.id}','nrCutii',this.value)"></div></div></div>
-        <div class="field"><label class="field-required-label">Autorizzazione reso</label><div class="radio-group"><label class="radio-pill opt-auth"><input type="radio" name="auth-${r.id}" value="autorizzato" ${r.autorizat==='autorizzato'?'checked':''} ${isReadOnly?'disabled':''} onchange="updateResi('${r.id}','autorizat',this.value)"><span class="radio-dot"></span><span>Autorizzato</span></label><label class="radio-pill opt-noauth"><input type="radio" name="auth-${r.id}" value="non_autorizzato" ${r.autorizat==='non_autorizzato'?'checked':''} ${isReadOnly?'disabled':''} onchange="updateResi('${r.id}','autorizat',this.value)"><span class="radio-dot"></span><span>Non autorizzato</span></label><label class="radio-pill opt-unknown"><input type="radio" name="auth-${r.id}" value="sconosciuto" ${r.autorizat==='sconosciuto'?'checked':''} ${isReadOnly?'disabled':''} onchange="updateResi('${r.id}','autorizat',this.value)"><span class="radio-dot"></span><span>Sconosciuto</span></label></div></div>
-        <div class="field"><label>Note</label><textarea placeholder="Motivo del reso, stato del pacco…" ${isReadOnly?'readonly':''} onchange="updateResi('${r.id}','comentariu',this.value)">${r.comentariu}</textarea></div>
-        <div class="field"><label class="field-required-label">Firma responsabile</label><div class="signature-wrap"><input type="text" placeholder="Nome di chi ha ritirato" value="${r.semnatura}" class="${!r.semnatura?'field-required-pulse':''}" ${isReadOnly?'readonly':''} oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateResi('${r.id}','semnatura',this.value)"><span class="signature-icon">✍️</span></div></div>
-        <div class="validation-errors" id="verr-${r.id}"></div>
-      </div>
-      ${!isReadOnly?`<div class="confirm-bar"><span class="editing-label">${r.isDraft?'⚡ Nuovo reso':'✎ Modalità modifica'}</span><button class="btn-cancel-edit" onclick="cancelEdit('${r.id}','resi')">Annulla</button><button class="btn-confirm" onclick="confirmEdit('${r.id}','resi')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${r.isDraft?'Registra':'Conferma'}</button></div>`:''}
-    `;
+        <div class="card-header"><span class="card-number" style="color:var(--accent-rose);border-color:rgba(248,113,113,0.2);background:rgba(248,113,113,0.06)">RESI #${dn}</span><span class="card-timestamp">${r.ts}</span>${isROExpanded?`<button class="btn-icon" title="Chiudi" onclick="event.stopPropagation();readonlyExpandedId=null;renderAll()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>`:''}</div>
+        <div class="card-body">
+          <div class="field"><label>Descrizione</label><input type="text" value="${r.descriere}" readonly style="cursor:default;opacity:0.85"></div>
+          <div class="field"><label>Tipo merce</label><div class="check-group"><label class="check-label bancal"><input type="checkbox" ${r.bancal?'checked':''} disabled><span class="check-box">${r.bancal?'✓':''}</span><span>Bancale</span></label><label class="check-label bancal"><input type="checkbox" ${r.cutii?'checked':''} disabled><span class="check-box">${r.cutii?'✓':''}</span><span>Colli</span></label></div>
+            <div class="qty-row"><div class="qty-block ${r.bancal?'':'hidden'}"><label>N° bancali</label><input type="number" value="${r.nrBancale}" readonly style="cursor:default;opacity:0.85"></div><div class="qty-block ${r.cutii?'':'hidden'}"><label>N° colli</label><input type="number" value="${r.nrCutii}" readonly style="cursor:default;opacity:0.85"></div></div></div>
+          <div class="field"><label>Autorizzazione reso</label><div class="radio-group"><label class="radio-pill opt-auth"><input type="radio" name="auth-ro-${r.id}" value="autorizzato" ${r.autorizat==='autorizzato'?'checked':''} disabled><span class="radio-dot"></span><span>Autorizzato</span></label><label class="radio-pill opt-noauth"><input type="radio" name="auth-ro-${r.id}" value="non_autorizzato" ${r.autorizat==='non_autorizzato'?'checked':''} disabled><span class="radio-dot"></span><span>Non autorizzato</span></label><label class="radio-pill opt-unknown"><input type="radio" name="auth-ro-${r.id}" value="sconosciuto" ${r.autorizat==='sconosciuto'?'checked':''} disabled><span class="radio-dot"></span><span>Sconosciuto</span></label></div></div>
+          ${r.comentariu?`<div class="field"><label>Note</label><textarea readonly style="cursor:default;opacity:0.85">${r.comentariu}</textarea></div>`:''}
+          <div class="field"><label>Firma responsabile</label><div class="signature-wrap"><input type="text" value="${r.semnatura}" readonly style="cursor:default;opacity:0.85"><span class="signature-icon">✍️</span></div></div>
+        </div>
+      `;
+    } else {
+      card.innerHTML=`
+        ${r.isDraft?`<div class="draft-banner"><span class="draft-banner-dot"></span>Bozza non salvata — completa e conferma per registrare</div>`:''}
+        <div class="card-compact-view" onclick="expandCard('${r.id}','resi')">
+          <div class="compact-top">
+            <span class="compact-badge compact-badge-rose">RESI #${dn}</span>
+            <span class="compact-time" style="color:var(--accent-rose)">${r.ts?r.ts.split(' ')[1]:'–'}</span>
+            <span class="compact-firma" title="${(r.descriere||'Senza descrizione').replace(/"/g,'&quot;')}">${r.descriere||'Senza descrizione'}</span>
+            ${r.semnatura?`<span class="compact-sig">✍ ${r.semnatura}</span>`:''}
+            <div class="compact-pills">${qty?`<span class="compact-pill">${qty}</span>`:''}</div>
+            ${authLabel?`<span class="compact-meta-pill ${authClass}">${authLabel}</span>`:''}
+          </div>
+          ${r.comentariu?`<div class="compact-desc">${r.comentariu}</div>`:''}
+        </div>
+        <div class="card-header"><span class="card-number" style="color:var(--accent-rose);border-color:rgba(248,113,113,0.2);background:rgba(248,113,113,0.06)">RESI #${dn}</span><span class="card-timestamp">${r.ts}</span><button class="btn-icon delete" title="Elimina" onclick="removeResi('${r.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div>
+        <div class="card-body">
+          <div class="field"><label class="field-required-label">Descrizione pacchi restituiti</label><input type="text" placeholder="es: 3 colli Bic, riferimento…" value="${r.descriere}" class="${!r.descriere?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateResi('${r.id}','descriere',this.value)"></div>
+          <div class="field"><label class="field-required-label">Tipo merce</label><div class="check-group"><label class="check-label bancal"><input type="checkbox" ${r.bancal?'checked':''} onchange="updateResi('${r.id}','bancal',this.checked)"><span class="check-box">${r.bancal?'✓':''}</span><span>Bancale</span></label><label class="check-label bancal"><input type="checkbox" ${r.cutii?'checked':''} onchange="updateResi('${r.id}','cutii',this.checked)"><span class="check-box">${r.cutii?'✓':''}</span><span>Colli</span></label></div>
+            <div class="qty-row"><div class="qty-block ${r.bancal?'':'hidden'}" id="qty-bancal-${r.id}"><label class="field-required-label">N° bancali</label><input type="number" min="1" placeholder="0" value="${r.nrBancale}" onchange="updateResi('${r.id}','nrBancale',this.value)"></div><div class="qty-block ${r.cutii?'':'hidden'}" id="qty-cutii-${r.id}"><label class="field-required-label">N° colli</label><input type="number" min="1" placeholder="0" value="${r.nrCutii}" onchange="updateResi('${r.id}','nrCutii',this.value)"></div></div></div>
+          <div class="field"><label class="field-required-label">Autorizzazione reso</label><div class="radio-group"><label class="radio-pill opt-auth"><input type="radio" name="auth-${r.id}" value="autorizzato" ${r.autorizat==='autorizzato'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"><span class="radio-dot"></span><span>Autorizzato</span></label><label class="radio-pill opt-noauth"><input type="radio" name="auth-${r.id}" value="non_autorizzato" ${r.autorizat==='non_autorizzato'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"><span class="radio-dot"></span><span>Non autorizzato</span></label><label class="radio-pill opt-unknown"><input type="radio" name="auth-${r.id}" value="sconosciuto" ${r.autorizat==='sconosciuto'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"><span class="radio-dot"></span><span>Sconosciuto</span></label></div></div>
+          <div class="field"><label>Note</label><textarea placeholder="Motivo del reso, stato del pacco…" onchange="updateResi('${r.id}','comentariu',this.value)">${r.comentariu}</textarea></div>
+          <div class="field"><label class="field-required-label">Firma responsabile</label><div class="signature-wrap"><input type="text" placeholder="Nome di chi ha ritirato" value="${r.semnatura}" class="${!r.semnatura?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateResi('${r.id}','semnatura',this.value)"><span class="signature-icon">✍️</span></div></div>
+          <div class="validation-errors" id="verr-${r.id}"></div>
+        </div>
+        <div class="confirm-bar"><span class="editing-label">${r.isDraft?'⚡ Nuovo reso':'✎ Modalità modifica'}</span><button class="btn-cancel-edit" onclick="cancelEdit('${r.id}','resi')">Annulla</button><button class="btn-confirm" onclick="confirmEdit('${r.id}','resi')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${r.isDraft?'Registra':'Conferma'}</button></div>
+      `;
+    }
     list.appendChild(card);
   });
 }
+
 function updateResi(id,field,val){
   const r=resis.find(x=>x.id===id);if(!r)return;
   r[field]=val;
@@ -1328,7 +1391,7 @@ function updateResi(id,field,val){
   const cardEl=document.getElementById(id);if(cardEl){const ev=cardEl.querySelector('.validation-errors');if(ev)ev.classList.remove('visible');}
 }
 
-// ─── PIANIFICAZIONE MODAL — FIX 2: show past entries in history ──────────────
+// ─── PIANIFICAZIONE MODAL ─────────────────────────────────────────────────────
 let pianNewFirma='',pianNewOrdma='',pianNewOra='',pianNewData='';
 
 function openPianificazione(){
@@ -1343,7 +1406,6 @@ function renderPianModal(){
   const tk=todayKey();
   const todayPians=pianificazioni.filter(p=>p.dateKey===tk);
   const futurePians=pianificazioni.filter(p=>p.dateKey>tk).sort((a,b)=>a.dateKey.localeCompare(b.dateKey)||a.ora.localeCompare(b.ora));
-  // FIX 2: past items now shown fully (not hidden behind details)
   const pastPians=pianificazioni.filter(p=>p.dateKey<tk).sort((a,b)=>b.dateKey.localeCompare(a.dateKey));
 
   const formatDate=k=>{const d=new Date(k+'T12:00:00');return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;};
@@ -1367,57 +1429,28 @@ function renderPianModal(){
       </div>
     </div>`;
 
-  const listToday=todayPians.length>0
-    ? todayPians.map((p,i)=>renderPianItem(p,i)).join('')
-    : `<div class="pian-empty">🕐 Nessun camion pianificato per oggi</div>`;
-
-  const listFuture=futurePians.length>0
-    ? futurePians.map((p,i)=>renderPianItem(p,i)).join('')
-    : `<div class="pian-empty" style="padding:12px">Nessun arrivo futuro pianificato</div>`;
-
-  const listPast=pastPians.length>0
-    ? pastPians.map((p,i)=>renderPianItem(p,i,true)).join('')
-    : `<div class="pian-empty" style="padding:12px;opacity:0.5">Nessun arrivo passato in archivio</div>`;
+  const listToday=todayPians.length>0?todayPians.map((p,i)=>renderPianItem(p,i)).join(''):`<div class="pian-empty">🕐 Nessun camion pianificato per oggi</div>`;
+  const listFuture=futurePians.length>0?futurePians.map((p,i)=>renderPianItem(p,i)).join(''):`<div class="pian-empty" style="padding:12px">Nessun arrivo futuro pianificato</div>`;
+  const listPast=pastPians.length>0?pastPians.map((p,i)=>renderPianItem(p,i,true)).join(''):`<div class="pian-empty" style="padding:12px;opacity:0.5">Nessun arrivo passato in archivio</div>`;
 
   body.innerHTML=`
     <div class="pian-separator">🔔 Oggi — ${formatDate(tk)}</div>
     <div class="pian-list">${listToday}</div>
-
     <div class="pian-separator" style="margin-top:6px">📅 Prossimi arrivi</div>
     <div class="pian-list">${listFuture}</div>
-
     <div class="pian-separator" style="margin-top:6px">➕ Pianifica nuovo arrivo</div>
     <div class="pian-add-form">
       <div class="pian-add-title">Inserisci i dettagli del camion atteso</div>
       <div class="pian-form-grid">
-        <div class="field">
-          <label class="field-required-label">Azienda / Fornitore</label>
-          <input type="text" id="pianFirma" placeholder="es: Bic, KOH-I-NOOR…" value="${pianNewFirma}" oninput="pianNewFirma=this.value">
-        </div>
-        <div class="field">
-          <label>N° ORDMA</label>
-          <input type="text" id="pianOrdma" placeholder="es: ORDMA-2026-001" value="${pianNewOrdma}" oninput="pianNewOrdma=this.value">
-        </div>
+        <div class="field"><label class="field-required-label">Azienda / Fornitore</label><input type="text" id="pianFirma" placeholder="es: Bic, KOH-I-NOOR…" value="${pianNewFirma}" oninput="pianNewFirma=this.value"></div>
+        <div class="field"><label>N° ORDMA</label><input type="text" id="pianOrdma" placeholder="es: ORDMA-2026-001" value="${pianNewOrdma}" oninput="pianNewOrdma=this.value"></div>
       </div>
       <div class="pian-form-grid three">
-        <div class="field">
-          <label>Data arrivo</label>
-          <input type="date" id="pianData" value="${pianNewData}" oninput="pianNewData=this.value" style="background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);color:var(--text-primary);font-family:'Sora',sans-serif;font-size:0.84rem;padding:9px 12px;outline:none;width:100%;color-scheme:dark">
-        </div>
-        <div class="field">
-          <label>Ora approssimativa</label>
-          <input type="time" id="pianOra" value="${pianNewOra}" oninput="pianNewOra=this.value" style="background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);color:var(--text-primary);font-family:'Sora',sans-serif;font-size:0.84rem;padding:9px 12px;outline:none;width:100%;color-scheme:dark">
-        </div>
-        <div class="field" style="justify-content:flex-end">
-          <label style="opacity:0">.</label>
-          <button class="pian-btn-add" onclick="savePian()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Aggiungi
-          </button>
-        </div>
+        <div class="field"><label>Data arrivo</label><input type="date" id="pianData" value="${pianNewData}" oninput="pianNewData=this.value" style="background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);color:var(--text-primary);font-family:'Sora',sans-serif;font-size:0.84rem;padding:9px 12px;outline:none;width:100%;color-scheme:dark"></div>
+        <div class="field"><label>Ora approssimativa</label><input type="time" id="pianOra" value="${pianNewOra}" oninput="pianNewOra=this.value" style="background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);color:var(--text-primary);font-family:'Sora',sans-serif;font-size:0.84rem;padding:9px 12px;outline:none;width:100%;color-scheme:dark"></div>
+        <div class="field" style="justify-content:flex-end"><label style="opacity:0">.</label><button class="pian-btn-add" onclick="savePian()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Aggiungi</button></div>
       </div>
     </div>
-
     <div class="pian-separator" style="margin-top:6px">🕰 Storico arrivi passati (${pastPians.length})</div>
     <div class="pian-list">${listPast}</div>
   `;
@@ -1439,7 +1472,7 @@ async function savePian(){
     toast('📅 Camion pianificato!');
     updateTodayAlert();
     renderPianModal();
-  } catch(e){
+  }catch(e){
     pianificazioni=pianificazioni.filter(x=>x.id!==p.id);
     setSyncStatus('error','Errore: '+e.message);
     toast('❌ Errore salvataggio',true);
@@ -1456,17 +1489,10 @@ async function deletePian(id){
   renderPianModal();
 }
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
-async function init(){
-  await Promise.all([loadDay(todayKey()),loadPianificazioni()]);
-}
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+async function init(){await Promise.all([loadDay(todayKey()),loadPianificazioni()]);}
 
-// ─── LOGIN INIT ───────────────────────────────────────────────────────────────
-(function(){
-  initLoginParticles();
-  const inp=document.getElementById('login-pw');
-  if(inp)inp.focus();
-})();
+(function(){initLoginParticles();const inp=document.getElementById('login-pw');if(inp)inp.focus();})();
 
 // ─── DAY PICKER ──────────────────────────────────────────────────────────────
 let dpYear=new Date().getFullYear(),dpMonth=new Date().getMonth();
@@ -1525,7 +1551,7 @@ function buildDayPickerHTML(allDates){
 }
 async function dpNavigate(dir){dpMonth+=dir;if(dpMonth<0){dpMonth=11;dpYear--;}if(dpMonth>11){dpMonth=0;dpYear++;}await buildAndShowDayPicker();}
 
-// ─── STATS MODAL ─────────────────────────────────────────────────────────────
+// ─── STATS MODAL ──────────────────────────────────────────────────────────────
 async function openCalendar(){
   document.getElementById('calModal').classList.add('open');
   document.getElementById('statsMain').innerHTML='<div style="text-align:center;padding:60px;color:var(--text-muted)">⏳ Caricamento…</div>';
