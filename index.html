@@ -168,7 +168,7 @@
   #app.visible { display: block; animation: appIn 0.5s ease; }
   @keyframes appIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
-  /* FIX 3: COMBINED STATUS BAR — replaces sync-bar + active-day-banner + readonly-banner */
+  /* STATUS BAR */
   .status-bar {
     display: flex; align-items: center; gap: 10px;
     padding: 8px 14px; border-radius: var(--radius-md);
@@ -185,7 +185,6 @@
   .sync-dot.pulse { animation: syncPulse 1.2s ease-in-out infinite; }
   @keyframes syncPulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
   .status-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-  /* Day view info on right side */
   .day-view-info {
     display: none; align-items: center; gap: 8px;
     font-size: 0.75rem; color: var(--accent-violet); font-weight: 600;
@@ -200,7 +199,6 @@
     font-size: 0.70rem; font-weight: 600; cursor: pointer; transition: all 0.18s;
   }
   .adb-back:hover { background: rgba(56,232,200,0.18); }
-  /* Readonly info on right side */
   .readonly-info {
     display: none; align-items: center; gap: 6px;
     font-size: 0.72rem; color: var(--accent-amber); font-weight: 600;
@@ -233,24 +231,181 @@
     border-radius: var(--radius-sm); padding: 4px 12px; flex-shrink: 0;
   }
 
-  /* PIANIFICAZIONE MODAL */
+  /* ─── PIANIFICAZIONE MODAL — REDESIGNED ─────────────────────────────────── */
   .modal-pian {
-    background: #0e1628;
-    border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 22px;
-    width: 100%; max-width: 580px; max-height: 92vh;
+    background: #0b1120;
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 780px;  /* wider to give more room */
+    max-height: 94vh;
     overflow: hidden; display: flex; flex-direction: column;
-    box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 1px 0 rgba(255,255,255,0.06) inset;
     animation: modalInCenter 0.3s cubic-bezier(0.34,1.3,0.64,1);
   }
   @keyframes modalInCenter { from{opacity:0;transform:scale(0.94) translateY(-16px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
   .pian-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 24px 18px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0;
-    background: linear-gradient(135deg, rgba(251,191,36,0.06) 0%, transparent 60%);
+    padding: 20px 26px 18px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(251,191,36,0.07) 0%, transparent 60%);
   }
   .pian-title { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; font-weight: 700; color: var(--accent-amber); }
-  /* FIX 4: Refresh button style */
+  .pian-title-sub { font-size: 0.68rem; color: var(--text-muted); font-weight: 400; margin-left: 4px; }
+
+  /* Two-column layout: form left, list right */
+  .pian-body {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  /* LEFT PANEL: Add form (always visible, no scroll needed) */
+  .pian-left-panel {
+    border-right: 1px solid rgba(255,255,255,0.06);
+    padding: 22px 22px 24px;
+    display: flex; flex-direction: column; gap: 16px;
+    background: rgba(251,191,36,0.025);
+    overflow-y: auto;
+  }
+
+  /* RIGHT PANEL: list of plannings */
+  .pian-right-panel {
+    padding: 20px 22px 24px;
+    display: flex; flex-direction: column; gap: 14px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.08) transparent;
+  }
+
+  .pian-panel-title {
+    font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-muted);
+    border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 8px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .pian-panel-title-count {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px; padding: 1px 8px; color: var(--text-muted);
+  }
+
+  /* Add form redesign */
+  .pian-add-form {
+    display: flex; flex-direction: column; gap: 13px;
+  }
+  .pian-form-row { display: flex; flex-direction: column; gap: 5px; }
+  .pian-form-label {
+    font-size: 0.63rem; font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--text-muted);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .pian-form-label.required::after { content: ' *'; color: var(--accent-rose); }
+  .pian-form-input {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary); font-family: 'Sora', sans-serif;
+    font-size: 0.84rem; padding: 9px 12px; outline: none; width: 100%;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  .pian-form-input:focus {
+    border-color: rgba(251,191,36,0.5); background: rgba(251,191,36,0.04);
+    box-shadow: 0 0 0 3px rgba(251,191,36,0.08);
+  }
+  .pian-form-input-dark {
+    background: rgba(255,255,255,0.045);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary); font-family: 'Sora', sans-serif;
+    font-size: 0.84rem; padding: 9px 12px; outline: none; width: 100%;
+    color-scheme: dark;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .pian-form-input-dark:focus {
+    border-color: rgba(251,191,36,0.5); background: rgba(251,191,36,0.04);
+    box-shadow: 0 0 0 3px rgba(251,191,36,0.08); outline: none;
+  }
+  .pian-form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .pian-btn-add {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 18px; border-radius: var(--radius-md);
+    border: 1px solid rgba(251,191,36,0.45); background: rgba(251,191,36,0.12);
+    color: var(--accent-amber); font-family: 'Sora', sans-serif;
+    font-size: 0.84rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .pian-btn-add:hover {
+    background: rgba(251,191,36,0.24); border-color: rgba(251,191,36,0.7);
+    box-shadow: 0 0 24px rgba(251,191,36,0.18); transform: translateY(-1px);
+  }
+
+  /* List items — compact & beautiful */
+  .pian-section-label {
+    font-size: 0.59rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-muted);
+    display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+  }
+  .pian-section-label::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.05); }
+
+  .pian-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .pian-item {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: var(--radius-md); padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+    transition: border-color 0.2s, background 0.2s;
+    animation: cardIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
+  }
+  .pian-item:hover { border-color: rgba(251,191,36,0.25); background: rgba(255,255,255,0.045); }
+  .pian-item.today-item { border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.05); }
+  .pian-item.past-item { opacity: 0.45; }
+  .pian-item.past-item:hover { opacity: 0.72; }
+
+  .pian-item-time {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.88rem; font-weight: 700;
+    color: var(--accent-amber); background: rgba(251,191,36,0.10);
+    border: 1px solid rgba(251,191,36,0.22); border-radius: var(--radius-sm);
+    padding: 5px 10px; text-align: center; white-space: nowrap; flex-shrink: 0; min-width: 58px;
+  }
+  .pian-item-time.unknown { color: var(--text-muted); background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.07); font-size: 0.68rem; }
+
+  .pian-item-info { flex: 1; min-width: 0; }
+  .pian-item-firma { font-size: 0.86rem; font-weight: 700; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 3px; }
+  .pian-item-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .pian-item-date { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; color: var(--text-secondary); }
+  .pian-item-ordma { font-family: 'JetBrains Mono', monospace; font-size: 0.63rem; color: var(--accent-violet); background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.2); border-radius: 20px; padding: 1px 7px; }
+  .pian-item-badge-today { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-amber); background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.3); border-radius: 20px; padding: 1px 7px; }
+
+  .pian-btn-delete {
+    width: 28px; height: 28px; border-radius: 7px; border: 1px solid rgba(248,113,113,0.18);
+    background: rgba(248,113,113,0.04); color: var(--text-muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0;
+  }
+  .pian-btn-delete:hover { background: rgba(248,113,113,0.15); color: var(--accent-rose); border-color: rgba(248,113,113,0.4); }
+
+  .pian-empty {
+    text-align: center; padding: 20px 16px; color: var(--text-muted); font-size: 0.78rem;
+    border: 1px dashed rgba(255,255,255,0.06); border-radius: var(--radius-md); letter-spacing: 0.03em;
+  }
+
+  /* Highlight box for "add form" in left panel */
+  .pian-add-header {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.75rem; font-weight: 700; color: var(--accent-amber);
+    letter-spacing: 0.04em;
+    padding-bottom: 12px; border-bottom: 1px solid rgba(251,191,36,0.15);
+    margin-bottom: 2px;
+  }
+  .pian-add-header-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--accent-amber);
+    animation: syncPulse 2s ease-in-out infinite; flex-shrink: 0;
+  }
+
+  /* Refresh button */
   .btn-refresh {
     width: 30px; height: 30px; border-radius: 8px;
     border: 1px solid rgba(56,232,200,0.25); background: rgba(56,232,200,0.07);
@@ -261,56 +416,33 @@
   .btn-refresh:hover { background: rgba(56,232,200,0.18); border-color: rgba(56,232,200,0.5); transform: rotate(30deg); }
   .btn-refresh.spinning svg { animation: spin 0.6s linear; }
   @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-  .pian-body { padding: 22px 24px 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; }
-  .pian-list { display: flex; flex-direction: column; gap: 10px; }
-  .pian-item {
-    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
-    border-radius: var(--radius-md); padding: 14px 16px;
-    display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; align-items: center;
-    transition: border-color 0.2s;
-    animation: cardIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
-  }
-  .pian-item:hover { border-color: rgba(251,191,36,0.25); }
-  .pian-item.past-item { opacity: 0.55; }
-  .pian-item.past-item:hover { opacity: 0.80; border-color: rgba(255,255,255,0.15); }
-  .pian-item-inner { display: flex; flex-direction: column; gap: 5px; }
-  .pian-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); }
-  .pian-value { font-size: 0.85rem; color: var(--text-primary); font-weight: 600; }
-  .pian-value.mono { font-family: 'JetBrains Mono', monospace; color: var(--accent-cyan); }
-  .pian-time-badge {
-    font-family: 'JetBrains Mono', monospace; font-size: 0.90rem; font-weight: 700;
-    color: var(--accent-amber); background: rgba(251,191,36,0.10);
-    border: 1px solid rgba(251,191,36,0.25); border-radius: var(--radius-sm);
-    padding: 6px 12px; text-align: center; white-space: nowrap;
-  }
-  .pian-time-badge.unknown { color: var(--text-muted); background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.07); }
-  .pian-add-form {
-    background: rgba(251,191,36,0.04); border: 1px solid rgba(251,191,36,0.18);
-    border-radius: var(--radius-md); padding: 18px;
-    display: flex; flex-direction: column; gap: 12px;
-  }
-  .pian-add-title { font-size: 0.74rem; font-weight: 700; color: var(--accent-amber); letter-spacing: 0.06em; text-transform: uppercase; }
-  .pian-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .pian-form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
-  .pian-btn-add {
-    display: flex; align-items: center; justify-content: center; gap: 7px;
-    padding: 10px 18px; border-radius: var(--radius-sm);
-    border: 1px solid rgba(251,191,36,0.4); background: rgba(251,191,36,0.10);
-    color: var(--accent-amber); font-family: 'Sora', sans-serif;
-    font-size: 0.80rem; font-weight: 700; cursor: pointer; transition: all 0.18s;
-  }
-  .pian-btn-add:hover { background: rgba(251,191,36,0.20); border-color: rgba(251,191,36,0.65); box-shadow: 0 0 18px rgba(251,191,36,0.15); }
-  .pian-btn-delete {
-    width: 30px; height: 30px; border-radius: 7px; border: 1px solid rgba(248,113,113,0.2);
-    background: rgba(248,113,113,0.06); color: var(--text-muted); cursor: pointer;
-    display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0;
-  }
-  .pian-btn-delete:hover { background: rgba(248,113,113,0.15); color: var(--accent-rose); border-color: rgba(248,113,113,0.4); }
-  .pian-empty { text-align: center; padding: 24px; color: var(--text-muted); font-size: 0.80rem; border: 1px dashed rgba(255,255,255,0.07); border-radius: var(--radius-md); letter-spacing: 0.03em; }
-  .pian-separator { font-size: 0.60rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 6px; }
-  .pian-ordma { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--accent-violet); }
 
-  /* FAB */
+  /* ─── GLOBAL REFRESH FAB (modification #2) ──────────────────────────────── */
+  .fab-refresh {
+    position: fixed; bottom: 96px; left: 28px;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(56,232,200,0.12); border: 1.5px solid rgba(56,232,200,0.35);
+    color: var(--accent-cyan); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 20px rgba(56,232,200,0.15);
+    transition: all 0.22s ease; z-index: 100; backdrop-filter: blur(12px);
+  }
+  .fab-refresh:hover {
+    background: rgba(56,232,200,0.24); border-color: rgba(56,232,200,0.65);
+    box-shadow: 0 10px 28px rgba(56,232,200,0.25); transform: translateY(-2px) scale(1.08) rotate(20deg);
+  }
+  .fab-refresh.spinning svg { animation: spin 0.8s linear infinite; }
+  .fab-refresh-tooltip {
+    position: absolute; right: 52px; top: 50%; transform: translateY(-50%);
+    background: rgba(13,22,50,0.95); border: 1px solid rgba(56,232,200,0.25);
+    border-radius: var(--radius-sm); padding: 4px 10px;
+    font-size: 0.64rem; color: var(--accent-cyan); white-space: nowrap;
+    pointer-events: none; opacity: 0; transition: opacity 0.18s;
+    font-weight: 600; letter-spacing: 0.06em;
+  }
+  .fab-refresh:hover .fab-refresh-tooltip { opacity: 1; }
+
+  /* FAB — PIANIFICAZIONE */
   .fab-pian {
     position: fixed; bottom: 96px; right: 28px;
     width: 52px; height: 52px; border-radius: 50%;
@@ -673,8 +805,8 @@
   .clock-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 12px 20px; text-align: right; backdrop-filter: blur(16px); box-shadow: var(--shadow-glass); }
   .clock-time { font-family: 'JetBrains Mono', monospace; font-size: clamp(1.4rem,2.5vw,2rem); font-weight: 500; color: var(--accent-cyan); letter-spacing: 0.04em; text-shadow: 0 0 20px rgba(56,232,200,0.3); }
   .clock-date { font-size: 0.75rem; color: var(--text-secondary); margin-top: 3px; letter-spacing: 0.06em; text-transform: uppercase; }
-  @media(max-width:900px){.main-layout{grid-template-columns:1fr;}.column-left{grid-column:1;grid-row:1;}.column-right{grid-column:1;grid-row:2;border-left:none;padding-left:0;}.stats-sidebar{width:200px;}.overview-grid{grid-template-columns:1fr 1fr;}.monthly-layout{grid-template-columns:1fr;}.suppliers-layout{grid-template-columns:1fr;}}
-  @media(max-width:600px){.stats-sidebar{display:none;}.stats-tab-bar{max-width:100%;}.overview-grid{grid-template-columns:1fr;}.stats-topbar{padding:0 12px;gap:8px;}.page{padding:14px 12px 50px;}.header{flex-direction:column;}.clock-card{text-align:left;width:100%;}}
+  @media(max-width:900px){.main-layout{grid-template-columns:1fr;}.column-left{grid-column:1;grid-row:1;}.column-right{grid-column:1;grid-row:2;border-left:none;padding-left:0;}.stats-sidebar{width:200px;}.overview-grid{grid-template-columns:1fr 1fr;}.monthly-layout{grid-template-columns:1fr;}.suppliers-layout{grid-template-columns:1fr;}.pian-body{grid-template-columns:1fr;}.pian-left-panel{border-right:none;border-bottom:1px solid rgba(255,255,255,0.06);max-height:420px;}}
+  @media(max-width:600px){.stats-sidebar{display:none;}.stats-tab-bar{max-width:100%;}.overview-grid{grid-template-columns:1fr;}.stats-topbar{padding:0 12px;gap:8px;}.page{padding:14px 12px 50px;}.header{flex-direction:column;}.clock-card{text-align:left;width:100%;}.modal-pian{max-width:100%;border-radius:16px 16px 0 0;}.pian-body{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -730,14 +862,12 @@
     </div>
   </div>
 
-  <!-- FIX 3: Combined status bar — sync + day view info + readonly info all in one row -->
   <div class="status-bar" id="status-bar">
     <div class="status-left">
       <span class="sync-dot" id="sync-dot"></span>
       <span id="sync-text">Connessione a Supabase…</span>
     </div>
     <div class="status-right">
-      <!-- Day view info (shown when viewing past day) -->
       <div class="day-view-info" id="day-view-info">
         <span style="font-size:0.68rem;color:var(--accent-violet)">📅</span>
         <span class="day-view-label" id="day-view-label">–</span>
@@ -746,10 +876,9 @@
           Oggi
         </button>
       </div>
-      <!-- Readonly info (shown for ufficio acquisti) -->
       <div class="readonly-info" id="readonly-info">
         <span class="readonly-dot"></span>
-        <span>SOLA LETTURA — Solo pianificazione</span>
+        <span>Solo pianificazione</span>
       </div>
     </div>
   </div>
@@ -795,10 +924,12 @@
   </div>
 </div>
 
+<!-- FAB: Calendar / Stats -->
 <button class="fab-cal" onclick="openCalendar()" title="Storico e statistiche">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
 </button>
 
+<!-- FAB: Pianificazione -->
 <button class="fab-pian" id="fabPian" onclick="openPianificazione()" title="Pianificazione arrivi camion">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block">
     <rect x="3" y="4" width="18" height="18" rx="2"/>
@@ -811,17 +942,25 @@
   <span class="fab-badge" id="fabPianBadge">0</span>
 </button>
 
+<!-- FAB: Day Picker -->
 <button class="fab-day" id="fab-day-btn" onclick="openDayPicker()" title="Seleziona giorno">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/></svg>
 </button>
 
-<!-- MODAL: PIANIFICAZIONE — FIX 4: refresh button added -->
+<!-- FAB: Global Refresh (MODIFICATION #2 — third refresh button, standalone FAB) -->
+<button class="fab-refresh" id="fabRefreshGlobal" onclick="globalRefresh()" title="Aggiorna dati">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+  <span class="fab-refresh-tooltip">Aggiorna</span>
+</button>
+
+<!-- MODAL: PIANIFICAZIONE — MODIFICATION #3: form first (left panel), list right -->
 <div class="modal-overlay" id="pianModal" onclick="if(event.target===this)closePianificazione()">
   <div class="modal-pian">
     <div class="pian-header">
       <div class="pian-title">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Pianificazione Arrivi Camion
+        <span class="pian-title-sub" id="pianTodayCount"></span>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <button class="btn-refresh" id="pianRefreshBtn" onclick="refreshPianModal()" title="Aggiorna dati">
@@ -832,7 +971,17 @@
         </button>
       </div>
     </div>
-    <div class="pian-body" id="pianBody"></div>
+    <!-- Two-column body: LEFT = add form (always visible), RIGHT = list -->
+    <div class="pian-body">
+      <!-- LEFT PANEL: add form always at top, no scroll needed for it -->
+      <div class="pian-left-panel" id="pianLeftPanel">
+        <!-- Content rendered by JS -->
+      </div>
+      <!-- RIGHT PANEL: scrollable list of plannings -->
+      <div class="pian-right-panel" id="pianRightPanel">
+        <!-- Content rendered by JS -->
+      </div>
+    </div>
   </div>
 </div>
 
@@ -852,7 +1001,7 @@
   </div>
 </div>
 
-<!-- MODAL: STATISTICHE — FIX 4: refresh button added -->
+<!-- MODAL: STATISTICHE -->
 <div class="modal-overlay" id="calModal" onclick="if(event.target===this)closeCalendar()">
   <div class="modal-stats">
     <div class="stats-topbar">
@@ -956,14 +1105,11 @@ function attemptLogin(pw){
   }
 }
 
-// FIX 1: doLogout resets activeDay so next login always starts on today
 function doLogout(){
   if(!confirm('Uscire dall\'applicazione?'))return;
   currentUser=null;
-  // FIX 1: reset activeDay on logout so next user always sees today
   activeDay=null;
   readonlyExpandedId=null;
-  // FIX 5: clear all snapshots
   editSnapshots.clear();
   document.getElementById('app').classList.remove('visible');
   const ls=document.getElementById('login-screen');
@@ -988,12 +1134,11 @@ function resiToDb(r,dateKey){return{id:r.id,date_key:dateKey||r.dateKey||todayKe
 function dbToPian(row){return{id:row.id,dateKey:row.date_key,firma:row.firma||'',ordma:row.comentariu||'',ora:row.arrival_time||''};}
 function pianToDb(p){return{id:p.id,date_key:p.dateKey,ts:nowStamp(),firma:p.firma||'',programat:'pianificato',bancal:false,nr_bancale:'',cutii:false,nr_cutii:'',comentariu:p.ordma||'',semnatura:'ufficio_acquisti',arrival_time:p.ora||'',collapsed:true};}
 
-// ─── FIX 3: Combined sync/status bar ─────────────────────────────────────────
+// ─── STATUS BAR ──────────────────────────────────────────────────────────────
 function setSyncStatus(state,msg){
   const bar=document.getElementById('status-bar');
   const dot=document.getElementById('sync-dot');
   const txt=document.getElementById('sync-text');
-  // Remove old state classes
   bar.classList.remove('syncing','synced','error','viewing-past');
   dot.classList.remove('pulse');
   if(state==='syncing'){bar.classList.add('syncing');dot.classList.add('pulse');}
@@ -1003,21 +1148,16 @@ function setSyncStatus(state,msg){
   txt.textContent=msg;
 }
 
-// FIX 3: Update the right side of the status bar
 function updateStatusRight(){
   const dayInfo=document.getElementById('day-view-info');
   const dayLabel=document.getElementById('day-view-label');
   const readonlyInfo=document.getElementById('readonly-info');
-
-  // Show day view info if viewing past day
   if(activeDay && activeDay!==todayKey()){
     dayInfo.classList.add('visible');
     dayLabel.textContent=formatKeyLabel(activeDay);
   } else {
     dayInfo.classList.remove('visible');
   }
-
-  // Show readonly info for ufficio acquisti
   if(currentUser&&currentUser.readOnly){
     readonlyInfo.classList.add('visible');
   } else {
@@ -1029,7 +1169,6 @@ function updateStatusRight(){
 let trucks=[],resis=[],pianificazioni=[],truckCount=0,resiCount=0,activeDay=null;
 let currentStatsTab='overview',activeStatsMonth=null,statsHistCache=null;
 let readonlyExpandedId=null;
-// FIX 5: Edit snapshots — stores deep copies of items before editing
 const editSnapshots=new Map();
 
 // ─── CLOCK ───────────────────────────────────────────────────────────────────
@@ -1085,10 +1224,8 @@ async function loadDay(key){
     trucks=tRows.map(dbToTruck);resis=rRows.map(dbToResi);
     truckCount=trucks.length;resiCount=resis.length;
     readonlyExpandedId=null;
-    // FIX 5: clear snapshots on day change
     editSnapshots.clear();
     renderAll();
-    // FIX 3: show combined status — just sync info (day view shown on right side of bar)
     if(key===todayKey()){
       setSyncStatus('synced','Aggiornato ✓');
     } else {
@@ -1107,7 +1244,17 @@ async function loadPianificazioni(){
   }catch(e){console.error('Pianificazioni load error:',e);}
 }
 
-// FIX 4: Refresh functions
+// ─── MODIFICATION #2: Global refresh FAB ─────────────────────────────────────
+async function globalRefresh(){
+  const btn=document.getElementById('fabRefreshGlobal');
+  btn.classList.add('spinning');
+  try{
+    await Promise.all([loadDay(activeDay||todayKey()),loadPianificazioni()]);
+    toast('🔄 Dati aggiornati!');
+  }catch(e){toast('❌ Errore aggiornamento',true);}
+  setTimeout(()=>btn.classList.remove('spinning'),800);
+}
+
 async function refreshPianModal(){
   const btn=document.getElementById('pianRefreshBtn');
   btn.classList.add('spinning');
@@ -1153,22 +1300,17 @@ function renderAll(){renderTrucks();renderResis();updateCounts();}
 function isTruckComplete(t){return !!(t.firma&&t.firma.trim()&&t.semnatura&&t.semnatura.trim());}
 function isResiComplete(r){return !!(r.descriere&&r.descriere.trim()&&r.semnatura&&r.semnatura.trim());}
 
-// FIX 1+2: applyUserRole — resets activeDay and state properly on login
 function applyUserRole(){
   const badge=document.getElementById('userBadge');
   const avatar=document.getElementById('userBadgeAvatar');
   const name=document.getElementById('userBadgeName');
   const role=document.getElementById('userBadgeRole');
-
-  // FIX 1: always reset to today on login
   activeDay=null;
   readonlyExpandedId=null;
   editSnapshots.clear();
-
   document.getElementById('btnAddTruck').disabled=false;
   document.getElementById('btnAddResi').disabled=false;
   document.getElementById('header-desc').textContent='Registrazione degli ingressi giornalieri & resi';
-
   if(currentUser.readOnly){
     badge.className='user-badge aquisti';
     avatar.textContent='🛒';
@@ -1186,7 +1328,6 @@ function applyUserRole(){
   updateStatusRight();
 }
 
-// FIX 4: Click outside to collapse readonly expanded card
 document.addEventListener('click',function(e){
   if(!readonlyExpandedId)return;
   const expandedCard=document.getElementById(readonlyExpandedId);
@@ -1197,7 +1338,6 @@ document.addEventListener('click',function(e){
 
 function expandCard(id,type){
   if(currentUser&&currentUser.readOnly){
-    // FIX 2: toggle expand/collapse for readonly
     if(readonlyExpandedId===id){readonlyExpandedId=null;}
     else{readonlyExpandedId=id;}
     renderAll();
@@ -1206,22 +1346,33 @@ function expandCard(id,type){
   if(type==='truck'){
     const t=trucks.find(x=>x.id===id);
     if(t){
-      // FIX 5: save snapshot before editing (only if not already editing)
-      if(!t.editing){
-        editSnapshots.set(id,JSON.parse(JSON.stringify(t)));
-      }
+      if(!t.editing){editSnapshots.set(id,JSON.parse(JSON.stringify(t)));}
       t.collapsed=false;t.editing=true;renderTrucks();
+      // MODIFICATION #1: scroll card to center on expand
+      scrollCardToCenter(id);
     }
   } else {
     const r=resis.find(x=>x.id===id);
     if(r){
-      // FIX 5: save snapshot before editing (only if not already editing)
-      if(!r.editing){
-        editSnapshots.set(id,JSON.parse(JSON.stringify(r)));
-      }
+      if(!r.editing){editSnapshots.set(id,JSON.parse(JSON.stringify(r)));}
       r.collapsed=false;r.editing=true;renderResis();
+      // MODIFICATION #1: scroll card to center on expand
+      scrollCardToCenter(id);
     }
   }
+}
+
+// MODIFICATION #1: smooth scroll card to viewport center
+function scrollCardToCenter(id){
+  setTimeout(()=>{
+    const el=document.getElementById(id);
+    if(!el)return;
+    const rect=el.getBoundingClientRect();
+    const elCenterY=rect.top+rect.height/2;
+    const viewportCenterY=window.innerHeight/2;
+    const scrollOffset=elCenterY-viewportCenterY;
+    window.scrollBy({top:scrollOffset,behavior:'smooth'});
+  },80);
 }
 
 async function confirmEdit(id,type){
@@ -1232,7 +1383,6 @@ async function confirmEdit(id,type){
     if(errors.length>0){toast('⚠ Compila tutti i campi obbligatori',true);cardEl.querySelector('.validation-errors').scrollIntoView({behavior:'smooth',block:'nearest'});return;}
     const wasDraft=t.isDraft;t.editing=false;t.isDraft=false;t.collapsed=true;
     if(t.semnatura&&!t.arrivalTime)t.arrivalTime=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false});
-    // FIX 5: clear snapshot on confirm
     editSnapshots.delete(id);
     renderTrucks();setSyncStatus('syncing','Salvataggio in corso…');
     try{await sbUpsert('trucks',truckToDb(t,activeDay||todayKey()));setSyncStatus('synced','Salvato ✓');toast(wasDraft?'🚛 Camion registrato!':'💾 Modifiche salvate');}
@@ -1243,7 +1393,6 @@ async function confirmEdit(id,type){
     showCardErrors(cardEl,errors);
     if(errors.length>0){toast('⚠ Compila tutti i campi obbligatori',true);cardEl.querySelector('.validation-errors').scrollIntoView({behavior:'smooth',block:'nearest'});return;}
     const wasDraft=r.isDraft;r.editing=false;r.isDraft=false;r.collapsed=true;
-    // FIX 5: clear snapshot on confirm
     editSnapshots.delete(id);
     renderResis();setSyncStatus('syncing','Salvataggio in corso…');
     try{await sbUpsert('resi',resiToDb(r,activeDay||todayKey()));setSyncStatus('synced','Salvato ✓');toast(wasDraft?'📦 Reso registrato!':'💾 Modifiche salvate');}
@@ -1252,7 +1401,6 @@ async function confirmEdit(id,type){
   updateCounts();
 }
 
-// FIX 5: cancelEdit restores from snapshot for non-draft items
 function cancelEdit(id,type){
   if(type==='truck'){
     const idx=trucks.findIndex(x=>x.id===id);if(idx===-1)return;
@@ -1262,17 +1410,9 @@ function cancelEdit(id,type){
       editSnapshots.delete(id);
       renderTrucks();updateCounts();toast('🗑 Bozza annullata');
     } else {
-      // FIX 5: restore original state from snapshot
       const snap=editSnapshots.get(id);
-      if(snap){
-        // Restore all fields from snapshot
-        Object.assign(t,snap);
-        t.editing=false;
-        t.collapsed=isTruckComplete(t);
-        editSnapshots.delete(id);
-      } else {
-        t.editing=false;t.collapsed=isTruckComplete(t);
-      }
+      if(snap){Object.assign(t,snap);t.editing=false;t.collapsed=isTruckComplete(t);editSnapshots.delete(id);}
+      else{t.editing=false;t.collapsed=isTruckComplete(t);}
       renderTrucks();
     }
   } else {
@@ -1283,21 +1423,15 @@ function cancelEdit(id,type){
       editSnapshots.delete(id);
       renderResis();updateCounts();toast('🗑 Bozza annullata');
     } else {
-      // FIX 5: restore original state from snapshot
       const snap=editSnapshots.get(id);
-      if(snap){
-        Object.assign(r,snap);
-        r.editing=false;
-        r.collapsed=isResiComplete(r);
-        editSnapshots.delete(id);
-      } else {
-        r.editing=false;r.collapsed=isResiComplete(r);
-      }
+      if(snap){Object.assign(r,snap);r.editing=false;r.collapsed=isResiComplete(r);editSnapshots.delete(id);}
+      else{r.editing=false;r.collapsed=isResiComplete(r);}
       renderResis();
     }
   }
 }
 
+// Also scroll to center for newly added cards
 function scrollToCardCenter(id){
   setTimeout(()=>{
     const el=document.getElementById(id);if(!el)return;
@@ -1569,7 +1703,7 @@ function updateResi(id,field,val){
   const cardEl=document.getElementById(id);if(cardEl){const ev=cardEl.querySelector('.validation-errors');if(ev)ev.classList.remove('visible');}
 }
 
-// ─── PIANIFICAZIONE MODAL ─────────────────────────────────────────────────────
+// ─── PIANIFICAZIONE MODAL (MODIFICATION #3: two-column layout, form first) ──
 let pianNewFirma='',pianNewOrdma='',pianNewOra='',pianNewData='';
 
 function openPianificazione(){
@@ -1580,53 +1714,111 @@ function openPianificazione(){
 function closePianificazione(){document.getElementById('pianModal').classList.remove('open');}
 
 function renderPianModal(){
-  const body=document.getElementById('pianBody');
   const tk=todayKey();
   const todayPians=pianificazioni.filter(p=>p.dateKey===tk);
   const futurePians=pianificazioni.filter(p=>p.dateKey>tk).sort((a,b)=>a.dateKey.localeCompare(b.dateKey)||a.ora.localeCompare(b.ora));
   const pastPians=pianificazioni.filter(p=>p.dateKey<tk).sort((a,b)=>b.dateKey.localeCompare(a.dateKey));
+
+  // Update header counter
+  const totalCount=todayPians.length+futurePians.length;
+  const subEl=document.getElementById('pianTodayCount');
+  if(subEl)subEl.textContent=totalCount>0?`— ${todayPians.length} oggi, ${futurePians.length} futuri`:'';
+
   const formatDate=k=>{const d=new Date(k+'T12:00:00');return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;};
-  const dayNames=['Domenica','Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato'];
-  const formatDateFull=k=>{const d=new Date(k+'T12:00:00');return `${dayNames[d.getDay()]} ${formatDate(k)}`;};
-  const renderPianItem=(p,idx,isPast=false)=>`
-    <div class="pian-item${isPast?' past-item':''}" style="animation-delay:${idx*0.04}s">
-      <div class="pian-item-inner">
-        <div class="pian-label">Azienda</div>
-        <div class="pian-value">${p.firma||'—'}</div>
-        <div class="pian-ordma">ORDMA: ${p.ordma||'N/D'}</div>
+  const dayNames=['Dom','Lun','Mar','Mer','Gio','Ven','Sab'];
+  const formatDateShort=k=>{const d=new Date(k+'T12:00:00');return `${dayNames[d.getDay()]} ${formatDate(k)}`;};
+
+  const renderItem=(p,idx,isToday=false,isPast=false)=>`
+    <div class="pian-item ${isToday?'today-item':''} ${isPast?'past-item':''}" style="animation-delay:${idx*0.04}s">
+      <div class="pian-item-time ${!p.ora?'unknown':''}">${p.ora||'N/D'}</div>
+      <div class="pian-item-info">
+        <div class="pian-item-firma">${p.firma||'—'}</div>
+        <div class="pian-item-meta">
+          <span class="pian-item-date">${formatDateShort(p.dateKey)}</span>
+          ${p.ordma?`<span class="pian-item-ordma">${p.ordma}</span>`:''}
+          ${isToday?`<span class="pian-item-badge-today">● oggi</span>`:''}
+        </div>
       </div>
-      <div class="pian-item-inner">
-        <div class="pian-label">Data</div>
-        <div class="pian-value">${formatDateFull(p.dateKey)}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div class="pian-time-badge ${!p.ora?'unknown':''}">${p.ora||'Ora N/D'}</div>
-        <button class="pian-btn-delete" onclick="deletePian('${p.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
-      </div>
+      <button class="pian-btn-delete" onclick="deletePian('${p.id}')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+      </button>
     </div>`;
-  const listToday=todayPians.length>0?todayPians.map((p,i)=>renderPianItem(p,i)).join(''):`<div class="pian-empty">🕐 Nessun camion pianificato per oggi</div>`;
-  const listFuture=futurePians.length>0?futurePians.map((p,i)=>renderPianItem(p,i)).join(''):`<div class="pian-empty" style="padding:12px">Nessun arrivo futuro pianificato</div>`;
-  const listPast=pastPians.length>0?pastPians.map((p,i)=>renderPianItem(p,i,true)).join(''):`<div class="pian-empty" style="padding:12px;opacity:0.5">Nessun arrivo passato in archivio</div>`;
-  body.innerHTML=`
-    <div class="pian-separator">🔔 Oggi — ${formatDate(tk)}</div>
-    <div class="pian-list">${listToday}</div>
-    <div class="pian-separator" style="margin-top:6px">📅 Prossimi arrivi</div>
-    <div class="pian-list">${listFuture}</div>
-    <div class="pian-separator" style="margin-top:6px">➕ Pianifica nuovo arrivo</div>
+
+  // LEFT PANEL: the add form — always visible, never needs scroll
+  document.getElementById('pianLeftPanel').innerHTML=`
+    <div class="pian-add-header">
+      <span class="pian-add-header-dot"></span>
+      Pianifica nuovo arrivo
+    </div>
     <div class="pian-add-form">
-      <div class="pian-add-title">Inserisci i dettagli del camion atteso</div>
-      <div class="pian-form-grid">
-        <div class="field"><label class="field-required-label">Azienda / Fornitore</label><input type="text" id="pianFirma" placeholder="es: Bic, KOH-I-NOOR…" value="${pianNewFirma}" oninput="pianNewFirma=this.value"></div>
-        <div class="field"><label>N° ORDMA</label><input type="text" id="pianOrdma" placeholder="es: ORDMA-2026-001" value="${pianNewOrdma}" oninput="pianNewOrdma=this.value"></div>
+      <div class="pian-form-row">
+        <label class="pian-form-label required">Azienda / Fornitore</label>
+        <input type="text" class="pian-form-input" id="pianFirma" placeholder="es: Bic, KOH-I-NOOR, DHL…" value="${pianNewFirma}" oninput="pianNewFirma=this.value">
       </div>
-      <div class="pian-form-grid three">
-        <div class="field"><label>Data arrivo</label><input type="date" id="pianData" value="${pianNewData}" oninput="pianNewData=this.value" style="background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);color:var(--text-primary);font-family:'Sora',sans-serif;font-size:0.84rem;padding:9px 12px;outline:none;width:100%;color-scheme:dark"></div>
-        <div class="field"><label>Ora approssimativa</label><input type="time" id="pianOra" value="${pianNewOra}" oninput="pianNewOra=this.value" style="background:rgba(255,255,255,0.045);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-sm);color:var(--text-primary);font-family:'Sora',sans-serif;font-size:0.84rem;padding:9px 12px;outline:none;width:100%;color-scheme:dark"></div>
-        <div class="field" style="justify-content:flex-end"><label style="opacity:0">.</label><button class="pian-btn-add" onclick="savePian()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Aggiungi</button></div>
+      <div class="pian-form-row">
+        <label class="pian-form-label">N° Ordine / ORDMA</label>
+        <input type="text" class="pian-form-input" id="pianOrdma" placeholder="es: ORDMA-2026-001" value="${pianNewOrdma}" oninput="pianNewOrdma=this.value">
+      </div>
+      <div class="pian-form-row-2">
+        <div class="pian-form-row">
+          <label class="pian-form-label required">Data arrivo</label>
+          <input type="date" class="pian-form-input-dark" id="pianData" value="${pianNewData}" oninput="pianNewData=this.value">
+        </div>
+        <div class="pian-form-row">
+          <label class="pian-form-label">Ora appross.</label>
+          <input type="time" class="pian-form-input-dark" id="pianOra" value="${pianNewOra}" oninput="pianNewOra=this.value">
+        </div>
+      </div>
+      <button class="pian-btn-add" onclick="savePian()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Aggiungi pianificazione
+      </button>
+    </div>
+
+    <!-- Quick stats for left panel -->
+    <div style="margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,0.05);">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.18);border-radius:var(--radius-sm);padding:10px 12px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--accent-amber)">${todayPians.length}</div>
+          <div style="font-size:0.60rem;color:var(--text-muted);letter-spacing:0.07em;text-transform:uppercase;font-weight:600;margin-top:2px">Oggi</div>
+        </div>
+        <div style="background:rgba(79,142,247,0.06);border:1px solid rgba(79,142,247,0.18);border-radius:var(--radius-sm);padding:10px 12px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;color:var(--accent-blue)">${futurePians.length}</div>
+          <div style="font-size:0.60rem;color:var(--text-muted);letter-spacing:0.07em;text-transform:uppercase;font-weight:600;margin-top:2px">Futuri</div>
+        </div>
       </div>
     </div>
-    <div class="pian-separator" style="margin-top:6px">🕰 Storico arrivi passati (${pastPians.length})</div>
-    <div class="pian-list">${listPast}</div>
+  `;
+
+  // RIGHT PANEL: the list
+  const todayHTML=todayPians.length>0
+    ? todayPians.map((p,i)=>renderItem(p,i,true,false)).join('')
+    : `<div class="pian-empty">Nessun camion pianificato per oggi</div>`;
+  const futureHTML=futurePians.length>0
+    ? futurePians.map((p,i)=>renderItem(p,i,false,false)).join('')
+    : `<div class="pian-empty">Nessun arrivo futuro pianificato</div>`;
+  const pastHTML=pastPians.length>0
+    ? pastPians.map((p,i)=>renderItem(p,i,false,true)).join('')
+    : `<div class="pian-empty" style="opacity:0.5">Nessun arrivo passato</div>`;
+
+  document.getElementById('pianRightPanel').innerHTML=`
+    <div class="pian-panel-title">
+      <span>🔔 Oggi — ${formatDate(tk)}</span>
+      <span class="pian-panel-title-count">${todayPians.length}</span>
+    </div>
+    <div class="pian-list">${todayHTML}</div>
+
+    <div class="pian-panel-title" style="margin-top:8px">
+      <span>📅 Prossimi arrivi</span>
+      <span class="pian-panel-title-count">${futurePians.length}</span>
+    </div>
+    <div class="pian-list">${futureHTML}</div>
+
+    <div class="pian-panel-title" style="margin-top:8px">
+      <span>🕰 Storico passato</span>
+      <span class="pian-panel-title-count">${pastPians.length}</span>
+    </div>
+    <div class="pian-list">${pastHTML}</div>
   `;
 }
 
@@ -1665,7 +1857,6 @@ async function deletePian(id){
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
 async function init(){await Promise.all([loadDay(todayKey()),loadPianificazioni()]);}
-
 (function(){initLoginParticles();const inp=document.getElementById('login-pw');if(inp)inp.focus();})();
 
 // ─── DAY PICKER ──────────────────────────────────────────────────────────────
