@@ -1226,7 +1226,22 @@ function setSyncStatus(state,msg){
   else if(state==='error'){bar.classList.add('error');}
   else if(state==='viewing-past'){bar.classList.add('viewing-past');}
   txt.textContent=msg;
+  updateStatusBarVisibility();
 }
+
+function updateStatusBarVisibility(){
+  const bar=document.getElementById('status-bar');
+  const tk=todayKey();
+  const viewingToday=!activeDay||activeDay===tk;
+  const hasTodayArrivals=pianificazioni.filter(p=>p.dateKey===tk).length>0;
+  const isSynced=bar.classList.contains('synced');
+  if(viewingToday&&hasTodayArrivals&&isSynced){
+    bar.style.display='none';
+  } else {
+    bar.style.display='';
+  }
+}
+
 
 function updateStatusRight(){
   const dayInfo=document.getElementById('day-view-info');
@@ -1286,13 +1301,15 @@ function updateTodayAlert(){
   const todayPians=pianificazioni.filter(p=>p.dateKey===tk);
   const alert=document.getElementById('todayArrivalAlert');
   updateFabPianBadge();
-  if(todayPians.length===0){alert.classList.remove('visible','hidden-past');return;}
+  if(todayPians.length===0){alert.classList.remove('visible','hidden-past');updateStatusBarVisibility();return;}
   alert.classList.add('visible');
   document.getElementById('taaCount').textContent=todayPians.length;
   document.getElementById('taaList').textContent=todayPians.map(p=>`${p.firma||'?'}${p.ora?' alle '+p.ora:''}`).join(' · ');
   if(activeDay&&activeDay!==tk){alert.classList.add('hidden-past');}
   else{alert.classList.remove('hidden-past');}
+  updateStatusBarVisibility();
 }
+
 
 function updateFabPianBadge(){
   const tk=todayKey();
