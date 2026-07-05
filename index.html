@@ -1014,17 +1014,18 @@ kin2026
 <div class="modal-overlay" id="pianModal" onclick="if(event.target===this)closePianificazione()">
   <div class="modal-pian">
     <div class="pian-topbar">
-      <button class="pian-close-btn" onclick="closePianificazione()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <button class="pian-refresh-btn" id="pianRefreshBtn" onclick="refreshPianModal()" title="Aggiorna dati">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
       </button>
       <div class="pian-topbar-title">
         <span class="pian-topbar-eyebrow">Magazzino</span>
         <span class="pian-topbar-main">Arrivi pianificati</span>
       </div>
-      <button class="pian-refresh-btn" id="pianRefreshBtn" onclick="refreshPianModal()" title="Aggiorna dati">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      <button class="pian-close-btn" onclick="closePianificazione()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
+
 
     <div class="pian-stats-strip" id="pianStatsStrip"></div>
 
