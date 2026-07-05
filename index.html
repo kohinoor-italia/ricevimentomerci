@@ -1715,9 +1715,10 @@ function editArrivalTimeInline(id,type,el){
   if(currentUser&&currentUser.readOnly)return;
   const item=type==='truck'?trucks.find(x=>x.id===id):resis.find(x=>x.id===id);
   if(!item)return;
-  el.innerHTML=`<input type="time" class="inline-time-edit" value="${item.arrivalTime||''}" onclick="event.stopPropagation()" onchange="saveArrivalTime('${id}','${type}',this.value)" onblur="renderAll()">`;
+  el.innerHTML=`<input type="time" class="inline-time-edit" value="${item.arrivalTime||''}" onclick="event.stopPropagation()" onblur="saveArrivalTime('${id}','${type}',this.value)">`;
   const inp=el.querySelector('input');inp.focus();
 }
+
 async function saveArrivalTime(id,type,val){
   const item=type==='truck'?trucks.find(x=>x.id===id):resis.find(x=>x.id===id);
   if(!item)return;
