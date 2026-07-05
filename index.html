@@ -239,30 +239,32 @@
 
   /* ─── PIANIFICAZIONE MODAL — REDESIGNED ─────────────────────────────────── */
   .modal-pian {
-    background: #0b1120;
-    border: 1px solid rgba(255,255,255,0.10);
-    border-radius: 24px;
-    width: 100%;
-    max-width: 780px;  /* wider to give more room */
-    max-height: 94vh;
+    background: #080d1c;
+    border: none;
+    border-radius: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
     overflow: hidden; display: flex; flex-direction: column;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 1px 0 rgba(255,255,255,0.06) inset;
-    animation: modalInCenter 0.3s cubic-bezier(0.34,1.3,0.64,1);
+    box-shadow: none;
+    animation: modalFull 0.3s cubic-bezier(0.34,1.2,0.64,1);
   }
-  @keyframes modalInCenter { from{opacity:0;transform:scale(0.94) translateY(-16px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
 
   .pian-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 26px 18px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0;
-    background: linear-gradient(135deg, rgba(251,191,36,0.07) 0%, transparent 60%);
+    padding: 0 28px; height: 60px; border-bottom: 1px solid rgba(255,255,255,0.07); flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(251,191,36,0.06) 0%, transparent 60%);
   }
-  .pian-title { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; font-weight: 700; color: var(--accent-amber); }
-  .pian-title-sub { font-size: 0.68rem; color: var(--text-muted); font-weight: 400; margin-left: 4px; }
+  .pian-title { display: flex; align-items: center; gap: 12px; font-size: 1.02rem; font-weight: 700; color: var(--accent-amber); letter-spacing: 0.01em; }
+  .pian-title-sub { font-size: 0.72rem; color: var(--text-muted); font-weight: 400; margin-left: 4px; }
+
 
   /* Two-column layout: form left, list right */
   .pian-body {
     display: grid;
-    grid-template-columns: 320px 1fr;
+    grid-template-columns: 400px 1fr;
     flex: 1;
     overflow: hidden;
     min-height: 0;
@@ -271,20 +273,22 @@
   /* LEFT PANEL: Add form (always visible, no scroll needed) */
   .pian-left-panel {
     border-right: 1px solid rgba(255,255,255,0.06);
-    padding: 22px 22px 24px;
-    display: flex; flex-direction: column; gap: 16px;
-    background: rgba(251,191,36,0.025);
+    padding: 32px 36px 36px;
+    display: flex; flex-direction: column; gap: 18px;
+    background: rgba(251,191,36,0.02);
     overflow-y: auto;
   }
 
   /* RIGHT PANEL: list of plannings */
   .pian-right-panel {
-    padding: 20px 22px 24px;
-    display: flex; flex-direction: column; gap: 14px;
+    padding: 32px 40px 40px;
+    max-width: 760px;
+    display: flex; flex-direction: column; gap: 16px;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(255,255,255,0.08) transparent;
   }
+
 
   .pian-panel-title {
     font-size: 0.62rem; font-weight: 700; letter-spacing: 0.12em;
@@ -338,12 +342,13 @@
 
   .pian-btn-add {
     display: flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 12px 18px; border-radius: var(--radius-md);
+    padding: 15px 18px; border-radius: var(--radius-md);
     border: 1px solid rgba(251,191,36,0.45); background: rgba(251,191,36,0.12);
     color: var(--accent-amber); font-family: 'Sora', sans-serif;
-    font-size: 0.84rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    font-size: 0.9rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
     letter-spacing: 0.02em;
   }
+
   .pian-btn-add:hover {
     background: rgba(251,191,36,0.24); border-color: rgba(251,191,36,0.7);
     box-shadow: 0 0 24px rgba(251,191,36,0.18); transform: translateY(-1px);
@@ -361,11 +366,12 @@
 
   .pian-item {
     background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
-    border-radius: var(--radius-md); padding: 12px 14px;
-    display: flex; align-items: center; gap: 12px;
+    border-radius: var(--radius-md); padding: 16px 18px;
+    display: flex; align-items: center; gap: 14px;
     transition: border-color 0.2s, background 0.2s;
     animation: cardIn 0.25s cubic-bezier(0.34,1.4,0.64,1) both;
   }
+
   .pian-item:hover { border-color: rgba(251,191,36,0.25); background: rgba(255,255,255,0.045); }
   .pian-item.today-item { border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.05); }
   .pian-item.past-item { opacity: 0.45; }
@@ -837,8 +843,10 @@
   .clock-orario-badge.dentro { background: rgba(74,222,128,0.10); border: 1px solid rgba(74,222,128,0.3); color: var(--accent-green); }
   .clock-orario-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
   .clock-orario-badge.fuori .clock-orario-dot { animation: syncPulse 1.2s ease-in-out infinite; }
-  @media(max-width:900px){.main-layout{grid-template-columns:1fr;}.column-left{grid-column:1;grid-row:1;}.column-right{grid-column:1;grid-row:2;border-left:none;padding-left:0;}.stats-sidebar{width:200px;}.overview-grid{grid-template-columns:1fr 1fr;}.monthly-layout{grid-template-columns:1fr;}.suppliers-layout{grid-template-columns:1fr;}.pian-body{grid-template-columns:1fr;}.pian-left-panel{border-right:none;border-bottom:1px solid rgba(255,255,255,0.06);max-height:420px;}}
-  @media(max-width:600px){.stats-sidebar{display:none;}.stats-tab-bar{max-width:100%;}.overview-grid{grid-template-columns:1fr;}.stats-topbar{padding:0 12px;gap:8px;}.page{padding:14px 12px 50px;}.header{flex-direction:column;}.clock-card{text-align:left;width:100%;}.modal-pian{max-width:100%;border-radius:16px 16px 0 0;}.pian-body{grid-template-columns:1fr;}}
+@media(max-width:900px){.main-layout{grid-template-columns:1fr;}.column-left{grid-column:1;grid-row:1;}.column-right{grid-column:1;grid-row:2;border-left:none;padding-left:0;}.stats-sidebar{width:200px;}.overview-grid{grid-template-columns:1fr 1fr;}.monthly-layout{grid-template-columns:1fr;}.suppliers-layout{grid-template-columns:1fr;}.pian-body{grid-template-columns:1fr;overflow-y:auto;}.pian-left-panel{border-right:none;border-bottom:1px solid rgba(255,255,255,0.06);overflow-y:visible;padding:24px 20px 28px;}.pian-right-panel{padding:24px 20px 28px;max-width:100%;}}
+
+@media(max-width:600px){.stats-sidebar{display:none;}.stats-tab-bar{max-width:100%;}.overview-grid{grid-template-columns:1fr;}.stats-topbar{padding:0 12px;gap:8px;}.page{padding:14px 12px 50px;}.header{flex-direction:column;}.clock-card{text-align:left;width:100%;}.pian-header{padding:0 16px;height:54px;}}
+
 </style>
 </head>
 <body>
