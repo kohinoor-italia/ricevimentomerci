@@ -548,7 +548,7 @@
   .compact-pills { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; }
   .compact-pill { font-size: 0.66rem; padding: 2px 7px; border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
   .compact-sig { font-size: 0.70rem; color: var(--text-muted); flex-shrink: 0; }
-  .compact-sig-name { font-family: 'Caveat', cursive; font-size: 1.15rem; color: var(--accent-cyan); font-weight: 600; letter-spacing: 0.02em; }
+  .compact-sig-name { font-family: 'Caveat', cursive; font-size: 0.95rem; color: var(--accent-cyan); font-weight: 600; letter-spacing: 0.02em; }
   .compact-desc { margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.77rem; color: var(--text-secondary); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .compact-desc:empty { display: none; }
   .compact-meta { display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
@@ -1156,8 +1156,9 @@ document.head.appendChild(styleEl);
 // ─── CONVERTERS ──────────────────────────────────────────────────────────────
 function dbToTruck(row){return{id:row.id,ts:row.ts||'',firma:row.firma||'',programat:row.programat||'',bancal:!!row.bancal,nrBancale:row.nr_bancale||'',cutii:!!row.cutii,nrCutii:row.nr_cutii||'',comentariu:row.comentariu||'',semnatura:row.semnatura||'',arrivalTime:row.arrival_time||'',collapsed:!!row.collapsed,editing:false,isDraft:false,dateKey:row.date_key};}
 function truckToDb(t,dateKey){return{id:t.id,date_key:dateKey||t.dateKey||todayKey(),ts:t.ts||'',firma:t.firma||'',programat:t.programat||'',bancal:!!t.bancal,nr_bancale:t.nrBancale||'',cutii:!!t.cutii,nr_cutii:t.nrCutii||'',comentariu:t.comentariu||'',semnatura:t.semnatura||'',arrival_time:t.arrivalTime||'',collapsed:!!t.collapsed};}
-function dbToResi(row){return{id:row.id,ts:row.ts||'',descriere:row.descriere||'',autorizat:row.autorizat||'',bancal:!!row.bancal,nrBancale:row.nr_bancale||'',cutii:!!row.cutii,nrCutii:row.nr_cutii||'',comentariu:row.comentariu||'',semnatura:row.semnatura||'',collapsed:!!row.collapsed,editing:false,isDraft:false,dateKey:row.date_key};}
-function resiToDb(r,dateKey){return{id:r.id,date_key:dateKey||r.dateKey||todayKey(),ts:r.ts||'',descriere:r.descriere||'',autorizat:r.autorizat||'',bancal:!!r.bancal,nr_bancale:r.nrBancale||'',cutii:!!r.cutii,nr_cutii:r.nrCutii||'',comentariu:r.comentariu||'',semnatura:r.semnatura||'',collapsed:!!r.collapsed};}
+function dbToResi(row){return{id:row.id,ts:row.ts||'',descriere:row.descriere||'',autorizat:row.autorizat||'',bancal:!!row.bancal,nrBancale:row.nr_bancale||'',cutii:!!row.cutii,nrCutii:row.nr_cutii||'',comentariu:row.comentariu||'',semnatura:row.semnatura||'',arrivalTime:row.arrival_time||'',collapsed:!!row.collapsed,editing:false,isDraft:false,dateKey:row.date_key};}
+function resiToDb(r,dateKey){return{id:r.id,date_key:dateKey||r.dateKey||todayKey(),ts:r.ts||'',descriere:r.descriere||'',autorizat:r.autorizat||'',bancal:!!r.bancal,nr_bancale:r.nrBancale||'',cutii:!!r.cutii,nr_cutii:r.nrCutii||'',comentariu:r.comentariu||'',semnatura:r.semnatura||'',arrival_time:r.arrivalTime||'',collapsed:!!r.collapsed};}
+
 function dbToPian(row){return{id:row.id,dateKey:row.date_key,firma:row.firma||'',ordma:row.comentariu||'',ora:row.arrival_time||'',note:row.note||'',creatDe:row.creat_de||''};}
 function pianToDb(p){return{id:p.id,date_key:p.dateKey,ts:nowStamp(),firma:p.firma||'',programat:'pianificato',bancal:false,nr_bancale:'',cutii:false,nr_cutii:'',comentariu:p.ordma||'',semnatura:'ufficio_acquisti',arrival_time:p.ora||'',collapsed:true,note:p.note||'',creat_de:p.creatDe||''};}
 
@@ -1583,12 +1584,11 @@ function renderTrucks(){
         </div>
         <div class="card-header">
           <span class="card-number">CAM #${dn}</span>
-          <span class="card-timestamp editable-time" title="Clicca per modificare l'ora di arrivo" onclick="editArrivalTimeInline('${t.id}','truck',this)">${(t.ts.split(', ')[0]||t.ts)}, ⏱ ${t.arrivalTime||'--:--'}</span>
-<button class="btn-icon delete" title="Elimina" onclick="removeTruck('${t.id}',this)">
-
-
+<span class="card-timestamp editable-time" title="Clicca per modificare l'ora di arrivo" onclick="editArrivalTimeInline('${t.id}','truck',this)">${(t.ts.split(', ')[0]||t.ts)}, ⏱ ${t.arrivalTime||'--:--'}</span>
+<button class="btn-icon delete" title="Elimina" onclick="removeTruck('${t.id}',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
         </div>
         <div class="card-body">
+
           <div class="field"><label class="field-required-label">Azienda / Fornitore</label><input type="text" placeholder="es: KOH-I-NOOR, Bic…" value="${t.firma}" class="${!t.firma?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateTruck('${t.id}','firma',this.value)"></div>
           <div class="field"><label class="field-required-label">Stato consegna</label><div class="radio-group">
             <label class="radio-pill opt-yes"><input type="radio" name="prog-${t.id}" value="programmato" ${t.programat==='programmato'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Programmato</span></label>
@@ -1628,18 +1628,25 @@ function updateTruck(id,field,val){
 
 function editArrivalTimeInline(id,type,el){
   if(currentUser&&currentUser.readOnly)return;
-  const t=trucks.find(x=>x.id===id);if(!t)return;
-  el.innerHTML=`<input type="time" class="inline-time-edit" value="${t.arrivalTime||''}" onclick="event.stopPropagation()" onchange="saveArrivalTime('${id}',this.value)" onblur="renderAll()">`;
+  const item=type==='truck'?trucks.find(x=>x.id===id):resis.find(x=>x.id===id);
+  if(!item)return;
+  el.innerHTML=`<input type="time" class="inline-time-edit" value="${item.arrivalTime||''}" onclick="event.stopPropagation()" onchange="saveArrivalTime('${id}','${type}',this.value)" onblur="renderAll()">`;
   const inp=el.querySelector('input');inp.focus();
 }
-async function saveArrivalTime(id,val){
-  const t=trucks.find(x=>x.id===id);if(!t)return;
-  t.arrivalTime=val;
+async function saveArrivalTime(id,type,val){
+  const item=type==='truck'?trucks.find(x=>x.id===id):resis.find(x=>x.id===id);
+  if(!item)return;
+  item.arrivalTime=val;
   setSyncStatus('syncing','Aggiornamento ora…');
-  try{await sbUpsert('trucks',truckToDb(t));setSyncStatus('synced','Ora aggiornata ✓');toast('⏱ Ora arrivo aggiornata: '+val);}
+  try{
+    if(type==='truck')await sbUpsert('trucks',truckToDb(item));
+    else await sbUpsert('resi',resiToDb(item));
+    setSyncStatus('synced','Ora aggiornata ✓');toast('⏱ Ora arrivo aggiornata: '+val);
+  }
   catch(e){setSyncStatus('error','Errore: '+e.message);toast('❌ Errore salvataggio ora',true);}
   renderAll();
 }
+
 
 // ─── RESI ─────────────────────────────────────────────────────────────────────
 
@@ -1647,7 +1654,7 @@ function addResi(){
   if(currentUser&&currentUser.readOnly){toast('⛔ Accesso in sola lettura',true);return;}
   resiCount++;
   const id='resi-'+Date.now()+'-'+resiCount,dKey=activeDay||todayKey();
-  resis.push({id,ts:nowStamp(),descriere:'',autorizat:'',bancal:false,nrBancale:'',cutii:false,nrCutii:'',comentariu:'',semnatura:'',collapsed:false,editing:true,isDraft:true,dateKey:dKey});
+  resis.push({id,ts:nowStamp(),descriere:'',autorizat:'',bancal:false,nrBancale:'',cutii:false,nrCutii:'',comentariu:'',semnatura:'',arrivalTime:'',collapsed:false,editing:true,isDraft:true,dateKey:dKey});
   renderResis();updateCounts();scrollToCardCenter(id);
 }
 async function removeResi(id,btnEl){
@@ -1735,9 +1742,10 @@ function renderResis(){
         </div>
         <div class="card-header">
           <span class="card-number" style="color:var(--accent-rose);border-color:rgba(248,113,113,0.2);background:rgba(248,113,113,0.06)">RESI #${dn}</span>
-          <span class="card-timestamp">${r.ts}</span>
+          <span class="card-timestamp editable-time" title="Clicca per modificare l'ora di arrivo" onclick="editArrivalTimeInline('${r.id}','resi',this)">${(r.ts.split(', ')[0]||r.ts)}, ⏱ ${r.arrivalTime||'--:--'}</span>
           <button class="btn-icon delete" title="Elimina" onclick="removeResi('${r.id}',this)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
         </div>
+
 
 
 
@@ -1760,7 +1768,7 @@ function renderResis(){
             <label class="radio-pill opt-unknown"><input type="radio" name="auth-${r.id}" value="sconosciuto" ${r.autorizat==='sconosciuto'?'checked':''} onchange="updateResi('${r.id}','autorizat',this.value)"><span class="radio-dot"></span><span>Sconosciuto</span></label>
           </div></div>
           <div class="field"><label>Note</label><textarea placeholder="Motivo del reso, stato del pacco…" onchange="updateResi('${r.id}','comentariu',this.value)">${r.comentariu}</textarea></div>
-          <div class="field"><label class="field-required-label">Firma responsabile</label><div class="signature-wrap"><input type="text" placeholder="Nome di chi ha ritirato" value="${r.semnatura}" class="${!r.semnatura?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateResi('${r.id}','semnatura',this.value)"><span class="signature-icon">✍️</span></div></div>
+          <div class="field"><label class="field-required-label">Firma responsabile</label><div class="signature-wrap"><input type="text" placeholder="Nome di chi ha ritirato" value="${r.semnatura}" class="${!r.semnatura?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateResi('${r.id}','semnatura',this.value)"><span class="signature-icon">✍️</span></div>${r.arrivalTime?`<div style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--accent-cyan);opacity:0.85;margin-top:4px;" title="Clicca per modificare l'ora" onclick="editArrivalTimeInline('${r.id}','resi',this)">⏱ Arrivato: ${r.arrivalTime}</div>`:`<div style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--text-muted);margin-top:4px;" title="Clicca per impostare l'ora" onclick="editArrivalTimeInline('${r.id}','resi',this)">⏱ Imposta ora arrivo</div>`}</div>
           <div class="validation-errors" id="verr-${r.id}"></div>
         </div>
         <div class="confirm-bar"><span class="editing-label">${r.isDraft?'⚡ Nuovo reso':'✎ Modalità modifica'}</span><button class="btn-cancel-edit" onclick="cancelEdit('${r.id}','resi')">Annulla</button><button class="btn-confirm" onclick="confirmEdit('${r.id}','resi')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${r.isDraft?'Registra':'Conferma'}</button></div>
@@ -1773,10 +1781,12 @@ function renderResis(){
 function updateResi(id,field,val){
   const r=resis.find(x=>x.id===id);if(!r)return;
   r[field]=val;
+  if(field==='semnatura'&&val.trim()&&!r.arrivalTime)r.arrivalTime=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false});
   if(field==='bancal'){const el=document.getElementById('qty-bancal-'+id);if(el)el.classList.toggle('hidden',!val);if(!val){r.nrBancale='';const inp=el&&el.querySelector('input');if(inp)inp.value='';}}
   else if(field==='cutii'){const el=document.getElementById('qty-cutii-'+id);if(el)el.classList.toggle('hidden',!val);if(!val){r.nrCutii='';const inp=el&&el.querySelector('input');if(inp)inp.value='';}}
   const cardEl=document.getElementById(id);if(cardEl){const ev=cardEl.querySelector('.validation-errors');if(ev)ev.classList.remove('visible');}
 }
+
 
 // ─── PIANIFICAZIONE MODAL (MODIFICATION #3: two-column layout, form first) ──
 let pianNewFirma='',pianNewOrdma='',pianNewOra='',pianNewData='',pianNewNote='',pianNewCreatDe='',pianEditingId=null;
