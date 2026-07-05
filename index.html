@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registro Magazzino</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg-deep: #0a0f1e;
@@ -570,7 +571,11 @@
   .validation-errors ul li::before { content: '⚠ '; }
   .card-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px 10px; border-bottom: 1px solid rgba(255,255,255,0.055); gap: 8px; }
   .card-number { font-family: 'JetBrains Mono', monospace; font-size: 0.69rem; color: var(--text-muted); background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2px 9px; flex-shrink: 0; }
-  .card-timestamp { font-family: 'JetBrains Mono', monospace; font-size: 0.69rem; color: var(--accent-cyan); opacity: 0.65; flex: 1; text-align: right; margin-right: 6px; }
+.card-timestamp { font-family: 'JetBrains Mono', monospace; font-size: 0.69rem; color: var(--accent-cyan); opacity: 0.65; flex: 1; text-align: right; margin-right: 6px; }
+.card-timestamp.editable-time { cursor: pointer; opacity: 0.85; transition: opacity 0.15s; }
+.card-timestamp.editable-time:hover { opacity: 1; text-decoration: underline dotted; }
+.inline-time-edit { background: rgba(56,232,200,0.08); border: 1px solid rgba(56,232,200,0.4); border-radius: 6px; color: var(--accent-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; padding: 2px 6px; outline: none; color-scheme: dark; }
+
   .btn-icon { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03); color: var(--text-secondary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; transition: all 0.18s; flex-shrink: 0; }
   .btn-icon:hover { background: rgba(255,255,255,0.09); color: var(--text-primary); }
   .btn-icon.delete:hover { background: rgba(248,113,113,0.14); color: var(--accent-rose); border-color: rgba(248,113,113,0.35); }
@@ -616,6 +621,7 @@
   .signature-wrap { position: relative; }
   .signature-icon { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); font-size: 0.9rem; opacity: 0.28; pointer-events: none; }
   .signature-wrap input { padding-right: 32px; }
+  .signature-wrap input[type="text"] { font-family: 'Caveat', cursive; font-size: 1.35rem; letter-spacing: 0.02em; color: var(--accent-cyan); font-weight: 600; }
   .empty-state { text-align: center; padding: 28px 16px; color: var(--text-muted); font-size: 0.8rem; border: 1px dashed rgba(255,255,255,0.06); border-radius: var(--radius-lg); letter-spacing: 0.04em; line-height: 1.6; }
   .empty-state .emoji { font-size: 1.6rem; display: block; margin-bottom: 8px; }
   .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(30,40,65,0.95); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 10px 18px; font-size: 0.8rem; color: var(--text-primary); box-shadow: 0 12px 40px rgba(0,0,0,0.5); backdrop-filter: blur(20px); z-index: 999; animation: toastIn 0.28s ease; max-width: 320px; text-align: center; }
@@ -985,6 +991,23 @@
   </div>
 </div>
 
+<!-- MODAL: REMINDER ARRIVI DI OGGI -->
+<div class="modal-overlay" id="todayReminderModal" onclick="if(event.target===this)closeTodayReminder()">
+  <div class="modal-day" style="max-width:400px;border-color:rgba(251,191,36,0.3)">
+    <div class="modal-header" style="background:linear-gradient(135deg, rgba(251,191,36,0.08) 0%, transparent 60%)">
+      <div class="modal-title" style="color:var(--accent-amber)">
+        <span style="font-size:1.1rem">🔔</span>
+        Arrivi previsti oggi
+      </div>
+      <button class="modal-close" onclick="closeTodayReminder()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="todayReminderBody"></div>
+  </div>
+</div>
+
+
 <!-- MODAL: DAY PICKER -->
 <div class="modal-overlay modal-overlay-left" id="dayPickerModal" onclick="if(event.target===this)closeDayPicker()">
   <div class="modal-day" style="margin:20px">
@@ -1131,8 +1154,9 @@ function dbToTruck(row){return{id:row.id,ts:row.ts||'',firma:row.firma||'',progr
 function truckToDb(t,dateKey){return{id:t.id,date_key:dateKey||t.dateKey||todayKey(),ts:t.ts||'',firma:t.firma||'',programat:t.programat||'',bancal:!!t.bancal,nr_bancale:t.nrBancale||'',cutii:!!t.cutii,nr_cutii:t.nrCutii||'',comentariu:t.comentariu||'',semnatura:t.semnatura||'',arrival_time:t.arrivalTime||'',collapsed:!!t.collapsed};}
 function dbToResi(row){return{id:row.id,ts:row.ts||'',descriere:row.descriere||'',autorizat:row.autorizat||'',bancal:!!row.bancal,nrBancale:row.nr_bancale||'',cutii:!!row.cutii,nrCutii:row.nr_cutii||'',comentariu:row.comentariu||'',semnatura:row.semnatura||'',collapsed:!!row.collapsed,editing:false,isDraft:false,dateKey:row.date_key};}
 function resiToDb(r,dateKey){return{id:r.id,date_key:dateKey||r.dateKey||todayKey(),ts:r.ts||'',descriere:r.descriere||'',autorizat:r.autorizat||'',bancal:!!r.bancal,nr_bancale:r.nrBancale||'',cutii:!!r.cutii,nr_cutii:r.nrCutii||'',comentariu:r.comentariu||'',semnatura:r.semnatura||'',collapsed:!!r.collapsed};}
-function dbToPian(row){return{id:row.id,dateKey:row.date_key,firma:row.firma||'',ordma:row.comentariu||'',ora:row.arrival_time||''};}
-function pianToDb(p){return{id:p.id,date_key:p.dateKey,ts:nowStamp(),firma:p.firma||'',programat:'pianificato',bancal:false,nr_bancale:'',cutii:false,nr_cutii:'',comentariu:p.ordma||'',semnatura:'ufficio_acquisti',arrival_time:p.ora||'',collapsed:true};}
+function dbToPian(row){return{id:row.id,dateKey:row.date_key,firma:row.firma||'',ordma:row.comentariu||'',ora:row.arrival_time||'',note:row.note||'',creatDe:row.creat_de||''};}
+function pianToDb(p){return{id:p.id,date_key:p.dateKey,ts:nowStamp(),firma:p.firma||'',programat:'pianificato',bancal:false,nr_bancale:'',cutii:false,nr_cutii:'',comentariu:p.ordma||'',semnatura:'ufficio_acquisti',arrival_time:p.ora||'',collapsed:true,note:p.note||'',creat_de:p.creatDe||''};}
+
 
 // ─── STATUS BAR ──────────────────────────────────────────────────────────────
 function setSyncStatus(state,msg){
@@ -1207,11 +1231,13 @@ function updateTodayAlert(){
 
 function updateFabPianBadge(){
   const tk=todayKey();
-  const todayCount=pianificazioni.filter(p=>p.dateKey===tk).length;
+  const futureCount=pianificazioni.filter(p=>p.dateKey>tk).length;
   const badge=document.getElementById('fabPianBadge');
-  badge.textContent=todayCount;
-  badge.classList.toggle('visible',todayCount>0);
+  badge.textContent=futureCount;
+  badge.classList.toggle('visible',futureCount>0);
+  badge.title=futureCount>0?`${futureCount} pianificazioni future`:'';
 }
+
 
 // ─── LOAD DAY ────────────────────────────────────────────────────────────────
 async function loadDay(key){
@@ -1533,8 +1559,10 @@ function renderTrucks(){
         </div>
         <div class="card-header">
           <span class="card-number">CAM #${dn}</span>
-          <span class="card-timestamp">${t.ts}</span>
-          <button class="btn-icon delete" title="Elimina" onclick="removeTruck('${t.id}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+          <span class="card-timestamp editable-time" title="Clicca per modificare l'ora di arrivo" onclick="editArrivalTimeInline('${t.id}','truck',this)">${(t.ts.split(', ')[0]||t.ts)}, ⏱ ${t.arrivalTime||'--:--'}</span>
+          <button class="btn-icon delete" title="Elimina" onclick="removeTruck('${t.id}')">
+
+
         </div>
         <div class="card-body">
           <div class="field"><label class="field-required-label">Azienda / Fornitore</label><input type="text" placeholder="es: KOH-I-NOOR, Bic…" value="${t.firma}" class="${!t.firma?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateTruck('${t.id}','firma',this.value)"></div>
@@ -1554,7 +1582,8 @@ function renderTrucks(){
             </div>
           </div>
           <div class="field"><label>Note</label><textarea placeholder="Osservazioni, danni, mancanze…" onchange="updateTruck('${t.id}','comentariu',this.value)">${t.comentariu}</textarea></div>
-          <div class="field"><label class="field-required-label">Firma responsabile</label><div class="signature-wrap"><input type="text" placeholder="Nome di chi ha ritirato" value="${t.semnatura}" class="${!t.semnatura?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateTruck('${t.id}','semnatura',this.value)"><span class="signature-icon">✍️</span></div>${t.arrivalTime?`<div style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--accent-cyan);opacity:0.7;margin-top:4px;">⏱ Arrivato: ${t.arrivalTime}</div>`:''}</div>
+<div class="field"><label class="field-required-label">Firma responsabile</label><div class="signature-wrap"><input type="text" placeholder="Nome di chi ha ritirato" value="${t.semnatura}" class="${!t.semnatura?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateTruck('${t.id}','semnatura',this.value)"><span class="signature-icon">✍️</span></div>${t.arrivalTime?`<div style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--accent-cyan);opacity:0.85;margin-top:4px;" title="Clicca per modificare l'ora" onclick="editArrivalTimeInline('${t.id}','truck',this)">⏱ Arrivato: ${t.arrivalTime}</div>`:`<div style="cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--text-muted);margin-top:4px;" title="Clicca per impostare l'ora" onclick="editArrivalTimeInline('${t.id}','truck',this)">⏱ Imposta ora arrivo</div>`}</div>
+
           <div class="validation-errors" id="verr-${t.id}"></div>
         </div>
         <div class="confirm-bar"><span class="editing-label">${t.isDraft?'⚡ Nuova registrazione':'✎ Modalità modifica'}</span><button class="btn-cancel-edit" onclick="cancelEdit('${t.id}','truck')">Annulla</button><button class="btn-confirm" onclick="confirmEdit('${t.id}','truck')"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>${t.isDraft?'Registra':'Conferma'}</button></div>
@@ -1573,7 +1602,23 @@ function updateTruck(id,field,val){
   const cardEl=document.getElementById(id);if(cardEl){const ev=cardEl.querySelector('.validation-errors');if(ev)ev.classList.remove('visible');}
 }
 
+function editArrivalTimeInline(id,type,el){
+  if(currentUser&&currentUser.readOnly)return;
+  const t=trucks.find(x=>x.id===id);if(!t)return;
+  el.innerHTML=`<input type="time" class="inline-time-edit" value="${t.arrivalTime||''}" onclick="event.stopPropagation()" onchange="saveArrivalTime('${id}',this.value)" onblur="renderAll()">`;
+  const inp=el.querySelector('input');inp.focus();
+}
+async function saveArrivalTime(id,val){
+  const t=trucks.find(x=>x.id===id);if(!t)return;
+  t.arrivalTime=val;
+  setSyncStatus('syncing','Aggiornamento ora…');
+  try{await sbUpsert('trucks',truckToDb(t));setSyncStatus('synced','Ora aggiornata ✓');toast('⏱ Ora arrivo aggiornata: '+val);}
+  catch(e){setSyncStatus('error','Errore: '+e.message);toast('❌ Errore salvataggio ora',true);}
+  renderAll();
+}
+
 // ─── RESI ─────────────────────────────────────────────────────────────────────
+
 function addResi(){
   if(currentUser&&currentUser.readOnly){toast('⛔ Accesso in sola lettura',true);return;}
   resiCount++;
@@ -1704,20 +1749,25 @@ function updateResi(id,field,val){
 }
 
 // ─── PIANIFICAZIONE MODAL (MODIFICATION #3: two-column layout, form first) ──
-let pianNewFirma='',pianNewOrdma='',pianNewOra='',pianNewData='';
+let pianNewFirma='',pianNewOrdma='',pianNewOra='',pianNewData='',pianNewNote='',pianNewCreatDe='',pianEditingId=null;
+
 
 function openPianificazione(){
-  pianNewFirma='';pianNewOrdma='';pianNewOra='';pianNewData=todayKey();
+  pianNewFirma='';pianNewOrdma='';pianNewOra='';pianNewData=todayKey();pianNewNote='';pianNewCreatDe='';pianEditingId=null;
   document.getElementById('pianModal').classList.add('open');
   renderPianModal();
 }
+
 function closePianificazione(){document.getElementById('pianModal').classList.remove('open');}
 
 function renderPianModal(){
   const tk=todayKey();
   const todayPians=pianificazioni.filter(p=>p.dateKey===tk);
   const futurePians=pianificazioni.filter(p=>p.dateKey>tk).sort((a,b)=>a.dateKey.localeCompare(b.dateKey)||a.ora.localeCompare(b.ora));
-  const pastPians=pianificazioni.filter(p=>p.dateKey<tk).sort((a,b)=>b.dateKey.localeCompare(a.dateKey));
+  const cutoffD=new Date();cutoffD.setDate(cutoffD.getDate()-31);
+  const cutoffKey=`${cutoffD.getFullYear()}-${String(cutoffD.getMonth()+1).padStart(2,'0')}-${String(cutoffD.getDate()).padStart(2,'0')}`;
+  const pastPians=pianificazioni.filter(p=>p.dateKey<tk&&p.dateKey>=cutoffKey).sort((a,b)=>b.dateKey.localeCompare(a.dateKey));
+
 
   // Update header counter
   const totalCount=todayPians.length+futurePians.length;
@@ -1737,19 +1787,26 @@ function renderPianModal(){
           <span class="pian-item-date">${formatDateShort(p.dateKey)}</span>
           ${p.ordma?`<span class="pian-item-ordma">${p.ordma}</span>`:''}
           ${isToday?`<span class="pian-item-badge-today">● oggi</span>`:''}
+          ${p.creatDe?`<span class="pian-item-ordma" style="color:var(--accent-cyan);border-color:rgba(56,232,200,0.25);background:rgba(56,232,200,0.08)">👤 ${p.creatDe}</span>`:''}
         </div>
+        ${p.note?`<div style="font-size:0.68rem;color:var(--text-muted);margin-top:4px;line-height:1.4;font-style:italic;">${p.note}</div>`:''}
       </div>
-      <button class="pian-btn-delete" onclick="deletePian('${p.id}')">
+      <button class="pian-btn-delete" style="background:rgba(79,142,247,0.06);border-color:rgba(79,142,247,0.2);color:var(--accent-blue);margin-right:2px" onclick="editPian('${p.id}')" title="Modifica">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </button>
+      <button class="pian-btn-delete" onclick="deletePian('${p.id}')" title="Elimina">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
       </button>
     </div>`;
+
 
   // LEFT PANEL: the add form — always visible, never needs scroll
   document.getElementById('pianLeftPanel').innerHTML=`
     <div class="pian-add-header">
       <span class="pian-add-header-dot"></span>
-      Pianifica nuovo arrivo
+      ${pianEditingId?'Modifica pianificazione':'Pianifica nuovo arrivo'}
     </div>
+
     <div class="pian-add-form">
       <div class="pian-form-row">
         <label class="pian-form-label required">Azienda / Fornitore</label>
@@ -1769,11 +1826,21 @@ function renderPianModal(){
           <input type="time" class="pian-form-input-dark" id="pianOra" value="${pianNewOra}" oninput="pianNewOra=this.value">
         </div>
       </div>
+      <div class="pian-form-row">
+        <label class="pian-form-label">Informazioni supplementari</label>
+        <textarea class="pian-form-input" id="pianNote" placeholder="Note aggiuntive, dettagli, contatti…" style="min-height:52px;resize:vertical" oninput="pianNewNote=this.value">${pianNewNote}</textarea>
+      </div>
+      <div class="pian-form-row">
+        <label class="pian-form-label required">Aggiunto da</label>
+        <input type="text" class="pian-form-input" id="pianCreatDe" placeholder="Il tuo nome" value="${pianNewCreatDe}" oninput="pianNewCreatDe=this.value">
+      </div>
       <button class="pian-btn-add" onclick="savePian()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Aggiungi pianificazione
+        ${pianEditingId?'Salva modifiche':'Aggiungi pianificazione'}
       </button>
+      ${pianEditingId?`<button class="pian-btn-add" style="border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.04);color:var(--text-secondary)" onclick="cancelEditPian()">Annulla modifica</button>`:''}
     </div>
+
 
     <!-- Quick stats for left panel -->
     <div style="margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,0.05);">
@@ -1822,20 +1889,55 @@ function renderPianModal(){
   `;
 }
 
+function editPian(id){
+  const p=pianificazioni.find(x=>x.id===id);if(!p)return;
+  pianEditingId=id;
+  pianNewFirma=p.firma||'';pianNewOrdma=p.ordma||'';pianNewOra=p.ora||'';pianNewData=p.dateKey||todayKey();
+  pianNewNote=p.note||'';pianNewCreatDe=p.creatDe||'';
+  renderPianModal();
+  document.getElementById('pianLeftPanel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function cancelEditPian(){
+  pianEditingId=null;pianNewFirma='';pianNewOrdma='';pianNewOra='';pianNewData=todayKey();pianNewNote='';pianNewCreatDe='';
+  renderPianModal();
+}
 async function savePian(){
   pianNewFirma=document.getElementById('pianFirma').value.trim();
   pianNewOrdma=document.getElementById('pianOrdma').value.trim();
   pianNewData=document.getElementById('pianData').value;
   pianNewOra=document.getElementById('pianOra').value;
+  pianNewNote=document.getElementById('pianNote').value.trim();
+  pianNewCreatDe=document.getElementById('pianCreatDe').value.trim();
   if(!pianNewFirma){toast('⚠ Inserisci l\'azienda fornitore',true);document.getElementById('pianFirma').focus();return;}
   if(!pianNewData){toast('⚠ Inserisci la data di arrivo',true);return;}
-  const p={id:'pian-'+Date.now(),dateKey:pianNewData,firma:pianNewFirma,ordma:pianNewOrdma,ora:pianNewOra};
+  if(!pianNewCreatDe){toast('⚠ Inserisci il tuo nome',true);document.getElementById('pianCreatDe').focus();return;}
+  if(pianEditingId){
+    const p=pianificazioni.find(x=>x.id===pianEditingId);if(!p){pianEditingId=null;return;}
+    const snapshot={...p};
+    p.dateKey=pianNewData;p.firma=pianNewFirma;p.ordma=pianNewOrdma;p.ora=pianNewOra;p.note=pianNewNote;p.creatDe=pianNewCreatDe;
+    setSyncStatus('syncing','Aggiornamento pianificazione…');
+    try{
+      await sbUpsert('trucks',pianToDb(p));
+      setSyncStatus('synced','Pianificazione aggiornata ✓');
+      toast('✏️ Pianificazione modificata!');
+      pianEditingId=null;pianNewFirma='';pianNewOrdma='';pianNewOra='';pianNewData=todayKey();pianNewNote='';pianNewCreatDe='';
+      updateTodayAlert();
+      renderPianModal();
+    }catch(e){
+      Object.assign(p,snapshot);
+      setSyncStatus('error','Errore: '+e.message);
+      toast('❌ Errore aggiornamento',true);
+    }
+    return;
+  }
+  const p={id:'pian-'+Date.now(),dateKey:pianNewData,firma:pianNewFirma,ordma:pianNewOrdma,ora:pianNewOra,note:pianNewNote,creatDe:pianNewCreatDe};
   pianificazioni.push(p);
   setSyncStatus('syncing','Salvataggio pianificazione…');
   try{
     await sbUpsert('trucks',pianToDb(p));
     setSyncStatus('synced','Pianificazione salvata ✓');
     toast('📅 Camion pianificato!');
+    pianNewFirma='';pianNewOrdma='';pianNewOra='';pianNewNote='';pianNewCreatDe='';
     updateTodayAlert();
     renderPianModal();
   }catch(e){
@@ -1844,6 +1946,7 @@ async function savePian(){
     toast('❌ Errore salvataggio',true);
   }
 }
+
 
 async function deletePian(id){
   if(!confirm('Eliminare questa pianificazione?'))return;
@@ -1856,7 +1959,32 @@ async function deletePian(id){
 }
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
-async function init(){await Promise.all([loadDay(todayKey()),loadPianificazioni()]);}
+let todayReminderShown=false;
+function showTodayReminderIfNeeded(){
+  if(todayReminderShown)return;
+  const tk=todayKey();
+  const todayPians=pianificazioni.filter(p=>p.dateKey===tk);
+  if(todayPians.length===0)return;
+  todayReminderShown=true;
+  document.getElementById('todayReminderBody').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      ${todayPians.map(p=>`
+        <div style="background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.18);border-radius:var(--radius-md);padding:12px 14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+            <span style="font-weight:700;font-size:0.86rem;color:var(--text-primary)">${p.firma||'—'}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--accent-amber);font-weight:700;">${p.ora||'N/D'}</span>
+          </div>
+          ${p.ordma?`<div style="font-size:0.66rem;color:var(--accent-violet);margin-top:4px;">${p.ordma}</div>`:''}
+          ${p.note?`<div style="font-size:0.72rem;color:var(--text-secondary);margin-top:6px;line-height:1.4;">${p.note}</div>`:''}
+          ${p.creatDe?`<div style="font-size:0.62rem;color:var(--text-muted);margin-top:6px;">👤 aggiunto da ${p.creatDe}</div>`:''}
+        </div>`).join('')}
+    </div>
+  `;
+  document.getElementById('todayReminderModal').classList.add('open');
+}
+function closeTodayReminder(){document.getElementById('todayReminderModal').classList.remove('open');}
+async function init(){await Promise.all([loadDay(todayKey()),loadPianificazioni()]);showTodayReminderIfNeeded();}
+
 (function(){initLoginParticles();const inp=document.getElementById('login-pw');if(inp)inp.focus();})();
 
 // ─── DAY PICKER ──────────────────────────────────────────────────────────────
@@ -2056,13 +2184,30 @@ function buildHistoryPanel(hist,allKeys){
   let filteredKeys=allKeys;
   if(histFilter==='trucks')filteredKeys=allKeys.filter(k=>(hist[k].trucks||[]).length>0);
   else if(histFilter==='resi')filteredKeys=allKeys.filter(k=>(hist[k].resis||[]).length>0);
+  else if(histFilter==='anomalie')filteredKeys=allKeys.filter(k=>(hist[k].trucks||[]).some(t=>{
+    if(t.programat==='non_programmato')return true;
+    const timeStr=t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'');
+    if(!timeStr)return false;
+    const h=parseInt(timeStr.split(':')[0],10);
+    return h<8||h>=18;
+  }));
   if(histSearch.trim()){const s=histSearch.trim().toLowerCase();filteredKeys=filteredKeys.filter(k=>{const ts=hist[k].trucks||[],rs=hist[k].resis||[];return ts.some(t=>(t.firma||'').toLowerCase().includes(s)||(t.semnatura||'').toLowerCase().includes(s))||rs.some(r=>(r.descriere||'').toLowerCase().includes(s)||(r.semnatura||'').toLowerCase().includes(s))||k.includes(s);});}
   const daysHTML=filteredKeys.map((k,idx)=>{const{trucks:ts=[],resis:rs=[]}=hist[k];const d=new Date(k+'T12:00:00'),isToday=k===tk,isBusiest=k===busiestKey;const dateLabel=`${dayLabels[d.getDay()]}, ${d.getDate()} ${monthNamesShort[d.getMonth()]} ${d.getFullYear()}`;let hs='';if(isToday)hs='border-color:rgba(56,232,200,0.4);background:rgba(56,232,200,0.05);';else if(isBusiest)hs='border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.04);';
   return `<div class="day-section"><div class="day-header" id="dh-${idx}" onclick="toggleDay(${idx})" style="${hs}"><div class="day-header-left"><span class="day-date-label">${dateLabel}${isToday?' (Oggi)':''}</span><div class="day-badges">${ts.length?`<span class="day-badge badge-truck">${ts.length} cam</span>`:''} ${rs.length?`<span class="day-badge badge-resi">${rs.length} resi</span>`:''} ${isBusiest?`<span class="day-badge badge-hot">🔥 Picco</span>`:''}</div></div><span class="day-chevron">▼</span></div>
   <div class="day-entries" id="de-${idx}">${ts.map(t=>`<div class="entry-row"><span class="entry-type" style="background:rgba(79,142,247,0.12);color:var(--accent-blue)">CAMION</span><span class="entry-time">${t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'–')||'–'}</span><span class="entry-firma">${t.firma||'Fornitore sconosciuto'}</span><span class="entry-qty">${[t.bancal&&t.nrBancale?`${t.nrBancale} B`:'',t.cutii&&t.nrCutii?`${t.nrCutii} C`:''].filter(Boolean).join('·')}</span>${t.semnatura?`<span class="entry-sig">✍ ${t.semnatura}</span>`:''} ${t.comentariu?`<div class="entry-note">${t.comentariu}</div>`:''}</div>`).join('')}${rs.map(r=>`<div class="entry-row"><span class="entry-type" style="background:rgba(248,113,113,0.12);color:var(--accent-rose)">RESO</span><span class="entry-time" style="color:var(--accent-rose)">${r.ts?r.ts.split(' ')[1]:'–'}</span><span class="entry-firma">${r.descriere||'Nessuna descrizione'}</span><span class="entry-qty">${[r.bancal&&r.nrBancale?`${r.nrBancale} B`:'',r.cutii&&r.nrCutii?`${r.nrCutii} C`:''].filter(Boolean).join('·')}</span>${r.semnatura?`<span class="entry-sig">✍ ${r.semnatura}</span>`:''} ${r.comentariu?`<div class="entry-note">${r.comentariu}</div>`:''}</div>`).join('')}</div></div>`;}).join('')||`<div class="no-history">Nessun risultato trovato.</div>`;
-  return `<div class="history-controls"><div class="hist-search"><input type="text" placeholder="🔍 Cerca fornitore, firma, data…" value="${histSearch}" oninput="histSearch=this.value;switchStatsTab('history')"></div><button class="hist-filter-btn ${histFilter==='all'?'active':''}" onclick="histFilter='all';switchStatsTab('history')">Tutti</button><button class="hist-filter-btn ${histFilter==='trucks'?'active':''}" onclick="histFilter='trucks';switchStatsTab('history')">Solo camion</button><button class="hist-filter-btn ${histFilter==='resi'?'active-rose active':''}" onclick="histFilter='resi';switchStatsTab('history')">Solo resi</button><span style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--text-muted);margin-left:auto">${filteredKeys.length} giorni</span></div>${daysHTML}`;
+  return `<div class="history-controls"><div class="hist-search"><input type="text" id="histSearchInput" placeholder="🔍 Cerca fornitore, firma, data…" value="${histSearch}" oninput="handleHistSearchInput(this)"></div><button class="hist-filter-btn ${histFilter==='all'?'active':''}" onclick="histFilter='all';switchStatsTab('history')">Tutti</button><button class="hist-filter-btn ${histFilter==='trucks'?'active':''}" onclick="histFilter='trucks';switchStatsTab('history')">Solo camion</button><button class="hist-filter-btn ${histFilter==='resi'?'active-rose active':''}" onclick="histFilter='resi';switchStatsTab('history')">Solo resi</button><button class="hist-filter-btn ${histFilter==='anomalie'?'active':''}" style="${histFilter==='anomalie'?'background:rgba(251,191,36,0.15);border-color:rgba(251,191,36,0.35);color:var(--accent-amber)':''}" onclick="histFilter='anomalie';switchStatsTab('history')">⚠ Fuori orario / Non prog.</button><span style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--text-muted);margin-left:auto">${filteredKeys.length} giorni</span></div>${daysHTML}`;
 }
 function toggleDay(idx){document.getElementById('dh-'+idx).classList.toggle('open');document.getElementById('de-'+idx).classList.toggle('open');}
+
+function handleHistSearchInput(inputEl){
+  const pos=inputEl.selectionStart;
+  histSearch=inputEl.value;
+  switchStatsTab('history');
+  const newInput=document.getElementById('histSearchInput');
+  if(newInput){newInput.focus();newInput.setSelectionRange(pos,pos);}
+}
+
+
 function exportCSV(){
   if(!statsHistCache){toast('⚠ Nessun dato da esportare',true);return;}
   const allKeys=Object.keys(statsHistCache).sort();let rows=['Data,Tipo,Ora,Azienda/Descrizione,Stato,Bancali,Colli,Segnatura,Note'];
