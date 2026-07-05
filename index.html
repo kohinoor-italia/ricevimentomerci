@@ -809,8 +809,16 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
   .header { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; flex-wrap: wrap; }
-  .header-left h1 { font-size: clamp(1.4rem,3vw,2rem); font-weight: 700; letter-spacing: -0.03em; background: linear-gradient(135deg,#e8edf8 0%,var(--accent-cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.1; }
-  .header-left p { color: var(--text-secondary); font-size: 0.82rem; margin-top: 5px; font-weight: 300; }
+  .brand-row { display: flex; align-items: center; gap: 16px; }
+  .brand-logo { width: 56px; height: 56px; border-radius: 16px; background: linear-gradient(135deg, #fbbf24 0%, #f87171 55%, #a78bfa 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(251,191,36,0.25), 0 1px 0 rgba(255,255,255,0.25) inset; flex-shrink: 0; position: relative; overflow: hidden; }
+  .brand-logo::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 55%); }
+  .brand-logo svg { position: relative; z-index: 1; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.25)); }
+  .brand-text { display: flex; flex-direction: column; gap: 3px; }
+  .brand-name { font-size: clamp(1.5rem,3.2vw,2.1rem); font-weight: 700; letter-spacing: -0.02em; background: linear-gradient(135deg,#e8edf8 0%,var(--accent-cyan) 55%,var(--accent-blue) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1.05; }
+  .brand-sub-row { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-top: 1px; }
+  .brand-tag { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-amber); background: rgba(251,191,36,0.10); border: 1px solid rgba(251,191,36,0.28); border-radius: 20px; padding: 3px 10px; white-space: nowrap; }
+  .brand-desc { color: var(--text-secondary); font-size: 0.82rem; font-weight: 300; margin: 0; }
+
   .header-right { display: flex; align-items: center; gap: 12px; }
   .clock-card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-md); padding: 12px 20px; text-align: right; backdrop-filter: blur(16px); box-shadow: var(--shadow-glass); }
   .clock-time { font-family: 'JetBrains Mono', monospace; font-size: clamp(1.4rem,2.5vw,2rem); font-weight: 500; color: var(--accent-cyan); letter-spacing: 0.04em; text-shadow: 0 0 20px rgba(56,232,200,0.3); }
@@ -851,9 +859,25 @@
 <div class="page">
   <div class="header">
     <div class="header-left">
-      <h1>📦 Registro Magazzino</h1>
-      <p id="header-desc">Registrazione degli ingressi giornalieri &amp; resi</p>
+      <div class="brand-row">
+        <div class="brand-logo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0a0f1e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+            <path d="M2 2l7.586 7.586"/>
+            <circle cx="11" cy="11" r="2"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-name">KOH-I-NOOR</div>
+          <div class="brand-sub-row">
+            <span class="brand-tag">✏️ Cancelleria</span>
+            <p class="brand-desc" id="header-desc">Registro Magazzino — Registrazione ingressi giornalieri &amp; resi</p>
+          </div>
+        </div>
+      </div>
     </div>
+
     <div class="header-right">
       <div class="user-badge" id="userBadge" onclick="doLogout()" title="Clicca per uscire">
         <div class="user-badge-avatar" id="userBadgeAvatar"></div>
@@ -1252,7 +1276,9 @@ async function loadDay(key){
       sbGet('trucks',`date_key=eq.${key}&programat=neq.pianificato&order=created_at.asc`),
       sbGet('resi',`date_key=eq.${key}&order=created_at.asc`)
     ]);
-    trucks=tRows.map(dbToTruck);resis=rRows.map(dbToResi);
+trucks=tRows.map(dbToTruck).map(t=>{t.collapsed=isTruckComplete(t);return t;});
+resis=rRows.map(dbToResi).map(r=>{r.collapsed=isResiComplete(r);return r;});
+
     truckCount=trucks.length;resiCount=resis.length;
     readonlyExpandedId=null;
     editSnapshots.clear();
@@ -1589,7 +1615,7 @@ function renderTrucks(){
         </div>
         <div class="card-body">
 
-          <div class="field"><label class="field-required-label">Azienda / Fornitore</label><input type="text" placeholder="es: KOH-I-NOOR, Bic…" value="${t.firma}" class="${!t.firma?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateTruck('${t.id}','firma',this.value)"></div>
+          <div class="field"><label class="field-required-label">Azienda / Fornitore</label><input type="text" placeholder="es: KOH-I-NOOR, MARKIN…" value="${t.firma}" class="${!t.firma?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateTruck('${t.id}','firma',this.value)"></div>
           <div class="field"><label class="field-required-label">Stato consegna</label><div class="radio-group">
             <label class="radio-pill opt-yes"><input type="radio" name="prog-${t.id}" value="programmato" ${t.programat==='programmato'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Programmato</span></label>
             <label class="radio-pill opt-no"><input type="radio" name="prog-${t.id}" value="non_programmato" ${t.programat==='non_programmato'?'checked':''} onchange="updateTruck('${t.id}','programat',this.value)"><span class="radio-dot"></span><span>Non programmato</span></label>
@@ -1692,7 +1718,7 @@ function renderResis(){
         <div class="card-compact-view" onclick="expandCard('${r.id}','resi')">
           <div class="compact-top">
             <span class="compact-badge compact-badge-rose">RESI #${dn}</span>
-            <span class="compact-time" style="color:var(--accent-rose)">${r.ts?r.ts.split(' ')[1]:'–'}</span>
+            <span class="compact-time" style="color:var(--accent-rose)">${r.arrivalTime||(r.ts?r.ts.split(' ')[1]:'–')}</span>
             <span class="compact-firma" title="${(r.descriere||'Senza descrizione').replace(/"/g,'&quot;')}">${r.descriere||'Senza descrizione'}</span>
             ${r.semnatura?`<span class="compact-sig">✍ <span class="compact-sig-name">${r.semnatura}</span></span>`:''}
             <div class="compact-pills">${qty?`<span class="compact-pill">${qty}</span>`:''}</div>
@@ -1732,7 +1758,7 @@ function renderResis(){
         <div class="card-compact-view" onclick="expandCard('${r.id}','resi')">
           <div class="compact-top">
             <span class="compact-badge compact-badge-rose">RESI #${dn}</span>
-            <span class="compact-time" style="color:var(--accent-rose)">${r.ts?r.ts.split(' ')[1]:'–'}</span>
+            <span class="compact-time" style="color:var(--accent-rose)">${r.arrivalTime||(r.ts?r.ts.split(' ')[1]:'–')}</span>
             <span class="compact-firma" title="${(r.descriere||'Senza descrizione').replace(/"/g,'&quot;')}">${r.descriere||'Senza descrizione'}</span>
             ${r.semnatura?`<span class="compact-sig">✍ <span class="compact-sig-name">${r.semnatura}</span></span>`:''}
             <div class="compact-pills">${qty?`<span class="compact-pill">${qty}</span>`:''}</div>
@@ -1751,7 +1777,7 @@ function renderResis(){
 
 
         <div class="card-body">
-          <div class="field"><label class="field-required-label">Descrizione pacchi restituiti</label><input type="text" placeholder="es: 3 colli Bic, riferimento…" value="${r.descriere}" class="${!r.descriere?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateResi('${r.id}','descriere',this.value)"></div>
+          <div class="field"><label class="field-required-label">Descrizione pacchi restituiti</label><input type="text" placeholder="es: 3 colli COOP, riferimento…" value="${r.descriere}" class="${!r.descriere?'field-required-pulse':''}" oninput="this.classList.toggle('field-required-pulse',!this.value.trim())" onchange="updateResi('${r.id}','descriere',this.value)"></div>
           <div class="field"><label class="field-required-label">Tipo merce</label>
             <div class="check-group">
               <label class="check-label bancal"><input type="checkbox" ${r.bancal?'checked':''} onchange="updateResi('${r.id}','bancal',this.checked)"><span class="check-box">${r.bancal?'✓':''}</span><span>Bancale</span></label>
@@ -1850,7 +1876,7 @@ function renderPianModal(){
     <div class="pian-add-form">
       <div class="pian-form-row">
         <label class="pian-form-label required">Azienda / Fornitore</label>
-        <input type="text" class="pian-form-input" id="pianFirma" placeholder="es: Bic, KOH-I-NOOR, DHL…" value="${pianNewFirma}" oninput="pianNewFirma=this.value">
+        <input type="text" class="pian-form-input" id="pianFirma" placeholder="es: KOH-I-NOOR, MARKIN…" value="${pianNewFirma}" oninput="pianNewFirma=this.value">
       </div>
       <div class="pian-form-row">
         <label class="pian-form-label">N° Ordine / ORDMA</label>
