@@ -2440,12 +2440,49 @@ function handleHistSearchInput(inputEl){
 }
 
 
-function exportCSV(){
-  if(!statsHistCache){toast('⚠ Nessun dato da esportare',true);return;}
-  const allKeys=Object.keys(statsHistCache).sort();let rows=['Data,Tipo,Ora,Azienda/Descrizione,Stato,Bancali,Colli,Segnatura,Note'];
-  allKeys.forEach(k=>{const ts=statsHistCache[k].trucks||[],rs=statsHistCache[k].resis||[];ts.forEach(t=>rows.push(`${k},Camion,${t.arrivalTime||''},${(t.firma||'').replace(/,/g,' ')},${t.programat||''},${t.nrBancale||0},${t.nrCutii||0},${(t.semnatura||'').replace(/,/g,' ')},${(t.comentariu||'').replace(/,/g,' ')}`));rs.forEach(r=>rows.push(`${k},Reso,${r.ts?r.ts.split(' ')[1]:''},${(r.descriere||'').replace(/,/g,' ')},${r.autorizat||''},${r.nrBancale||0},${r.nrCutii||0},${(r.semnatura||'').replace(/,/g,' ')},${(r.comentariu||'').replace(/,/g,' ')}`));});
-  const blob=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`registro_magazzino_${todayKey()}.csv`;a.click();URL.revokeObjectURL(url);toast('📥 CSV esportato!');
+function csvEscape(val){
+  if(val===null||val===undefined)return '';
+  let s=(typeof val==='boolean')?(val?'true':'false'):String(val);
+  if(/[",\n\r]/.test(s)){s='"'+s.replace(/"/g,'""')+'"';}
+  return s;
 }
+
+function rowsToRawCSV(rows){
+  if(!rows||rows.length===0)return '';
+  // Union of keys across all rows, preserving first-seen order (matches Postgrest column order)
+  const cols=[];
+  rows.forEach(r=>{Object.keys(r).forEach(k=>{if(!cols.includes(k))cols.push(k);});});
+  const header=cols.map(csvEscape).join(',');
+  const body=rows.map(r=>cols.map(c=>csvEscape(r[c])).join(',')).join('\r\n');
+  return header+'\r\n'+body;
+}
+
+function downloadCSV(filename,content){
+  const blob=new Blob(['\ufeff'+content],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=filename;a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function exportCSV(){
+  toast('⏳ Esportazione tabelle in corso…');
+  try{
+    const [tRows,rRows]=await Promise.all([
+      sbGet('trucks','select=*&order=date_key.asc,created_at.asc'),
+      sbGet('resi','select=*&order=date_key.asc,created_at.asc')
+    ]);
+    if(tRows.length===0&&rRows.length===0){toast('⚠ Nessun dato da esportare',true);return;}
+
+    const dateStamp=todayKey();
+    if(tRows.length>0)downloadCSV(`trucks_${dateStamp}.csv`,rowsToRawCSV(tRows));
+    if(rRows.length>0)setTimeout(()=>downloadCSV(`resi_${dateStamp}.csv`,rowsToRawCSV(rRows)),200);
+
+    toast(`📥 Esportate ${tRows.length} righe (trucks) e ${rRows.length} righe (resi)`);
+  }catch(e){
+    toast('❌ Errore esportazione: '+e.message,true);
+  }
+}
+
 </script>
 </body>
 </html>
