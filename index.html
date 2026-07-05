@@ -846,6 +846,100 @@ kin2026
 @media(max-width:600px){.stats-sidebar{display:none;}.stats-tab-bar{max-width:100%;}.overview-grid{grid-template-columns:1fr;}.stats-topbar{padding:0 12px;gap:8px;}.page{padding:14px 12px 50px;}.header{flex-direction:column;}.clock-card{text-align:left;width:100%;}.pian-topbar{padding:0 14px;height:54px;}.pian-drawer{border-radius:20px 20px 0 0;padding:10px 16px 18px;}}
 
 
+
+/* ─── TODAY REMINDER MODAL — REDESIGN ────────────────────────────────────── */
+.reminder-card{
+  background:#0d1120;
+  border:1px solid rgba(251,191,36,0.18);
+  border-radius:24px;
+  width:100%;max-width:400px;
+  overflow:hidden;
+  box-shadow:0 30px 80px rgba(0,0,0,.55),0 0 60px rgba(251,191,36,.06);
+  animation:modalInLeft .3s cubic-bezier(.34,1.4,.64,1);
+}
+.reminder-glow-header{
+  position:relative;
+  padding:34px 24px 22px;
+  text-align:center;
+  background:radial-gradient(120% 140% at 50% -20%,rgba(251,191,36,.16) 0%,transparent 65%);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.reminder-bell-wrap{
+  position:relative;width:64px;height:64px;margin:0 auto 14px;
+  display:flex;align-items:center;justify-content:center;
+}
+.reminder-ring{
+  position:absolute;inset:0;border-radius:50%;
+  border:1.5px solid rgba(251,191,36,.45);
+  animation:reminderPing 2.2s cubic-bezier(.2,.7,.3,1) infinite;
+}
+.reminder-ring.r2{animation-delay:.7s;}
+@keyframes reminderPing{
+  0%{transform:scale(.6);opacity:.9;}
+  100%{transform:scale(1.7);opacity:0;}
+}
+.reminder-bell-core{
+  position:relative;width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(145deg,rgba(251,191,36,.25),rgba(251,191,36,.08));
+  border:1px solid rgba(251,191,36,.4);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;
+  animation:bellRing 2.4s ease-in-out infinite;
+  box-shadow:0 0 30px rgba(251,191,36,.25);
+}
+.reminder-title{font-size:1.05rem;font-weight:700;color:var(--text-primary);letter-spacing:-.01em;margin-bottom:4px;}
+.reminder-subtitle{font-size:.76rem;color:var(--text-muted);}
+.reminder-subtitle strong{color:var(--accent-amber);font-weight:700;}
+
+.reminder-list{
+  max-height:340px;overflow-y:auto;
+  padding:6px 8px;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent;
+}
+.reminder-row{
+  display:flex;gap:14px;align-items:flex-start;
+  padding:14px 14px;border-radius:14px;
+  transition:background .15s;
+  animation:cardIn .25s cubic-bezier(.34,1.4,.64,1) both;
+}
+.reminder-row:hover{background:rgba(255,255,255,.03);}
+.reminder-row + .reminder-row{border-top:1px solid rgba(255,255,255,.045);}
+
+.reminder-time-chip{
+  flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:56px;height:52px;border-radius:12px;
+  background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);
+}
+.reminder-time-chip .t{font-family:'JetBrains Mono',monospace;font-size:.86rem;font-weight:700;color:var(--accent-amber);line-height:1;}
+.reminder-time-chip .l{font-size:.5rem;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;margin-top:2px;}
+.reminder-time-chip.unk{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.07);}
+.reminder-time-chip.unk .t{color:var(--text-muted);font-size:.62rem;}
+
+.reminder-info{flex:1;min-width:0;padding-top:1px;}
+.reminder-firma{font-size:.88rem;font-weight:700;color:var(--text-primary);}
+.reminder-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:5px;}
+.reminder-tag{
+  font-size:.63rem;font-family:'JetBrains Mono',monospace;padding:2px 8px;border-radius:20px;
+  background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.22);color:var(--accent-violet);
+}
+.reminder-tag.who{background:rgba(56,232,200,.08);border-color:rgba(56,232,200,.22);color:var(--accent-cyan);}
+.reminder-note{font-size:.72rem;color:var(--text-secondary);margin-top:7px;line-height:1.45;font-style:italic;}
+
+.reminder-footer{
+  padding:16px 24px 22px;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.reminder-btn{
+  width:100%;padding:13px;border-radius:14px;border:none;cursor:pointer;
+  background:var(--accent-amber);color:#1a1305;
+  font-family:'Sora',sans-serif;font-weight:700;font-size:.86rem;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all .18s;
+}
+.reminder-btn:hover{transform:translateY(-1px);box-shadow:0 10px 26px rgba(251,191,36,.3);}
+
+
+
 </style>
 </head>
 <body>
@@ -1014,18 +1108,17 @@ kin2026
 <div class="modal-overlay" id="pianModal" onclick="if(event.target===this)closePianificazione()">
   <div class="modal-pian">
     <div class="pian-topbar">
-      <button class="pian-refresh-btn" id="pianRefreshBtn" onclick="refreshPianModal()" title="Aggiorna dati">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      <button class="pian-close-btn" onclick="closePianificazione()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
       <div class="pian-topbar-title">
         <span class="pian-topbar-eyebrow">Magazzino</span>
         <span class="pian-topbar-main">Arrivi pianificati</span>
       </div>
-      <button class="pian-close-btn" onclick="closePianificazione()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <button class="pian-refresh-btn" id="pianRefreshBtn" onclick="refreshPianModal()" title="Aggiorna dati">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
       </button>
     </div>
-
 
     <div class="pian-stats-strip" id="pianStatsStrip"></div>
 
@@ -1051,19 +1144,26 @@ kin2026
 
 <!-- MODAL: REMINDER ARRIVI DI OGGI -->
 <div class="modal-overlay" id="todayReminderModal" onclick="if(event.target===this)closeTodayReminder()">
-  <div class="modal-day" style="max-width:400px;border-color:rgba(251,191,36,0.3)">
-    <div class="modal-header" style="background:linear-gradient(135deg, rgba(251,191,36,0.08) 0%, transparent 60%)">
-      <div class="modal-title" style="color:var(--accent-amber)">
-        <span style="font-size:1.1rem">🔔</span>
-        Arrivi previsti oggi
+  <div class="reminder-card">
+    <div class="reminder-glow-header">
+      <div class="reminder-bell-wrap">
+        <span class="reminder-ring"></span>
+        <span class="reminder-ring r2"></span>
+        <div class="reminder-bell-core">🔔</div>
       </div>
-      <button class="modal-close" onclick="closeTodayReminder()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <div class="reminder-title">Arrivi previsti oggi</div>
+      <div class="reminder-subtitle" id="reminderSubtitle"></div>
+    </div>
+    <div class="reminder-list" id="todayReminderBody"></div>
+    <div class="reminder-footer">
+      <button class="reminder-btn" onclick="closeTodayReminder()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Ho capito
       </button>
     </div>
-    <div class="modal-body" id="todayReminderBody"></div>
   </div>
 </div>
+
 
 
 <!-- MODAL: DAY PICKER -->
@@ -2084,26 +2184,36 @@ let todayReminderShown=false;
 function showTodayReminderIfNeeded(){
   if(todayReminderShown)return;
   const tk=todayKey();
-  const todayPians=pianificazioni.filter(p=>p.dateKey===tk);
+  const todayPians=pianificazioni.filter(p=>p.dateKey===tk).sort((a,b)=>(a.ora||'99:99').localeCompare(b.ora||'99:99'));
   if(todayPians.length===0)return;
   todayReminderShown=true;
-  document.getElementById('todayReminderBody').innerHTML=`
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      ${todayPians.map(p=>`
-        <div style="background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.18);border-radius:var(--radius-md);padding:12px 14px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
-            <span style="font-weight:700;font-size:0.86rem;color:var(--text-primary)">${p.firma||'—'}</span>
-            <span style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--accent-amber);font-weight:700;">${p.ora||'N/D'}</span>
-          </div>
-          ${p.ordma?`<div style="font-size:0.66rem;color:var(--accent-violet);margin-top:4px;">${p.ordma}</div>`:''}
-          ${p.note?`<div style="font-size:0.72rem;color:var(--text-secondary);margin-top:6px;line-height:1.4;">${p.note}</div>`:''}
-          ${p.creatDe?`<div style="font-size:0.62rem;color:var(--text-muted);margin-top:6px;">👤 aggiunto da ${p.creatDe}</div>`:''}
-        </div>`).join('')}
+
+  document.getElementById('reminderSubtitle').innerHTML=
+    todayPians.length===1
+      ? `<strong>1 camion</strong> in programma per oggi`
+      : `<strong>${todayPians.length} camion</strong> in programma per oggi`;
+
+  document.getElementById('todayReminderBody').innerHTML=todayPians.map(p=>`
+    <div class="reminder-row">
+      <div class="reminder-time-chip ${!p.ora?'unk':''}">
+        <span class="t">${p.ora||'N/D'}</span>
+        ${p.ora?`<span class="l">ora</span>`:''}
+      </div>
+      <div class="reminder-info">
+        <div class="reminder-firma">${p.firma||'—'}</div>
+        <div class="reminder-tags">
+          ${p.ordma?`<span class="reminder-tag">${p.ordma}</span>`:''}
+          ${p.creatDe?`<span class="reminder-tag who">👤 ${p.creatDe}</span>`:''}
+        </div>
+        ${p.note?`<div class="reminder-note">${p.note}</div>`:''}
+      </div>
     </div>
-  `;
+  `).join('');
+
   document.getElementById('todayReminderModal').classList.add('open');
 }
 function closeTodayReminder(){document.getElementById('todayReminderModal').classList.remove('open');}
+
 async function init(){await Promise.all([loadDay(todayKey()),loadPianificazioni()]);showTodayReminderIfNeeded();}
 
 (function(){initLoginParticles();const inp=document.getElementById('login-pw');if(inp)inp.focus();})();
