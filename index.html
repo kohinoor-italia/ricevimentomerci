@@ -212,30 +212,91 @@
   .readonly-info.visible { display: flex; }
   .readonly-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-amber); flex-shrink: 0; }
 
-  /* TODAY ARRIVAL ALERT */
+  /* TODAY ARRIVAL ALERT — REDESIGN */
   .today-arrival-alert {
-    display: none; align-items: center; gap: 12px;
-    padding: 11px 18px; border-radius: var(--radius-md);
-    background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.35);
+    display: none; position: relative; overflow: hidden;
+    align-items: center; gap: 14px;
+    padding: 14px 18px 14px 16px; border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(251,191,36,0.09) 0%, rgba(251,191,36,0.03) 100%);
+    border: 1px solid rgba(251,191,36,0.28);
     margin-bottom: 14px; cursor: pointer;
-    transition: all 0.2s ease;
-    animation: alertPulseIn 0.5s cubic-bezier(0.34,1.3,0.64,1);
+    transition: all 0.22s ease;
+    animation: alertPulseIn 0.45s cubic-bezier(0.34,1.3,0.64,1);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 4px 20px rgba(251,191,36,0.06);
+  }
+  .today-arrival-alert::before {
+    content:'';
+    position:absolute; left:0; top:0; bottom:0; width:3px;
+    background: linear-gradient(180deg, var(--accent-amber), rgba(251,191,36,0.3));
+    box-shadow: 0 0 10px rgba(251,191,36,0.5);
   }
   @keyframes alertPulseIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
-  .today-arrival-alert:hover { background: rgba(251,191,36,0.14); border-color: rgba(251,191,36,0.55); }
+  .today-arrival-alert:hover {
+    background: linear-gradient(135deg, rgba(251,191,36,0.15) 0%, rgba(251,191,36,0.05) 100%);
+    border-color: rgba(251,191,36,0.5);
+    box-shadow: 0 8px 28px rgba(251,191,36,0.14);
+    transform: translateY(-1px);
+  }
   .today-arrival-alert.visible { display: flex; }
   .today-arrival-alert.hidden-past { display: none !important; }
-  .taa-icon { font-size: 1.1rem; animation: bellRing 2s ease-in-out infinite; flex-shrink: 0; }
+
+  .taa-icon-wrap {
+    position: relative; flex-shrink: 0;
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(251,191,36,0.14); border: 1px solid rgba(251,191,36,0.35);
+  }
+  .taa-icon-wrap svg { position: relative; z-index: 1; animation: bellRing 2.6s ease-in-out infinite; }
+  .taa-ring {
+    position: absolute; inset: 0; border-radius: 50%;
+    border: 1.5px solid rgba(251,191,36,0.4);
+    animation: reminderPing 2.2s cubic-bezier(.2,.7,.3,1) infinite;
+  }
   @keyframes bellRing { 0%,100%{transform:rotate(0)} 10%,30%{transform:rotate(-12deg)} 20%,40%{transform:rotate(12deg)} 50%{transform:rotate(0)} }
-  .taa-content { flex: 1; }
-  .taa-title { font-size: 0.80rem; font-weight: 700; color: var(--accent-amber); margin-bottom: 2px; }
-  .taa-list { font-size: 0.73rem; color: var(--text-secondary); line-height: 1.5; }
+
+  .taa-content { flex: 1; min-width: 0; }
+  .taa-title {
+    font-size: 0.68rem; font-weight: 700; color: var(--accent-amber);
+    letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .taa-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .taa-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 0.73rem; font-weight: 600; color: var(--text-primary);
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 20px; padding: 3px 10px 3px 8px;
+    max-width: 220px;
+  }
+  .taa-pill-firma { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .taa-pill-time {
+    font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+    color: var(--accent-amber); opacity: 0.85; flex-shrink: 0;
+  }
+  .taa-pill-more {
+    font-size: 0.70rem; font-weight: 600; color: var(--text-muted);
+    background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.12);
+    border-radius: 20px; padding: 3px 10px;
+  }
+
+  .taa-count-wrap { display: flex; flex-direction: column; align-items: center; gap: 1px; flex-shrink: 0; }
   .taa-count {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 1.2rem; font-weight: 700; color: var(--accent-amber);
-    background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.3);
-    border-radius: var(--radius-sm); padding: 4px 12px; flex-shrink: 0;
+    font-size: 1.35rem; font-weight: 700; line-height: 1; color: var(--accent-amber);
+    background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.32);
+    border-radius: var(--radius-sm); padding: 6px 14px;
   }
+  .taa-count-label {
+    font-size: 0.56rem; color: var(--text-muted); letter-spacing: 0.07em;
+    text-transform: uppercase; font-weight: 600; margin-top: 3px;
+  }
+
+  @media(max-width:600px){
+    .taa-pills{display:none;}
+    .today-arrival-alert{padding:12px 14px;}
+  }
+
 
   /* ─── PIANIFICAZIONE MODAL — TIMELINE REDESIGN ───────────────────────────── */
   .modal-pian{
@@ -1074,13 +1135,20 @@ kin2026
   </div>
 
   <div class="today-arrival-alert" id="todayArrivalAlert" onclick="openPianificazione()">
-    <span class="taa-icon">🔔</span>
+    <div class="taa-icon-wrap">
+      <span class="taa-ring"></span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--accent-amber)"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </div>
     <div class="taa-content">
       <div class="taa-title">Camion previsti oggi</div>
-      <div class="taa-list" id="taaList">—</div>
+      <div class="taa-pills" id="taaList"></div>
     </div>
-    <div class="taa-count" id="taaCount">0</div>
+    <div class="taa-count-wrap">
+      <div class="taa-count" id="taaCount">0</div>
+      <div class="taa-count-label">arrivi</div>
+    </div>
   </div>
+
 
   <div class="main-layout">
     <div class="column-left">
@@ -1465,7 +1533,13 @@ const todayPians=pianificazioni.filter(p=>pianCoversDate(p,tk)&&p.stareSosire!==
   if(todayPians.length===0){alert.classList.remove('visible','hidden-past');updateStatusBarVisibility();return;}
   alert.classList.add('visible');
   document.getElementById('taaCount').textContent=todayPians.length;
-  document.getElementById('taaList').textContent=todayPians.map(p=>`${p.firma||'?'}${pianIsRange(p)?' ('+formatRangeShort(p)+')':(p.ora?' alle '+p.ora:'')}`).join(' · ');
+  const maxPills=4;
+  const shown=todayPians.slice(0,maxPills);
+  const extra=todayPians.length-shown.length;
+  document.getElementById('taaList').innerHTML=
+    shown.map(p=>`<span class="taa-pill"><span class="taa-pill-firma">${p.firma||'?'}</span><span class="taa-pill-time">${pianIsRange(p)?formatRangeShort(p):(p.ora||'08–12h')}</span></span>`).join('')
+    +(extra>0?`<span class="taa-pill-more">+${extra} altri</span>`:'');
+
   if(activeDay&&activeDay!==tk){alert.classList.add('hidden-past');}
   else{alert.classList.remove('hidden-past');}
   updateStatusBarVisibility();
@@ -2068,14 +2142,17 @@ function renderPianModal(){
   const singles=pianificazioni.filter(p=>!pianIsRange(p));
   const ranges=pianificazioni.filter(p=>pianIsRange(p));
 
-  const future=singles.filter(p=>p.dateKey>=tk).sort((a,b)=>a.dateKey.localeCompare(b.dateKey)||a.ora.localeCompare(b.ora));
-  const rangesActive=ranges.filter(p=>pianEndKey(p)>=tk).sort((a,b)=>a.dateKey.localeCompare(b.dateKey));
+ const future=singles.filter(p=>p.dateKey>=tk&&p.stareSosire!=='sosit').sort((a,b)=>a.dateKey.localeCompare(b.dateKey)||a.ora.localeCompare(b.ora));
+const rangesActive=ranges.filter(p=>pianEndKey(p)>=tk&&p.stareSosire!=='sosit').sort((a,b)=>a.dateKey.localeCompare(b.dateKey));
+
 
   const cutoffD=new Date();cutoffD.setDate(cutoffD.getDate()-31);
   const cutoffKey=`${cutoffD.getFullYear()}-${String(cutoffD.getMonth()+1).padStart(2,'0')}-${String(cutoffD.getDate()).padStart(2,'0')}`;
-  const pastSingles=singles.filter(p=>p.dateKey<tk&&p.dateKey>=cutoffKey);
-  const pastRanges=ranges.filter(p=>pianEndKey(p)<tk&&pianEndKey(p)>=cutoffKey);
-  const past=[...pastSingles,...pastRanges].sort((a,b)=>pianEndKey(b).localeCompare(pianEndKey(a)));
+const pastSingles=singles.filter(p=>(p.dateKey<tk||p.stareSosire==='sosit')&&p.dateKey>=cutoffKey);
+const pastRanges=ranges.filter(p=>(pianEndKey(p)<tk||p.stareSosire==='sosit')&&pianEndKey(p)>=cutoffKey);
+
+const past=[...pastSingles,...pastRanges].sort((a,b)=>b.dateKey.localeCompare(a.dateKey));
+
 
   const todayCount=pianificazioni.filter(p=>pianCoversDate(p,tk)).length;
 
@@ -2114,10 +2191,14 @@ function renderPianModal(){
         </div>
 <div class="pian-ticket-actions">
   <button class="pian-ticket-btn ${p.stareSosire==='sosit'?'status-yes':''}" onclick="event.stopPropagation();toggleArrivoStatus('${p.id}','sosit')" title="Segna arrivato"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button>
-  <button class="pian-ticket-btn ${p.stareSosire==='nesosit'?'status-no':''}" onclick="event.stopPropagation();toggleArrivoStatus('${p.id}','nesosit')" title="Segna non arrivato"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-  ${isPast?'':`<button class="pian-ticket-btn" onclick="editPian('${p.id}')" title="Modifica"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>`}
+<button class="pian-ticket-btn" onclick="editPian('${p.id}')" title="Modifica"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+
   <button class="pian-ticket-btn del" onclick="deletePian('${p.id}')" title="Elimina"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
 </div>
+
+
+
+
 
       </div>
     </div>`;
@@ -2138,12 +2219,14 @@ function renderPianModal(){
           </div>
           ${p.note?`<div class="pian-ticket-note">${p.note}</div>`:''}
         </div>
-        <div class="pian-ticket-actions">
-          <button class="pian-ticket-btn ${p.stareSosire==='sosit'?'status-yes':''}" onclick="event.stopPropagation();toggleArrivoStatus('${p.id}','sosit')" title="Segna arrivato"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button>
-          <button class="pian-ticket-btn ${p.stareSosire==='nesosit'?'status-no':''}" onclick="event.stopPropagation();toggleArrivoStatus('${p.id}','nesosit')" title="Segna non arrivato"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-          <button class="pian-ticket-btn" onclick="editPian('${p.id}')" title="Modifica"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
-          <button class="pian-ticket-btn del" onclick="deletePian('${p.id}')" title="Elimina"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
-        </div>
+<div class="pian-ticket-actions">
+  <button class="pian-ticket-btn ${p.stareSosire==='sosit'?'status-yes':''}" onclick="event.stopPropagation();toggleArrivoStatus('${p.id}','sosit')" title="Segna arrivato"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button>
+  <button class="pian-ticket-btn" onclick="editPian('${p.id}')" title="Modifica"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+  <button class="pian-ticket-btn del" onclick="deletePian('${p.id}')" title="Elimina"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+</div>
+
+
+
 
       </div>
     </div>`;
