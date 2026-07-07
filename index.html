@@ -524,7 +524,15 @@
   .btn-add-rose { border-color: rgba(248,113,113,0.35); background: rgba(248,113,113,0.09); color: var(--accent-rose); }
   .btn-add-rose:hover { background: rgba(248,113,113,0.18); border-color: rgba(248,113,113,0.65); box-shadow: 0 0 18px rgba(248,113,113,0.18); }
   .cards-list { display: flex; flex-direction: column; gap: 12px; }
-  .card { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); backdrop-filter: blur(20px); box-shadow: var(--shadow-glass); overflow: hidden; transition: box-shadow 0.25s ease, border-color 0.25s ease; animation: cardIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
+.card { position: relative; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); backdrop-filter: blur(20px); box-shadow: var(--shadow-glass); overflow: hidden; transition: box-shadow 0.25s ease, border-color 0.25s ease; animation: cardIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
+.card.is-fuori-orario::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--accent-rose);
+  box-shadow: 0 0 8px rgba(248,113,113,0.5);
+  z-index: 2;
+}
+
   @keyframes cardIn { from{opacity:0;transform:translateY(12px) scale(0.98)} to{opacity:1;transform:translateY(0) scale(1)} }
   .card:hover { box-shadow: var(--shadow-hover); border-color: rgba(255,255,255,0.15); }
   .card.is-compact { cursor: pointer; }
@@ -1707,11 +1715,16 @@ function renderTrucks(){
     const card=document.createElement('div');
     const isROExpanded=isReadOnly&&readonlyExpandedId===t.id;
     const isCollapsed=t.collapsed&&!isROExpanded;
-    card.className='card'+(isCollapsed?' is-compact':'')+(t.editing?' is-editing':'')+(isROExpanded?' is-readonly-expanded':'');
-    card.id=t.id;
-    const qty=[t.bancal&&t.nrBancale?`${t.nrBancale} bancali`:t.bancal?'bancali':'',t.cutii&&t.nrCutii?`${t.nrCutii} colli`:t.cutii?'colli':''].filter(Boolean).join(' · ');
-    const progLabel=t.programat==='programmato'?'✓ Prog.':t.programat==='non_programmato'?'✗ Non prog.':t.programat==='sconosciuto'?'? Sconosciuto':'';
-    const progClass=t.programat==='programmato'?'meta-prog':t.programat==='non_programmato'?'meta-nonprog':'meta-unknown';
+const qty=[t.bancal&&t.nrBancale?`${t.nrBancale} bancali`:t.bancal?'bancali':'',t.cutii&&t.nrCutii?`${t.nrCutii} colli`:t.cutii?'colli':''].filter(Boolean).join(' · ');
+const progLabel=t.programat==='programmato'?'✓ Prog.':t.programat==='non_programmato'?'✗ Non prog.':t.programat==='sconosciuto'?'? Sconosciuto':'';
+const progClass=t.programat==='programmato'?'meta-prog':t.programat==='non_programmato'?'meta-nonprog':'meta-unknown';
+const _tTimeStr=t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'');
+const isFuoriOrario=_tTimeStr?(()=>{const h=parseInt(_tTimeStr.split(':')[0],10);return h<8||h>=12;})():false;
+
+card.className='card'+(isCollapsed?' is-compact':'')+(t.editing?' is-editing':'')+(isROExpanded?' is-readonly-expanded':'')+(isFuoriOrario?' is-fuori-orario':'');
+card.id=t.id;
+
+
 
     if(isReadOnly){
       card.innerHTML=`
@@ -1866,11 +1879,16 @@ function renderResis(){
     const card=document.createElement('div');
     const isROExpanded=isReadOnly&&readonlyExpandedId===r.id;
     const isCollapsed=r.collapsed&&!isROExpanded;
-    card.className='card resi-card'+(isCollapsed?' is-compact':'')+(r.editing?' is-editing':'')+(isROExpanded?' is-readonly-expanded':'');
-    card.id=r.id;
-    const qty=[r.bancal&&r.nrBancale?`${r.nrBancale} bancali`:r.bancal?'bancali':'',r.cutii&&r.nrCutii?`${r.nrCutii} colli`:r.cutii?'colli':''].filter(Boolean).join(' · ');
-    const authLabel=r.autorizat==='autorizzato'?'✓ Autorizzato':r.autorizat==='non_autorizzato'?'✗ Non autor.':r.autorizat==='sconosciuto'?'? Sconosciuto':'';
-    const authClass=r.autorizat==='autorizzato'?'meta-auth':r.autorizat==='non_autorizzato'?'meta-noauth':'meta-unknown';
+const qty=[r.bancal&&r.nrBancale?`${r.nrBancale} bancali`:r.bancal?'bancali':'',r.cutii&&r.nrCutii?`${r.nrCutii} colli`:r.cutii?'colli':''].filter(Boolean).join(' · ');
+const authLabel=r.autorizat==='autorizzato'?'✓ Autorizzato':r.autorizat==='non_autorizzato'?'✗ Non autor.':r.autorizat==='sconosciuto'?'? Sconosciuto':'';
+const authClass=r.autorizat==='autorizzato'?'meta-auth':r.autorizat==='non_autorizzato'?'meta-noauth':'meta-unknown';
+const _rTimeStr=r.arrivalTime||(r.ts?r.ts.split(' ')[1]:'');
+const isFuoriOrario=_rTimeStr?(()=>{const h=parseInt(_rTimeStr.split(':')[0],10);return h<8||h>=12;})():false;
+
+card.className='card resi-card'+(isCollapsed?' is-compact':'')+(r.editing?' is-editing':'')+(isROExpanded?' is-readonly-expanded':'')+(isFuoriOrario?' is-fuori-orario':'');
+card.id=r.id;
+
+
 
     if(isReadOnly){
       card.innerHTML=`
