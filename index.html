@@ -1568,6 +1568,9 @@ async function loadDay(key){
     ]);
 trucks=tRows.map(dbToTruck).map(t=>{t.collapsed=isTruckComplete(t);return t;});
 resis=rRows.map(dbToResi).map(r=>{r.collapsed=isResiComplete(r);return r;});
+sortByArrival(trucks);
+sortByArrival(resis);
+
 
     truckCount=trucks.length;resiCount=resis.length;
     readonlyExpandedId=null;
@@ -1646,6 +1649,15 @@ function updateFabDay(){const fab=document.getElementById('fab-day-btn');if(acti
 function renderAll(){renderTrucks();renderResis();updateCounts();}
 function isTruckComplete(t){return !!(t.firma&&t.firma.trim()&&t.semnatura&&t.semnatura.trim());}
 function isResiComplete(r){return !!(r.descriere&&r.descriere.trim()&&r.semnatura&&r.semnatura.trim());}
+
+function getSortTime(item){
+  const t=item.arrivalTime||(item.ts?item.ts.split(' ')[1]:'');
+  return t||'99:99';
+}
+function sortByArrival(arr){
+  arr.sort((a,b)=>getSortTime(a).localeCompare(getSortTime(b)));
+}
+
 
 function applyUserRole(){
   const badge=document.getElementById('userBadge');
@@ -1730,8 +1742,10 @@ async function confirmEdit(id,type){
     if(errors.length>0){toast('⚠ Compila tutti i campi obbligatori',true);cardEl.querySelector('.validation-errors').scrollIntoView({behavior:'smooth',block:'nearest'});return;}
     const wasDraft=t.isDraft;t.editing=false;t.isDraft=false;t.collapsed=true;
     if(t.semnatura&&!t.arrivalTime)t.arrivalTime=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false});
+    sortByArrival(trucks);
     editSnapshots.delete(id);
     renderTrucks();setSyncStatus('syncing','Salvataggio in corso…');
+
     try{await sbUpsert('trucks',truckToDb(t,activeDay||todayKey()));setSyncStatus('synced','Salvato ✓');toast(wasDraft?'🚛 Camion registrato!':'💾 Modifiche salvate');}
     catch(e){setSyncStatus('error','Errore: '+e.message);toast('❌ Errore salvataggio',true);}
   } else {
@@ -1740,8 +1754,10 @@ async function confirmEdit(id,type){
     showCardErrors(cardEl,errors);
     if(errors.length>0){toast('⚠ Compila tutti i campi obbligatori',true);cardEl.querySelector('.validation-errors').scrollIntoView({behavior:'smooth',block:'nearest'});return;}
     const wasDraft=r.isDraft;r.editing=false;r.isDraft=false;r.collapsed=true;
+    sortByArrival(resis);
     editSnapshots.delete(id);
     renderResis();setSyncStatus('syncing','Salvataggio in corso…');
+
     try{await sbUpsert('resi',resiToDb(r,activeDay||todayKey()));setSyncStatus('synced','Salvato ✓');toast(wasDraft?'📦 Reso registrato!':'💾 Modifiche salvate');}
     catch(e){setSyncStatus('error','Errore: '+e.message);toast('❌ Errore salvataggio',true);}
   }
@@ -1963,6 +1979,7 @@ async function saveArrivalTime(id,type,val){
   const item=type==='truck'?trucks.find(x=>x.id===id):resis.find(x=>x.id===id);
   if(!item)return;
   item.arrivalTime=val;
+  if(type==='truck')sortByArrival(trucks);else sortByArrival(resis);
   setSyncStatus('syncing','Aggiornamento ora…');
   try{
     if(type==='truck')await sbUpsert('trucks',truckToDb(item));
@@ -1972,6 +1989,7 @@ async function saveArrivalTime(id,type,val){
   catch(e){setSyncStatus('error','Errore: '+e.message);toast('❌ Errore salvataggio ora',true);}
   renderAll();
 }
+
 
 
 // ─── RESI ─────────────────────────────────────────────────────────────────────
