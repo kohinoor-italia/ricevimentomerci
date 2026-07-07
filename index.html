@@ -532,6 +532,14 @@
   box-shadow: 0 0 8px rgba(248,113,113,0.5);
   z-index: 2;
 }
+.card.is-in-orario::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--accent-green);
+  box-shadow: 0 0 8px rgba(74,222,128,0.5);
+  z-index: 2;
+}
+
 
   @keyframes cardIn { from{opacity:0;transform:translateY(12px) scale(0.98)} to{opacity:1;transform:translateY(0) scale(1)} }
   .card:hover { box-shadow: var(--shadow-hover); border-color: rgba(255,255,255,0.15); }
@@ -1719,10 +1727,13 @@ const qty=[t.bancal&&t.nrBancale?`${t.nrBancale} bancali`:t.bancal?'bancali':'',
 const progLabel=t.programat==='programmato'?'✓ Prog.':t.programat==='non_programmato'?'✗ Non prog.':t.programat==='sconosciuto'?'? Sconosciuto':'';
 const progClass=t.programat==='programmato'?'meta-prog':t.programat==='non_programmato'?'meta-nonprog':'meta-unknown';
 const _tTimeStr=t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'');
-const isFuoriOrario=_tTimeStr?(()=>{const h=parseInt(_tTimeStr.split(':')[0],10);return h<8||h>=12;})():false;
+const hasTimeT=!!_tTimeStr;
+const isFuoriOrario=hasTimeT?(()=>{const h=parseInt(_tTimeStr.split(':')[0],10);return h<8||h>=12;})():false;
 
-card.className='card'+(isCollapsed?' is-compact':'')+(t.editing?' is-editing':'')+(isROExpanded?' is-readonly-expanded':'')+(isFuoriOrario?' is-fuori-orario':'');
+card.className='card'+(isCollapsed?' is-compact':'')+(t.editing?' is-editing':'')+(isROExpanded?' is-readonly-expanded':'')+(hasTimeT?(isFuoriOrario?' is-fuori-orario':' is-in-orario'):'');
 card.id=t.id;
+card.title=hasTimeT?(isFuoriOrario?'Fuori orario (08:00–12:00)':'In orario (08:00–12:00)'):'';
+
 
 
 
@@ -1883,10 +1894,13 @@ const qty=[r.bancal&&r.nrBancale?`${r.nrBancale} bancali`:r.bancal?'bancali':'',
 const authLabel=r.autorizat==='autorizzato'?'✓ Autorizzato':r.autorizat==='non_autorizzato'?'✗ Non autor.':r.autorizat==='sconosciuto'?'? Sconosciuto':'';
 const authClass=r.autorizat==='autorizzato'?'meta-auth':r.autorizat==='non_autorizzato'?'meta-noauth':'meta-unknown';
 const _rTimeStr=r.arrivalTime||(r.ts?r.ts.split(' ')[1]:'');
-const isFuoriOrario=_rTimeStr?(()=>{const h=parseInt(_rTimeStr.split(':')[0],10);return h<8||h>=12;})():false;
+const hasTimeR=!!_rTimeStr;
+const isFuoriOrario=hasTimeR?(()=>{const h=parseInt(_rTimeStr.split(':')[0],10);return h<8||h>=12;})():false;
 
-card.className='card resi-card'+(isCollapsed?' is-compact':'')+(r.editing?' is-editing':'')+(isROExpanded?' is-readonly-expanded':'')+(isFuoriOrario?' is-fuori-orario':'');
+card.className='card resi-card'+(isCollapsed?' is-compact':'')+(r.editing?' is-editing':'')+(isROExpanded?' is-readonly-expanded':'')+(hasTimeR?(isFuoriOrario?' is-fuori-orario':' is-in-orario'):'');
 card.id=r.id;
+card.title=hasTimeR?(isFuoriOrario?'Fuori orario (08:00–12:00)':'In orario (08:00–12:00)'):'';
+
 
 
 
