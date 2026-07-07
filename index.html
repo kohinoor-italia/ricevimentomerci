@@ -299,17 +299,28 @@
     border-radius:14px;padding:13px 16px 13px 14px;display:flex;gap:12px;align-items:center;
     animation:cardIn .25s cubic-bezier(.34,1.4,.64,1) both;
   }
-  .pian-ticket::after{
+.pian-ticket::after{
     content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:14px 0 0 14px;
     background:var(--accent-amber);opacity:.55;
   }
+  .pian-ticket.pian-ticket-range::after{background:var(--accent-violet);}
+  .pian-ticket.pian-ticket-range.is-ongoing::after{background:var(--accent-green);}
+  .pian-range-live{font-size:.62rem;color:var(--accent-green);font-weight:700;letter-spacing:.03em;margin-left:8px;}
+
   .pian-ticket.is-past{opacity:.4;}
   .pian-ticket.is-past:hover{opacity:.7;}
   .pian-ticket-time{
-    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:.86rem;color:var(--accent-amber);
-    flex-shrink:0;min-width:46px;text-align:center;
+    font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent-amber);
+    flex-shrink:0;min-width:66px;text-align:left;
+    display:flex;flex-direction:column;justify-content:center;gap:3px;line-height:1.2;
   }
-  .pian-ticket-time.unk{color:var(--text-muted);font-size:.62rem;}
+  .pian-ticket-time .row{display:flex;align-items:center;gap:4px;}
+  .pian-ticket-time .row svg{opacity:.6;flex-shrink:0;}
+  .pian-ticket-time .d{font-size:.78rem;font-weight:700;}
+  .pian-ticket-time .t{font-size:.62rem;font-weight:600;opacity:.8;}
+  .pian-ticket-time.range .d{color:var(--accent-violet);font-size:.7rem;}
+
+
   .pian-ticket-body{flex:1;min-width:0;}
   .pian-ticket-firma{font-size:.85rem;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .pian-ticket-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
@@ -323,6 +334,10 @@
   }
   .pian-ticket-btn:hover{background:rgba(79,142,247,.14);color:var(--accent-blue);border-color:rgba(79,142,247,.35);}
   .pian-ticket-btn.del:hover{background:rgba(248,113,113,.14);color:var(--accent-rose);border-color:rgba(248,113,113,.35);}
+
+.pian-ticket-btn.status-yes{background:rgba(74,222,128,.18);color:var(--accent-green);border-color:rgba(74,222,128,.4);}
+.pian-ticket-btn.status-no{background:rgba(248,113,113,.18);color:var(--accent-rose);border-color:rgba(248,113,113,.4);}
+
 
   .pian-empty-block{text-align:center;padding:24px 14px;color:var(--text-muted);font-size:.78rem;border:1px dashed rgba(255,255,255,.07);border-radius:14px;}
 
@@ -926,14 +941,18 @@ kin2026
 .reminder-row + .reminder-row{border-top:1px solid rgba(255,255,255,.045);}
 
 .reminder-time-chip{
-  flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  width:56px;height:52px;border-radius:12px;
+  flex-shrink:0;display:flex;flex-direction:column;justify-content:center;
+  min-width:78px;height:52px;padding:0 10px;border-radius:12px;gap:4px;
   background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.25);
 }
-.reminder-time-chip .t{font-family:'JetBrains Mono',monospace;font-size:.86rem;font-weight:700;color:var(--accent-amber);line-height:1;}
-.reminder-time-chip .l{font-size:.5rem;color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;margin-top:2px;}
-.reminder-time-chip.unk{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.07);}
-.reminder-time-chip.unk .t{color:var(--text-muted);font-size:.62rem;}
+.reminder-time-chip .row{display:flex;align-items:center;gap:4px;}
+.reminder-time-chip .row svg{opacity:.6;flex-shrink:0;}
+.reminder-time-chip .t{font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:700;color:var(--accent-amber);line-height:1.2;white-space:nowrap;}
+.reminder-time-chip .l{font-size:.62rem;color:var(--text-muted);letter-spacing:.02em;font-family:'JetBrains Mono',monospace;font-weight:600;white-space:nowrap;}
+.reminder-time-chip.range .t{color:var(--accent-violet);font-size:.68rem;}
+
+
+
 
 .reminder-info{flex:1;min-width:0;padding-top:1px;}
 .reminder-firma{font-size:.88rem;font-weight:700;color:var(--text-primary);}
@@ -1334,8 +1353,17 @@ function truckToDb(t,dateKey){return{id:t.id,date_key:dateKey||t.dateKey||todayK
 function dbToResi(row){return{id:row.id,ts:row.ts||'',descriere:row.descriere||'',autorizat:row.autorizat||'',bancal:!!row.bancal,nrBancale:row.nr_bancale||'',cutii:!!row.cutii,nrCutii:row.nr_cutii||'',comentariu:row.comentariu||'',semnatura:row.semnatura||'',arrivalTime:row.arrival_time||'',collapsed:!!row.collapsed,editing:false,isDraft:false,dateKey:row.date_key};}
 function resiToDb(r,dateKey){return{id:r.id,date_key:dateKey||r.dateKey||todayKey(),ts:r.ts||'',descriere:r.descriere||'',autorizat:r.autorizat||'',bancal:!!r.bancal,nr_bancale:r.nrBancale||'',cutii:!!r.cutii,nr_cutii:r.nrCutii||'',comentariu:r.comentariu||'',semnatura:r.semnatura||'',arrival_time:r.arrivalTime||'',collapsed:!!r.collapsed};}
 
-function dbToPian(row){return{id:row.id,dateKey:row.date_key,firma:row.firma||'',ordma:row.comentariu||'',ora:row.arrival_time||'',note:row.note||'',creatDe:row.creat_de||''};}
-function pianToDb(p){return{id:p.id,date_key:p.dateKey,ts:nowStamp(),firma:p.firma||'',programat:'pianificato',bancal:false,nr_bancale:'',cutii:false,nr_cutii:'',comentariu:p.ordma||'',semnatura:'ufficio_acquisti',arrival_time:p.ora||'',collapsed:true,note:p.note||'',creat_de:p.creatDe||''};}
+function dbToPian(row){return{id:row.id,dateKey:row.date_key,dateKeyEnd:row.date_key_end||'',firma:row.firma||'',ordma:row.comentariu||'',ora:row.arrival_time||'',note:row.note||'',creatDe:row.creat_de||'',stareSosire:row.stare_sosire||''};}
+function pianToDb(p){return{id:p.id,date_key:p.dateKey,date_key_end:p.dateKeyEnd||null,ts:nowStamp(),firma:p.firma||'',programat:'pianificato',bancal:false,nr_bancale:'',cutii:false,nr_cutii:'',comentariu:p.ordma||'',semnatura:'ufficio_acquisti',arrival_time:p.ora||'',collapsed:true,note:p.note||'',creat_de:p.creatDe||'',stare_sosire:p.stareSosire||''};}
+
+function pianEndKey(p){return p.dateKeyEnd||p.dateKey;}
+function pianCoversDate(p,k){return k>=p.dateKey && k<=pianEndKey(p);}
+function pianIsRange(p){return !!(p.dateKeyEnd && p.dateKeyEnd!==p.dateKey);}
+function formatRangeShort(p){
+  const fmt=(k)=>{const d=new Date(k+'T12:00:00');return `${d.getDate()}/${d.getMonth()+1}`;};
+  return pianIsRange(p)?`${fmt(p.dateKey)} → ${fmt(p.dateKeyEnd)}`:fmt(p.dateKey);
+}
+
 
 
 // ─── STATUS BAR ──────────────────────────────────────────────────────────────
@@ -1388,6 +1416,11 @@ function updateStatusRight(){
 let trucks=[],resis=[],pianificazioni=[],truckCount=0,resiCount=0,activeDay=null;
 const ICON_PALLET='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg>';
 const ICON_BOX='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
+const ICON_CAL='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+const ICON_CLOCK='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>';
+const ICON_USER='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+
+
 
 let currentStatsTab='overview',activeStatsMonth=null,statsHistCache=null;
 let readonlyExpandedId=null;
@@ -1425,27 +1458,30 @@ function showCardErrors(cardEl,errors){let errDiv=cardEl.querySelector('.validat
 
 function updateTodayAlert(){
   const tk=todayKey();
-  const todayPians=pianificazioni.filter(p=>p.dateKey===tk);
+const todayPians=pianificazioni.filter(p=>pianCoversDate(p,tk)&&p.stareSosire!=='sosit');
+
   const alert=document.getElementById('todayArrivalAlert');
   updateFabPianBadge();
   if(todayPians.length===0){alert.classList.remove('visible','hidden-past');updateStatusBarVisibility();return;}
   alert.classList.add('visible');
   document.getElementById('taaCount').textContent=todayPians.length;
-  document.getElementById('taaList').textContent=todayPians.map(p=>`${p.firma||'?'}${p.ora?' alle '+p.ora:''}`).join(' · ');
+  document.getElementById('taaList').textContent=todayPians.map(p=>`${p.firma||'?'}${pianIsRange(p)?' ('+formatRangeShort(p)+')':(p.ora?' alle '+p.ora:'')}`).join(' · ');
   if(activeDay&&activeDay!==tk){alert.classList.add('hidden-past');}
   else{alert.classList.remove('hidden-past');}
   updateStatusBarVisibility();
 }
 
 
+
 function updateFabPianBadge(){
   const tk=todayKey();
-  const futureCount=pianificazioni.filter(p=>p.dateKey>tk).length;
+  const futureCount=pianificazioni.filter(p=>!pianCoversDate(p,tk)&&p.dateKey>tk).length;
   const badge=document.getElementById('fabPianBadge');
   badge.textContent=futureCount;
   badge.classList.toggle('visible',futureCount>0);
   badge.title=futureCount>0?`${futureCount} pianificazioni future`:'';
 }
+
 
 
 // ─── LOAD DAY ────────────────────────────────────────────────────────────────
@@ -2013,7 +2049,8 @@ function updateResi(id,field,val){
 
 
 // ─── PIANIFICAZIONE MODAL (timeline + bottom sheet) ─────────────────────────
-let pianNewFirma='',pianNewOrdma='',pianNewOra='',pianNewData='',pianNewNote='',pianNewCreatDe='',pianEditingId=null;
+let pianNewFirma='',pianNewOrdma='',pianNewOra='',pianNewData='',pianNewDataFine='',pianNewNote='',pianNewCreatDe='',pianEditingId=null;
+
 let pianShowHistory=false;
 
 function openPianificazione(){
@@ -2028,15 +2065,24 @@ function closePianificazione(){
 
 function renderPianModal(){
   const tk=todayKey();
-  const future=pianificazioni.filter(p=>p.dateKey>=tk).sort((a,b)=>a.dateKey.localeCompare(b.dateKey)||a.ora.localeCompare(b.ora));
+  const singles=pianificazioni.filter(p=>!pianIsRange(p));
+  const ranges=pianificazioni.filter(p=>pianIsRange(p));
+
+  const future=singles.filter(p=>p.dateKey>=tk).sort((a,b)=>a.dateKey.localeCompare(b.dateKey)||a.ora.localeCompare(b.ora));
+  const rangesActive=ranges.filter(p=>pianEndKey(p)>=tk).sort((a,b)=>a.dateKey.localeCompare(b.dateKey));
+
   const cutoffD=new Date();cutoffD.setDate(cutoffD.getDate()-31);
   const cutoffKey=`${cutoffD.getFullYear()}-${String(cutoffD.getMonth()+1).padStart(2,'0')}-${String(cutoffD.getDate()).padStart(2,'0')}`;
-  const past=pianificazioni.filter(p=>p.dateKey<tk&&p.dateKey>=cutoffKey).sort((a,b)=>b.dateKey.localeCompare(a.dateKey));
-  const todayCount=pianificazioni.filter(p=>p.dateKey===tk).length;
+  const pastSingles=singles.filter(p=>p.dateKey<tk&&p.dateKey>=cutoffKey);
+  const pastRanges=ranges.filter(p=>pianEndKey(p)<tk&&pianEndKey(p)>=cutoffKey);
+  const past=[...pastSingles,...pastRanges].sort((a,b)=>pianEndKey(b).localeCompare(pianEndKey(a)));
+
+  const todayCount=pianificazioni.filter(p=>pianCoversDate(p,tk)).length;
 
   document.getElementById('pianStatsStrip').innerHTML=`
     <div class="pian-stat-chip"><span class="n" style="color:var(--accent-amber)">${todayCount}</span><span class="l">Oggi</span></div>
-    <div class="pian-stat-chip"><span class="n" style="color:var(--accent-blue)">${future.length-todayCount}</span><span class="l">Futuri</span></div>
+    <div class="pian-stat-chip"><span class="n" style="color:var(--accent-blue)">${future.length}</span><span class="l">Futuri</span></div>
+    <div class="pian-stat-chip"><span class="n" style="color:var(--accent-violet)">${rangesActive.length}</span><span class="l">Intervalli</span></div>
     <div class="pian-stat-chip"><span class="n" style="color:var(--text-secondary)">${past.length}</span><span class="l">Storico 31gg</span></div>
   `;
 
@@ -2055,21 +2101,53 @@ function renderPianModal(){
   const renderTicket=(p,isPast)=>`
     <div class="pian-node ${isPast?'is-past':''}">
       <div class="pian-ticket ${isPast?'is-past':''}">
-        <div class="pian-ticket-time ${!p.ora?'unk':''}">${p.ora||'N/D'}</div>
+        <div class="pian-ticket-time"><span class="row d">${ICON_CAL}${formatRangeShort(p)}</span><span class="row t">${ICON_CLOCK}${p.ora||'08–12h'}</span></div>
+
+
         <div class="pian-ticket-body">
           <div class="pian-ticket-firma">${p.firma||'—'}</div>
           <div class="pian-ticket-meta">
-            ${p.ordma?`<span class="pian-ticket-tag" style="color:var(--accent-violet);border-color:rgba(167,139,250,.25)">${p.ordma}</span>`:''}
-            ${p.creatDe?`<span class="pian-ticket-tag">👤 ${p.creatDe}</span>`:''}
+            ${p.ordma?`<span class="pian-ticket-tag" style="color:var(--accent-violet);border-color:rgba(167,139,250,.25)">ORDMA: ${p.ordma}</span>`:''}
+            ${p.creatDe?`<span class="pian-ticket-tag" style="display:inline-flex;align-items:center;gap:4px">${ICON_USER}${p.creatDe}</span>`:''}
+          </div>
+          ${p.note?`<div class="pian-ticket-note">${p.note}</div>`:''}
+        </div>
+<div class="pian-ticket-actions">
+  <button class="pian-ticket-btn ${p.stareSosire==='sosit'?'status-yes':''}" onclick="event.stopPropagation();toggleArrivoStatus('${p.id}','sosit')" title="Segna arrivato"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button>
+  <button class="pian-ticket-btn ${p.stareSosire==='nesosit'?'status-no':''}" onclick="event.stopPropagation();toggleArrivoStatus('${p.id}','nesosit')" title="Segna non arrivato"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  ${isPast?'':`<button class="pian-ticket-btn" onclick="editPian('${p.id}')" title="Modifica"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>`}
+  <button class="pian-ticket-btn del" onclick="deletePian('${p.id}')" title="Elimina"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
+</div>
+
+      </div>
+    </div>`;
+
+  const renderRangeTicket=(p)=>{
+    const isOngoing=pianCoversDate(p,tk);
+    return `
+    <div class="pian-node">
+      <div class="pian-ticket pian-ticket-range ${isOngoing?'is-ongoing':''}">
+        <div class="pian-ticket-time range"><span class="row d">${ICON_CAL}${formatRangeShort(p)}</span><span class="row t">${ICON_CLOCK}08–12h</span></div>
+
+
+        <div class="pian-ticket-body">
+          <div class="pian-ticket-firma">${p.firma||'—'}${isOngoing?' <span class="pian-range-live">● in corso</span>':''}</div>
+          <div class="pian-ticket-meta">
+            ${p.ordma?`<span class="pian-ticket-tag" style="color:var(--accent-violet);border-color:rgba(167,139,250,.25)">ORDMA: ${p.ordma}</span>`:''}
+            ${p.creatDe?`<span class="pian-ticket-tag" style="display:inline-flex;align-items:center;gap:4px">${ICON_USER}${p.creatDe}</span>`:''}
           </div>
           ${p.note?`<div class="pian-ticket-note">${p.note}</div>`:''}
         </div>
         <div class="pian-ticket-actions">
-          ${isPast?'':`<button class="pian-ticket-btn" onclick="editPian('${p.id}')" title="Modifica"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>`}
+          <button class="pian-ticket-btn ${p.stareSosire==='sosit'?'status-yes':''}" onclick="event.stopPropagation();toggleArrivoStatus('${p.id}','sosit')" title="Segna arrivato"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></button>
+          <button class="pian-ticket-btn ${p.stareSosire==='nesosit'?'status-no':''}" onclick="event.stopPropagation();toggleArrivoStatus('${p.id}','nesosit')" title="Segna non arrivato"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+          <button class="pian-ticket-btn" onclick="editPian('${p.id}')" title="Modifica"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
           <button class="pian-ticket-btn del" onclick="deletePian('${p.id}')" title="Elimina"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button>
         </div>
+
       </div>
     </div>`;
+  };
 
   const groupByDay=(list,isPast)=>{
     const groups={};
@@ -2078,15 +2156,21 @@ function renderPianModal(){
       const lbl=dayLabel(k);
       return `<div class="pian-day-group">
         <div class="pian-day-head ${k===tk?'is-today':''}"><span class="d1">${lbl.main}</span><span class="d2">${lbl.sub}</span></div>
-        <div class="pian-rail">${groups[k].map(p=>renderTicket(p,isPast)).join('')}</div>
+        <div class="pian-rail">${groups[k].map(p=>pianIsRange(p)?renderRangeTicket(p):renderTicket(p,isPast)).join('')}</div>
       </div>`;
     }).join('');
   };
 
-  const futureHTML=future.length?groupByDay(future,false):`<div class="pian-empty-block">Nessun arrivo pianificato al momento</div>`;
+  const rangesHTML=rangesActive.length?`<div class="pian-day-group">
+      <div class="pian-day-head"><span class="d1">🗓 Intervalli attivi</span><span class="d2">possono arrivare in qualsiasi giorno del periodo</span></div>
+      <div class="pian-rail">${rangesActive.map(renderRangeTicket).join('')}</div>
+    </div>`:'';
+
+  const futureHTML=future.length?groupByDay(future,false):(rangesActive.length?'':`<div class="pian-empty-block">Nessun arrivo pianificato al momento</div>`);
   const historyHTML=pianShowHistory?(past.length?groupByDay(past,true):`<div class="pian-empty-block">Nessun arrivo passato</div>`):'';
 
   document.getElementById('pianTimelineWrap').innerHTML=`
+    ${rangesHTML}
     ${futureHTML}
     <button class="pian-history-toggle" onclick="togglePianHistory()">
       ${pianShowHistory?'▲ Nascondi storico':`▼ Mostra storico (${past.length})`}
@@ -2095,9 +2179,11 @@ function renderPianModal(){
   `;
 }
 
+
 function togglePianHistory(){pianShowHistory=!pianShowHistory;renderPianModal();}
 
 function renderPianDrawerBody(){
+  const isRangeMode=!!pianNewDataFine;
   return `
     <div class="pian-form-row">
       <label class="pian-form-label required">Azienda / Fornitore</label>
@@ -2107,15 +2193,23 @@ function renderPianDrawerBody(){
       <label class="pian-form-label">N° Ordine / ORDMA</label>
       <input type="text" class="pian-form-input" id="pianOrdma" placeholder="es: ORDMA-2026-001" value="${pianNewOrdma}" oninput="pianNewOrdma=this.value">
     </div>
+    <label class="check-label bancal" style="align-self:flex-start">
+      <input type="checkbox" id="pianRangeToggle" ${isRangeMode?'checked':''} onchange="togglePianRangeMode(this.checked)">
+      <span class="check-box">${isRangeMode?'✓':''}</span>
+      <span>Intervallo di date (non un giorno preciso)</span>
+    </label>
     <div class="pian-form-row-2">
       <div class="pian-form-row">
-        <label class="pian-form-label required">Data arrivo</label>
+        <label class="pian-form-label required">${isRangeMode?'Dal':'Data arrivo'}</label>
         <input type="date" class="pian-form-input-dark" id="pianData" value="${pianNewData}" oninput="pianNewData=this.value">
       </div>
-      <div class="pian-form-row">
+      ${isRangeMode?`<div class="pian-form-row">
+        <label class="pian-form-label required">Al</label>
+        <input type="date" class="pian-form-input-dark" id="pianDataFine" value="${pianNewDataFine}" oninput="pianNewDataFine=this.value">
+      </div>`:`<div class="pian-form-row">
         <label class="pian-form-label">Ora appross.</label>
         <input type="time" class="pian-form-input-dark" id="pianOra" value="${pianNewOra}" oninput="pianNewOra=this.value">
-      </div>
+      </div>`}
     </div>
     <div class="pian-form-row">
       <label class="pian-form-label">Informazioni supplementari</label>
@@ -2132,6 +2226,11 @@ function renderPianDrawerBody(){
     ${pianEditingId?`<button class="pian-btn-add" style="border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:var(--text-secondary)" onclick="cancelEditPian()">Annulla modifica</button>`:''}
   `;
 }
+function togglePianRangeMode(checked){
+  pianNewDataFine=checked?(pianNewDataFine||pianNewData||todayKey()):'';
+  mountPianDrawerBody();
+}
+
 
 function mountPianDrawerBody(){
   const drawer=document.getElementById('pianDrawer');
@@ -2143,7 +2242,7 @@ function mountPianDrawerBody(){
 }
 
 function openPianDrawer(){
-  pianEditingId=null;pianNewFirma='';pianNewOrdma='';pianNewOra='';pianNewData=todayKey();pianNewNote='';pianNewCreatDe='';
+  pianEditingId=null;pianNewFirma='';pianNewOrdma='';pianNewOra='';pianNewData=todayKey();pianNewDataFine='';pianNewNote='';pianNewCreatDe='';
   document.getElementById('pianDrawerTitle').textContent='Nuovo arrivo';
   mountPianDrawerBody();
   document.getElementById('pianDrawerOverlay').classList.add('open');
@@ -2154,27 +2253,32 @@ function editPian(id){
   const p=pianificazioni.find(x=>x.id===id);if(!p)return;
   pianEditingId=id;
   pianNewFirma=p.firma||'';pianNewOrdma=p.ordma||'';pianNewOra=p.ora||'';pianNewData=p.dateKey||todayKey();
-  pianNewNote=p.note||'';pianNewCreatDe=p.creatDe||'';
+  pianNewDataFine=p.dateKeyEnd||'';pianNewNote=p.note||'';pianNewCreatDe=p.creatDe||'';
   document.getElementById('pianDrawerTitle').textContent='Modifica arrivo';
   mountPianDrawerBody();
   document.getElementById('pianDrawerOverlay').classList.add('open');
 }
+
 function cancelEditPian(){pianEditingId=null;closePianDrawer();}
 
 async function savePian(){
   pianNewFirma=document.getElementById('pianFirma').value.trim();
   pianNewOrdma=document.getElementById('pianOrdma').value.trim();
   pianNewData=document.getElementById('pianData').value;
-  pianNewOra=document.getElementById('pianOra').value;
+  const fineEl=document.getElementById('pianDataFine');
+  pianNewDataFine=fineEl?fineEl.value:'';
+  const oraEl=document.getElementById('pianOra');
+  pianNewOra=oraEl?oraEl.value:'';
   pianNewNote=document.getElementById('pianNote').value.trim();
   pianNewCreatDe=document.getElementById('pianCreatDe').value.trim();
   if(!pianNewFirma){toast('⚠ Inserisci l\'azienda fornitore',true);document.getElementById('pianFirma').focus();return;}
-  if(!pianNewData){toast('⚠ Inserisci la data di arrivo',true);return;}
+  if(!pianNewData){toast('⚠ Inserisci la data di inizio',true);return;}
+  if(pianNewDataFine&&pianNewDataFine<pianNewData){toast('⚠ La data finale non può precedere quella iniziale',true);return;}
   if(!pianNewCreatDe){toast('⚠ Inserisci il tuo nome',true);document.getElementById('pianCreatDe').focus();return;}
   if(pianEditingId){
     const p=pianificazioni.find(x=>x.id===pianEditingId);if(!p){pianEditingId=null;return;}
     const snapshot={...p};
-    p.dateKey=pianNewData;p.firma=pianNewFirma;p.ordma=pianNewOrdma;p.ora=pianNewOra;p.note=pianNewNote;p.creatDe=pianNewCreatDe;
+    p.dateKey=pianNewData;p.dateKeyEnd=pianNewDataFine;p.firma=pianNewFirma;p.ordma=pianNewOrdma;p.ora=pianNewOra;p.note=pianNewNote;p.creatDe=pianNewCreatDe;
     setSyncStatus('syncing','Aggiornamento pianificazione…');
     try{
       await sbUpsert('trucks',pianToDb(p));
@@ -2191,13 +2295,13 @@ async function savePian(){
     }
     return;
   }
-  const p={id:'pian-'+Date.now(),dateKey:pianNewData,firma:pianNewFirma,ordma:pianNewOrdma,ora:pianNewOra,note:pianNewNote,creatDe:pianNewCreatDe};
+  const p={id:'pian-'+Date.now(),dateKey:pianNewData,dateKeyEnd:pianNewDataFine,firma:pianNewFirma,ordma:pianNewOrdma,ora:pianNewOra,note:pianNewNote,creatDe:pianNewCreatDe};
   pianificazioni.push(p);
   setSyncStatus('syncing','Salvataggio pianificazione…');
   try{
     await sbUpsert('trucks',pianToDb(p));
     setSyncStatus('synced','Pianificazione salvata ✓');
-    toast('📅 Camion pianificato!');
+    toast(pianIsRange(p)?'📅 Intervallo pianificato!':'📅 Camion pianificato!');
     updateTodayAlert();
     renderPianModal();
     closePianDrawer();
@@ -2207,6 +2311,7 @@ async function savePian(){
     toast('❌ Errore salvataggio',true);
   }
 }
+
 
 async function deletePian(id){
   if(!confirm('Eliminare questa pianificazione?'))return;
@@ -2219,31 +2324,53 @@ async function deletePian(id){
 }
 
 
+async function toggleArrivoStatus(id,status){
+  const p=pianificazioni.find(x=>x.id===id);if(!p)return;
+  const prev=p.stareSosire;
+  p.stareSosire=(p.stareSosire===status)?'':status;
+  renderPianModal();
+  setSyncStatus('syncing','Aggiornamento stato…');
+  try{
+    await sbUpsert('trucks',pianToDb(p));
+    setSyncStatus('synced','Stato aggiornato ✓');
+    toast(p.stareSosire==='sosit'?'✅ Segnato come arrivato':p.stareSosire==='nesosit'?'❌ Segnato come non arrivato':'↺ Stato rimosso');
+  }catch(e){
+    p.stareSosire=prev;
+    setSyncStatus('error','Errore: '+e.message);
+    toast('❌ Errore aggiornamento stato',true);
+    renderPianModal();
+  }
+}
+
+
 // ─── INIT ────────────────────────────────────────────────────────────────────
 let todayReminderShown=false;
 function showTodayReminderIfNeeded(){
   if(todayReminderShown)return;
   const tk=todayKey();
-  const todayPians=pianificazioni.filter(p=>p.dateKey===tk).sort((a,b)=>(a.ora||'99:99').localeCompare(b.ora||'99:99'));
+const todayPians=pianificazioni.filter(p=>pianCoversDate(p,tk)&&p.stareSosire!=='sosit').sort((a,b)=>(a.ora||'99:99').localeCompare(b.ora||'99:99'));
+
   if(todayPians.length===0)return;
   todayReminderShown=true;
 
   document.getElementById('reminderSubtitle').innerHTML=
     todayPians.length===1
-      ? `<strong>1 camion</strong> in programma per oggi`
-      : `<strong>${todayPians.length} camion</strong> in programma per oggi`;
+      ? `<strong>1 camion</strong> possibile oggi`
+      : `<strong>${todayPians.length} camion</strong> possibili oggi`;
 
   document.getElementById('todayReminderBody').innerHTML=todayPians.map(p=>`
     <div class="reminder-row">
-      <div class="reminder-time-chip ${!p.ora?'unk':''}">
-        <span class="t">${p.ora||'N/D'}</span>
-        ${p.ora?`<span class="l">ora</span>`:''}
+      <div class="reminder-time-chip ${pianIsRange(p)?'range':''}">
+        <span class="row t">${ICON_CAL}${formatRangeShort(p)}</span>
+        <span class="row l">${ICON_CLOCK}${pianIsRange(p)?'08–12h':(p.ora||'08–12h')}</span>
       </div>
+
+
       <div class="reminder-info">
-        <div class="reminder-firma">${p.firma||'—'}</div>
+        <div class="reminder-firma">${p.firma||'—'}${pianIsRange(p)?' <span class="pian-range-live">● in questo periodo</span>':''}</div>
         <div class="reminder-tags">
           ${p.ordma?`<span class="reminder-tag">${p.ordma}</span>`:''}
-          ${p.creatDe?`<span class="reminder-tag who">👤 ${p.creatDe}</span>`:''}
+          ${p.creatDe?`<span class="reminder-tag who" style="display:inline-flex;align-items:center;gap:4px">${ICON_USER}${p.creatDe}</span>`:''}
         </div>
         ${p.note?`<div class="reminder-note">${p.note}</div>`:''}
       </div>
@@ -2252,6 +2379,7 @@ function showTodayReminderIfNeeded(){
 
   document.getElementById('todayReminderModal').classList.add('open');
 }
+
 function closeTodayReminder(){document.getElementById('todayReminderModal').classList.remove('open');}
 
 async function init(){await Promise.all([loadDay(todayKey()),loadPianificazioni()]);showTodayReminderIfNeeded();}
