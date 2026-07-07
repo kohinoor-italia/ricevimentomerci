@@ -563,7 +563,10 @@
   .compact-time { font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--accent-cyan); flex-shrink: 0; }
   .compact-firma { font-size: 0.85rem; font-weight: 700; color: var(--text-primary); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: default; }
   .compact-pills { display: flex; gap: 5px; flex-shrink: 0; flex-wrap: wrap; }
-  .compact-pill { font-size: 0.66rem; padding: 2px 7px; border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
+.compact-pill { font-size: 0.66rem; padding: 2px 7px; border-radius: 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary); font-family: 'JetBrains Mono', monospace; }
+.compact-pill-icon { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px 2px 6px; }
+.compact-pill-icon svg { opacity: 0.75; }
+
   .compact-sig { font-size: 0.70rem; color: var(--text-muted); flex-shrink: 0; }
   .compact-sig-name { font-family: 'Caveat', cursive; font-size: 0.95rem; color: var(--accent-cyan); font-weight: 600; letter-spacing: 0.02em; }
   .compact-desc { margin-top: 6px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.77rem; color: var(--text-secondary); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -1383,6 +1386,9 @@ function updateStatusRight(){
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let trucks=[],resis=[],pianificazioni=[],truckCount=0,resiCount=0,activeDay=null;
+const ICON_PALLET='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg>';
+const ICON_BOX='<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
+
 let currentStatsTab='overview',activeStatsMonth=null,statsHistCache=null;
 let readonlyExpandedId=null;
 const editSnapshots=new Map();
@@ -1723,7 +1729,8 @@ function renderTrucks(){
     const card=document.createElement('div');
     const isROExpanded=isReadOnly&&readonlyExpandedId===t.id;
     const isCollapsed=t.collapsed&&!isROExpanded;
-const qty=[t.bancal&&t.nrBancale?`${t.nrBancale} bancali`:t.bancal?'bancali':'',t.cutii&&t.nrCutii?`${t.nrCutii} colli`:t.cutii?'colli':''].filter(Boolean).join(' · ');
+const qty=[t.bancal?`<span class="compact-pill compact-pill-icon" title="${t.nrBancale?t.nrBancale+' bancali':'Bancali'}">${ICON_PALLET}${t.nrBancale?`<span>${t.nrBancale}</span>`:''}</span>`:'',t.cutii?`<span class="compact-pill compact-pill-icon" title="${t.nrCutii?t.nrCutii+' colli':'Colli'}">${ICON_BOX}${t.nrCutii?`<span>${t.nrCutii}</span>`:''}</span>`:''].filter(Boolean).join('');
+
 const progLabel=t.programat==='programmato'?'✓ Prog.':t.programat==='non_programmato'?'✗ Non prog.':t.programat==='sconosciuto'?'? Sconosciuto':'';
 const progClass=t.programat==='programmato'?'meta-prog':t.programat==='non_programmato'?'meta-nonprog':'meta-unknown';
 const _tTimeStr=t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'');
@@ -1745,7 +1752,7 @@ card.title=hasTimeT?(isFuoriOrario?'Fuori orario (08:00–12:00)':'In orario (08
             <span class="compact-time">${t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'–')||'–'}</span>
             <span class="compact-firma" title="${(t.firma||'Azienda sconosciuta').replace(/"/g,'&quot;')}">${t.firma||'Azienda sconosciuta'}</span>
             ${t.semnatura?`<span class="compact-sig">✍ <span class="compact-sig-name">${t.semnatura}</span></span>`:''}
-            <div class="compact-pills">${qty?`<span class="compact-pill">${qty}</span>`:''}</div>
+            <div class="compact-pills">${qty}</div>
             ${progLabel?`<span class="compact-meta-pill ${progClass}">${progLabel}</span>`:''}
           </div>
           ${t.comentariu?`<div class="compact-desc">${t.comentariu}</div>`:''}
@@ -1785,7 +1792,7 @@ card.title=hasTimeT?(isFuoriOrario?'Fuori orario (08:00–12:00)':'In orario (08
             <span class="compact-time">${t.arrivalTime||(t.ts?t.ts.split(' ')[1]:'–')||'–'}</span>
             <span class="compact-firma" title="${(t.firma||'Azienda sconosciuta').replace(/"/g,'&quot;')}">${t.firma||'Azienda sconosciuta'}</span>
             ${t.semnatura?`<span class="compact-sig">✍ <span class="compact-sig-name">${t.semnatura}</span></span>`:''}
-            <div class="compact-pills">${qty?`<span class="compact-pill">${qty}</span>`:''}</div>
+            <div class="compact-pills">${qty}</div>
             ${progLabel?`<span class="compact-meta-pill ${progClass}">${progLabel}</span>`:''}
           </div>
           ${t.comentariu?`<div class="compact-desc">${t.comentariu}</div>`:''}
@@ -1890,7 +1897,7 @@ function renderResis(){
     const card=document.createElement('div');
     const isROExpanded=isReadOnly&&readonlyExpandedId===r.id;
     const isCollapsed=r.collapsed&&!isROExpanded;
-const qty=[r.bancal&&r.nrBancale?`${r.nrBancale} bancali`:r.bancal?'bancali':'',r.cutii&&r.nrCutii?`${r.nrCutii} colli`:r.cutii?'colli':''].filter(Boolean).join(' · ');
+const qty=[r.bancal?`<span class="compact-pill compact-pill-icon" title="${r.nrBancale?r.nrBancale+' bancali':'Bancali'}">${ICON_PALLET}${r.nrBancale?`<span>${r.nrBancale}</span>`:''}</span>`:'',r.cutii?`<span class="compact-pill compact-pill-icon" title="${r.nrCutii?r.nrCutii+' colli':'Colli'}">${ICON_BOX}${r.nrCutii?`<span>${r.nrCutii}</span>`:''}</span>`:''].filter(Boolean).join('');
 const authLabel=r.autorizat==='autorizzato'?'✓ Autorizzato':r.autorizat==='non_autorizzato'?'✗ Non autor.':r.autorizat==='sconosciuto'?'? Sconosciuto':'';
 const authClass=r.autorizat==='autorizzato'?'meta-auth':r.autorizat==='non_autorizzato'?'meta-noauth':'meta-unknown';
 const _rTimeStr=r.arrivalTime||(r.ts?r.ts.split(' ')[1]:'');
@@ -1912,7 +1919,7 @@ card.title=hasTimeR?(isFuoriOrario?'Fuori orario (08:00–12:00)':'In orario (08
             <span class="compact-time" style="color:var(--accent-rose)">${r.arrivalTime||(r.ts?r.ts.split(' ')[1]:'–')}</span>
             <span class="compact-firma" title="${(r.descriere||'Senza descrizione').replace(/"/g,'&quot;')}">${r.descriere||'Senza descrizione'}</span>
             ${r.semnatura?`<span class="compact-sig">✍ <span class="compact-sig-name">${r.semnatura}</span></span>`:''}
-            <div class="compact-pills">${qty?`<span class="compact-pill">${qty}</span>`:''}</div>
+            <div class="compact-pills">${qty}</div>
             ${authLabel?`<span class="compact-meta-pill ${authClass}">${authLabel}</span>`:''}
           </div>
           ${r.comentariu?`<div class="compact-desc">${r.comentariu}</div>`:''}
@@ -1952,7 +1959,7 @@ card.title=hasTimeR?(isFuoriOrario?'Fuori orario (08:00–12:00)':'In orario (08
             <span class="compact-time" style="color:var(--accent-rose)">${r.arrivalTime||(r.ts?r.ts.split(' ')[1]:'–')}</span>
             <span class="compact-firma" title="${(r.descriere||'Senza descrizione').replace(/"/g,'&quot;')}">${r.descriere||'Senza descrizione'}</span>
             ${r.semnatura?`<span class="compact-sig">✍ <span class="compact-sig-name">${r.semnatura}</span></span>`:''}
-            <div class="compact-pills">${qty?`<span class="compact-pill">${qty}</span>`:''}</div>
+            <div class="compact-pills">${qty}</div>
             ${authLabel?`<span class="compact-meta-pill ${authClass}">${authLabel}</span>`:''}
           </div>
           ${r.comentariu?`<div class="compact-desc">${r.comentariu}</div>`:''}
