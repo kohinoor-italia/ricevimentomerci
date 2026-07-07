@@ -2369,7 +2369,8 @@ const todayPians=pianificazioni.filter(p=>pianCoversDate(p,tk)&&p.stareSosire!==
       <div class="reminder-info">
         <div class="reminder-firma">${p.firma||'—'}${pianIsRange(p)?' <span class="pian-range-live">● in questo periodo</span>':''}</div>
         <div class="reminder-tags">
-          ${p.ordma?`<span class="reminder-tag">${p.ordma}</span>`:''}
+${p.ordma?`<span class="reminder-tag">ORDMA: ${p.ordma}</span>`:''}
+
           ${p.creatDe?`<span class="reminder-tag who" style="display:inline-flex;align-items:center;gap:4px">${ICON_USER}${p.creatDe}</span>`:''}
         </div>
         ${p.note?`<div class="reminder-note">${p.note}</div>`:''}
