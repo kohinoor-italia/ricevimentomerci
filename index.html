@@ -1335,6 +1335,25 @@ async function sbGet(table,params=''){const res=await fetch(`${SUPABASE_URL}/res
 async function sbUpsert(table,data){const res=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:{...sbHeaders,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(data)});if(!res.ok)throw new Error(await res.text());}
 async function sbDelete(table,id){const res=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`,{method:'DELETE',headers:sbHeaders});if(!res.ok)throw new Error(await res.text());}
 
+// ─── HEARTBEAT (mantine conexiunea Supabase "caldă") ─────────────────────────
+let heartbeatInterval=null;
+async function sbHeartbeat(){
+  try{await fetch(`${SUPABASE_URL}/rest/v1/trucks?select=id&limit=1`,{headers:sbHeaders});}catch(e){}
+}
+function startHeartbeat(){
+  stopHeartbeat();
+  heartbeatInterval=setInterval(()=>{if(document.visibilityState==='visible')sbHeartbeat();},8000);
+  document.addEventListener('visibilitychange',onVisibilityChangeHeartbeat);
+}
+function stopHeartbeat(){
+  if(heartbeatInterval){clearInterval(heartbeatInterval);heartbeatInterval=null;}
+  document.removeEventListener('visibilitychange',onVisibilityChangeHeartbeat);
+}
+function onVisibilityChangeHeartbeat(){
+  if(document.visibilityState==='visible')sbHeartbeat();
+}
+
+
 // ─── AUTH ────────────────────────────────────────────────────────────────────
 const PASSWORDS={
   'kin2026': { role:'magazziniere', label:'Magazziniere', readOnly:false },
@@ -1385,6 +1404,7 @@ function attemptLogin(pw){
         document.getElementById('app').classList.add('visible');
         applyUserRole();
         init();
+        startHeartbeat();
       },380);
     },300);
   } else {
@@ -1396,6 +1416,7 @@ function attemptLogin(pw){
 
 function doLogout(){
   if(!confirm('Uscire dall\'applicazione?'))return;
+  stopHeartbeat();
   currentUser=null;
   activeDay=null;
   readonlyExpandedId=null;
