@@ -1055,7 +1055,7 @@ button,.card,.day-header,.month-tab{touch-action:manipulation;-webkit-tap-highli
   input[type="text"],input[type="number"],input[type="time"],input[type="date"],input[type="password"],textarea,select,.pian-form-input,.pian-form-input-dark{font-size:16px;}
 
   /* login */
-  .login-card{width:calc(100% - 32px);padding:36px 22px 28px;}
+  .login-card{width:calc(100% - 50px);padding:36px 22px 28px;}
 
   /* pagină + header */
   .page{padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(96px + env(safe-area-inset-bottom,0px));}
@@ -1076,6 +1076,38 @@ button,.card,.day-header,.month-tab{touch-action:manipulation;-webkit-tap-highli
   .clock-card{order:3;flex:1 1 100%;height:36px;padding:0 14px;flex-direction:row;align-items:center;justify-content:space-between;border-radius:11px;}
   .clock-time{font-size:.98rem;}
   .clock-date{font-size:.58rem;margin:0;}
+
+  /* ── antet: card de sticlă ── */
+  .header{padding:12px 12px 10px;gap:10px;margin-bottom:12px;background:linear-gradient(135deg,rgba(79,142,247,.13) 0%,rgba(255,255,255,.03) 55%,rgba(248,113,113,.07) 100%);border:1px solid rgba(255,255,255,.10);border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,.30),0 1px 0 rgba(255,255,255,.07) inset;}
+  .brand-logo{width:42px;height:42px;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,.35);}
+  .brand-name{font-size:1.25rem;letter-spacing:-.01em;}
+  .brand-tag{display:inline-flex;align-items:center;gap:5px;font-size:.54rem;padding:3px 9px 3px 7px;}
+  .brand-tag svg{flex-shrink:0;}
+  .brand-logo{padding:7px;}
+  .brand-logo img{object-fit:contain;}
+
+
+  /* avatar + ieșire */
+  .user-badge{padding:2px;gap:2px;}
+  .user-badge-avatar{width:36px;height:36px;margin:0 !important;}
+  .user-badge-logout{width:28px;height:28px;margin:0 2px 0 0;}
+
+  /* ceas */
+  .clock-card{height:40px;padding:0 14px;background:rgba(0,0,0,.24);border:1px solid rgba(255,255,255,.06);box-shadow:none;border-radius:13px;}
+  .clock-time{font-size:1.08rem;gap:8px !important;}
+  .clock-date{font-size:.56rem;letter-spacing:.09em;color:var(--text-secondary);}
+
+  /* bara de stare */
+  .status-bar{padding:7px 14px;border-radius:13px;}
+  .status-bar.synced{display:none !important;}
+
+  .status-bar.syncing{color:var(--accent-amber);}
+  .status-bar.error{color:var(--accent-rose);}
+  .status-bar.viewing-past{color:var(--accent-violet);}
+  .sync-dot{width:8px;height:8px;box-shadow:0 0 8px currentColor;}
+  #sync-text{font-size:.68rem;font-weight:600;letter-spacing:.03em;}
+  .day-view-info{align-items:center;}
+
   .status-bar{flex-wrap:nowrap;padding:5px 12px;min-height:30px;margin-bottom:12px;font-size:.68rem;border-radius:11px;}
   .status-bar.viewing-past{padding:6px 8px 6px 12px;}
   .status-bar.viewing-past .status-left{display:none;}
@@ -1107,6 +1139,42 @@ button,.card,.day-header,.month-tab{touch-action:manipulation;-webkit-tap-highli
   .column-right .card{background:rgba(248,113,113,.05);border-color:rgba(248,113,113,.2);}
   .column-right .col-count{color:rgba(248,113,113,.8);}
   .column-left .col-count{color:rgba(79,142,247,.85);}
+
+  /* ── card în modul editare: compact ── */
+  .card .draft-banner{padding:5px 12px;font-size:.6rem;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .card .card-header{padding:8px 10px 8px 12px;gap:6px;}
+  .card .card-number{font-size:.62rem;padding:2px 8px;}
+  .card .card-timestamp{font-size:.62rem;margin-right:0;}
+  .card .btn-icon{width:30px;height:30px;border-radius:9px;}
+  .card .card-body{padding:10px 12px 12px;gap:10px;}
+  .card .field{gap:4px;}
+  .card .field > label{font-size:.58rem;letter-spacing:.09em;}
+
+  /* câmpuri */
+  .card input[type="text"],.card input[type="number"],.card textarea{padding:8px 11px;border-radius:10px;}
+  .card textarea{min-height:46px;}
+  .card .signature-wrap input[type="text"]{padding:4px 32px 4px 11px;}
+  .card .qty-row{gap:8px;}
+
+  /* Stato consegna: cele 3 opțiuni pe un singur rând */
+  .card .radio-group{flex-wrap:nowrap;gap:5px;}
+  .card .radio-pill{flex:1 1 auto;justify-content:center;gap:0;padding:9px 4px;font-size:.56rem;letter-spacing:.01em;text-align:center;}
+  .card .radio-pill .radio-dot{display:none;}
+
+  /* Tipo merce: Bancale + Colli pe un rând */
+  .card .check-group{flex-wrap:nowrap;gap:6px;}
+  .card .check-label{flex:1;justify-content:center;gap:6px;padding:9px 8px;font-size:.64rem;}
+
+  /* ora de sosire: pastilă mică */
+  .card .signature-wrap + div{display:inline-block;align-self:flex-start;margin-top:6px !important;padding:4px 10px;border-radius:20px;background:rgba(56,232,200,.07);border:1px solid rgba(56,232,200,.2);}
+
+  /* butoane jos: Annulla / Registra */
+  .card .confirm-bar{flex-wrap:nowrap;gap:8px;padding:9px 12px;}
+  .card .editing-label{display:none;}
+  .card .btn-confirm,.card .btn-cancel-edit{flex:1;justify-content:center;padding:10px 12px;font-size:.78rem;border-radius:11px;}
+  .card .btn-confirm{flex:1.4;}
+  .card .validation-errors{margin:0 12px 8px;padding:8px 12px;font-size:.7rem;line-height:1.5;}
+
 
 
 
@@ -1217,7 +1285,8 @@ button,.card,.day-header,.month-tab{touch-action:manipulation;-webkit-tap-highli
         <div class="brand-text">
           <div class="brand-name">KOH-I-NOOR</div>
           <div class="brand-sub-row">
-            <span class="brand-tag">✏️ Registro Magazzino</span>
+<span class="brand-tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Registro Magazzino</span>
+
             <p class="brand-desc" id="header-desc">Registrazione ingressi giornalieri &amp; resi</p>
           </div>
         </div>
@@ -1255,7 +1324,8 @@ button,.card,.day-header,.month-tab{touch-action:manipulation;-webkit-tap-highli
     </div>
     <div class="status-right">
       <div class="day-view-info" id="day-view-info">
-        <span style="font-size:0.68rem;color:var(--accent-violet)">📅</span>
+        <span style="display:flex;align-items:center;color:var(--accent-violet)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+
         <span class="day-view-label" id="day-view-label">–</span>
         <button class="adb-back" onclick="returnToToday()">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 8 8 12 12 16"/><line x1="16" y1="12" x2="8" y2="12"/></svg>
@@ -1530,7 +1600,8 @@ function attemptLogin(pw){
   const match=PASSWORDS[pw];
   const inp=document.getElementById('login-pw');
   if(match){
-    currentUser=match;
+    currentUser=match;saveLoginDay(pw);
+
     inp.classList.add('success');
     setTimeout(()=>{
       document.getElementById('login-screen').style.animation='loginBgOut 0.4s ease forwards';
@@ -1551,6 +1622,8 @@ function attemptLogin(pw){
 
 function doLogout(){
   if(!confirm('Uscire dall\'applicazione?'))return;
+  clearLoginDay();
+
   stopHeartbeat();
   currentUser=null;
   activeDay=null;
@@ -1601,7 +1674,8 @@ function setSyncStatus(state,msg){
   else if(state==='synced'){bar.classList.add('synced');}
   else if(state==='error'){bar.classList.add('error');}
   else if(state==='viewing-past'){bar.classList.add('viewing-past');}
-  txt.textContent=msg;
+  txt.textContent=msg.replace(/[\u2600-\u27BF\u{1F300}-\u{1FAFF}\uFE0F]/gu,'').trim();
+
   updateStatusBarVisibility();
 }
 
@@ -1828,7 +1902,8 @@ function applyUserRole(){
   document.getElementById('header-desc').textContent='Registrazione degli ingressi giornalieri & resi';
   if(currentUser.readOnly){
     badge.className='user-badge aquisti';
-    avatar.textContent='🛒';
+    avatar.innerHTML='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>';
+
     name.textContent='Ufficio Acquisti';
     role.textContent='Sola lettura';
     document.getElementById('btnAddTruck').disabled=true;
@@ -1836,7 +1911,8 @@ function applyUserRole(){
     document.getElementById('header-desc').textContent='Visualizzazione registrazioni & pianificazione arrivi';
   } else {
     badge.className='user-badge magaz';
-    avatar.textContent='📦';
+    avatar.innerHTML='<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
+
     name.textContent='Magazziniere';
     role.textContent='Accesso completo';
   }
@@ -2643,6 +2719,47 @@ function closeTodayReminder(){document.getElementById('todayReminderModal').clas
 async function init(){await Promise.all([loadDay(todayKey()),loadPianificazioni()]);showTodayReminderIfNeeded();}
 
 (function(){initLoginParticles();const inp=document.getElementById('login-pw');if(inp)inp.focus();})();
+
+// ─── LOGIN O DATĂ PE ZI ──────────────────────────────────────────────────────
+const LOGIN_DAY_KEY='kin_login_day';
+function saveLoginDay(pw){
+  const val=JSON.stringify({d:todayKey(),p:pw});
+  try{localStorage.setItem(LOGIN_DAY_KEY,val);}catch(e){}
+  try{document.cookie=LOGIN_DAY_KEY+'='+encodeURIComponent(val)+';max-age=86400;path=/;SameSite=Lax';}catch(e){}
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
+}
+function clearLoginDay(){
+  try{localStorage.removeItem(LOGIN_DAY_KEY);}catch(e){}
+  try{document.cookie=LOGIN_DAY_KEY+'=;max-age=0;path=/;SameSite=Lax';}catch(e){}
+}
+function readLoginDay(){
+  let raw=null;
+  try{raw=localStorage.getItem(LOGIN_DAY_KEY);}catch(e){}
+  if(!raw){
+    try{
+      const m=document.cookie.split('; ').find(c=>c.startsWith(LOGIN_DAY_KEY+'='));
+      if(m)raw=decodeURIComponent(m.slice(LOGIN_DAY_KEY.length+1));
+    }catch(e){}
+  }
+  if(!raw)return null;
+  try{return JSON.parse(raw);}catch(e){return null;}
+}
+function tryAutoLogin(){
+  if(currentUser)return;
+  const s=readLoginDay();
+  if(!s)return;
+  if(s.d!==todayKey()||!PASSWORDS[s.p]){clearLoginDay();return;}
+  currentUser=PASSWORDS[s.p];
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').classList.add('visible');
+  applyUserRole();
+  init();
+  startHeartbeat();
+}
+tryAutoLogin();
+window.addEventListener('pageshow',e=>{if(e.persisted)tryAutoLogin();});
+
+
 
 // ─── DAY PICKER ──────────────────────────────────────────────────────────────
 let dpYear=new Date().getFullYear(),dpMonth=new Date().getMonth();
