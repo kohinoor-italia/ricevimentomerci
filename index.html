@@ -2,7 +2,8 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
 <title>Scarichi</title>
 
 <link rel="apple-touch-icon" href="https://github.com/kohinoor-italia/ricevimentomerci/raw/refs/heads/main/icon.png">
@@ -1045,7 +1046,136 @@ kin2026
 
 
 
+/* ═══════════ MOBILE ═══════════ */
+html{-webkit-text-size-adjust:100%;}
+button,.card,.day-header,.month-tab{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+
+@media(max-width:600px){
+  /* anti-zoom iOS la focus pe câmpuri */
+  input[type="text"],input[type="number"],input[type="time"],input[type="date"],input[type="password"],textarea,select,.pian-form-input,.pian-form-input-dark{font-size:16px;}
+
+  /* login */
+  .login-card{width:calc(100% - 32px);padding:36px 22px 28px;}
+
+  /* pagină + header */
+  .page{padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(96px + env(safe-area-inset-bottom,0px));}
+  .header{flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-bottom:12px;}
+  .header-left{order:1;flex:1;min-width:0;}
+  .header-right{display:contents;}
+  .brand-row{gap:10px;}
+  .brand-logo{width:40px;height:40px;border-radius:10px;}
+  .brand-text{gap:2px;min-width:0;}
+  .brand-name{font-size:1.2rem;}
+  .brand-sub-row{gap:0;margin-top:0;}
+  .brand-desc{display:none;}
+  .brand-tag{font-size:.56rem;padding:2px 8px;letter-spacing:.06em;}
+  .user-badge{order:2;flex-shrink:0;}
+  .user-badge-info{display:none;}
+  .user-badge-avatar{width:34px;height:34px;}
+  .user-badge-logout{margin:0 6px 0 4px;}
+  .clock-card{order:3;flex:1 1 100%;height:36px;padding:0 14px;flex-direction:row;align-items:center;justify-content:space-between;border-radius:11px;}
+  .clock-time{font-size:.98rem;}
+  .clock-date{font-size:.58rem;margin:0;}
+  .status-bar{flex-wrap:nowrap;padding:5px 12px;min-height:30px;margin-bottom:12px;font-size:.68rem;border-radius:11px;}
+  .status-bar.viewing-past{padding:6px 8px 6px 12px;}
+  .status-bar.viewing-past .status-left{display:none;}
+  .status-bar.viewing-past .status-right{flex:1;min-width:0;}
+  .day-view-info{flex:1;min-width:0;gap:8px;}
+  .day-view-info > span:first-child{font-size:.85rem !important;}
+  .day-view-label{flex:1;min-width:0;font-size:.7rem;font-weight:600;color:var(--accent-violet);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .adb-back{flex-shrink:0;padding:6px 13px;border-radius:20px;font-size:.68rem;}
+
+
+  .main-layout{grid-template-columns:minmax(0,1fr);gap:18px;}
+  .column-left,.column-right{min-width:0;max-width:100%;}
+  .cards-list,.card{min-width:0;max-width:100%;}
+   .col-header{flex-wrap:nowrap;align-items:center;gap:10px;padding:10px 12px 10px 14px;margin-bottom:0;min-width:0;max-width:100%;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:16px;}
+  .col-title{flex:1;min-width:0;flex-wrap:wrap;align-items:center;gap:1px 8px;font-size:.78rem;font-weight:700;letter-spacing:.08em;}
+  .col-dot{width:8px;height:8px;}
+  .col-count{flex:0 0 100%;order:3;padding:0 0 0 16px;border:none;background:none;font-size:.62rem;letter-spacing:.02em;color:var(--text-secondary);white-space:normal;}
+  .btn-add{flex-shrink:0;width:40px;height:40px;padding:0;justify-content:center;border-radius:50%;font-size:0;gap:0;}
+  .btn-add svg{width:17px;height:17px;}
+
+  /* culori distincte: Camion = albastru, Resi = roșu */
+  .column-left .col-header{background:linear-gradient(135deg,rgba(79,142,247,.22),rgba(79,142,247,.06));border-color:rgba(79,142,247,.45);box-shadow:inset 4px 0 0 var(--accent-blue),0 6px 20px rgba(79,142,247,.12);}
+  .column-left .col-title{color:var(--accent-blue);}
+  .column-left .card{background:rgba(79,142,247,.045);border-color:rgba(79,142,247,.16);}
+
+  .column-right{margin-top:12px;padding-top:22px;border-top:2px dashed rgba(248,113,113,.3);}
+  .column-right .col-header{background:linear-gradient(135deg,rgba(248,113,113,.24),rgba(248,113,113,.06));border-color:rgba(248,113,113,.5);box-shadow:inset 4px 0 0 var(--accent-rose),0 6px 20px rgba(248,113,113,.14);}
+  .column-right .col-title{color:var(--accent-rose);}
+  .column-right .card{background:rgba(248,113,113,.05);border-color:rgba(248,113,113,.2);}
+  .column-right .col-count{color:rgba(248,113,113,.8);}
+  .column-left .col-count{color:rgba(79,142,247,.85);}
+
+
+
+
+  /* carduri */
+  .compact-top{gap:6px 7px;}
+  .compact-firma{order:3;flex:1 1 100%;}
+  .compact-sig,.compact-pills,.compact-meta-pill{order:0;}
+  .compact-sig{font-size:.66rem;margin-left:auto;}
+  .compact-sig-name{font-size:.88rem;}
+  .compact-sig + .compact-pills{margin-left:0;}
+  .compact-firma + .compact-pills{margin-left:auto;}
+  .compact-meta-pill{font-size:.6rem;padding:1px 6px;}
+
+
+  .btn-icon{width:36px;height:36px;}
+  .radio-pill,.check-label{padding:9px 14px;}
+  .confirm-bar{flex-wrap:wrap;padding:12px 16px;}
+  .editing-label{flex:1 1 100%;}
+  .btn-confirm,.btn-cancel-edit{flex:1;justify-content:center;padding:11px 14px;font-size:.85rem;}
+
+  /* butoanele plutitoare → bară jos */
+  .fab-cal,.fab-day,.fab-pian,.fab-refresh{width:46px;height:46px;right:auto;bottom:calc(14px + env(safe-area-inset-bottom,0px));}
+  .fab-day{left:calc(50% - 104px);}
+  .fab-refresh{left:calc(50% - 50px);}
+  .fab-pian{left:calc(50% + 4px);}
+  .fab-cal{left:calc(50% + 58px);}
+  .fab-refresh-tooltip{display:none;}
+  #app.visible::after{content:'';position:fixed;left:0;right:0;bottom:0;height:calc(74px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,rgba(10,15,30,.92) 45%);pointer-events:none;z-index:99;}
+  .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px));}
+
+  /* modale full-screen */
+  .modal-stats,.modal-pian{width:100%;max-width:100%;height:100dvh;max-height:100dvh;}
+
+  /* statistici */
+  .stats-topbar{height:auto;flex-wrap:wrap;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 12px 8px;}
+  .stats-topbar-title{flex:1;font-size:.7rem;}
+  .stats-tab-bar{order:3;flex:1 1 100%;max-width:100%;overflow-x:auto;scrollbar-width:none;}
+  .stats-tab{flex:1 0 auto;padding:7px 10px;font-size:.68rem;}
+  .export-btn{font-size:0;gap:0;padding:8px 9px;}
+  .stats-body{flex-direction:column;}
+  .stats-sidebar{display:flex;flex-direction:row;width:100%;flex-shrink:0;overflow-x:auto;overflow-y:hidden;border-right:none;border-bottom:1px solid rgba(255,255,255,.06);padding:10px 12px;gap:8px;}
+  .kpi-card{min-width:148px;flex-shrink:0;padding:9px 12px;}
+  .kpi-val{font-size:1.25rem;}
+  .sidebar-section-title,.alert-item{display:none;}
+  .stats-main{padding:14px 12px 28px;min-height:0;}
+  .month-stats-grid{grid-template-columns:1fr 1fr;}
+  .hist-search{min-width:100%;}
+  .day-header{flex-wrap:wrap;gap:8px;}
+
+  /* pianificazione */
+  .pian-topbar{height:calc(54px + env(safe-area-inset-top,0px));padding:env(safe-area-inset-top,0px) 14px 0;}
+  .pian-timeline-wrap{padding:14px 12px calc(110px + env(safe-area-inset-bottom,0px));}
+  .pian-fab-add{bottom:calc(20px + env(safe-area-inset-bottom,0px));}
+  .pian-ticket{flex-wrap:wrap;}
+  .pian-ticket-body{flex:1 1 0;min-width:120px;}
+  .pian-ticket-firma{white-space:normal;}
+  .pian-ticket-actions{flex:1 1 100%;justify-content:flex-end;}
+  .pian-ticket-btn{width:34px;height:34px;}
+  .pian-drawer{max-height:90dvh;padding-bottom:calc(22px + env(safe-area-inset-bottom,0px));}
+
+  /* reminder + selector zi */
+  .reminder-card{width:calc(100% - 24px);}
+  .reminder-list{max-height:50dvh;}
+  .modal-overlay-left{justify-content:center;}
+  .modal-day{margin:12px !important;max-height:88dvh;}
+}
 </style>
+
 </head>
 <body>
 
