@@ -1973,6 +1973,8 @@ async function confirmEdit(id,type){
     showCardErrors(cardEl,errors);
     if(errors.length>0){toast('⚠ Compila tutti i campi obbligatori',true);cardEl.querySelector('.validation-errors').scrollIntoView({behavior:'smooth',block:'nearest'});return;}
     const wasDraft=t.isDraft;t.editing=false;t.isDraft=false;t.collapsed=true;
+    saveLastSignature(t.semnatura);
+
     if(t.semnatura&&!t.arrivalTime)t.arrivalTime=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false});
     sortByArrival(trucks);
     editSnapshots.delete(id);
@@ -1986,6 +1988,8 @@ async function confirmEdit(id,type){
     showCardErrors(cardEl,errors);
     if(errors.length>0){toast('⚠ Compila tutti i campi obbligatori',true);cardEl.querySelector('.validation-errors').scrollIntoView({behavior:'smooth',block:'nearest'});return;}
     const wasDraft=r.isDraft;r.editing=false;r.isDraft=false;r.collapsed=true;
+    saveLastSignature(r.semnatura);
+
     sortByArrival(resis);
     editSnapshots.delete(id);
     renderResis();setSyncStatus('syncing','Salvataggio in corso…');
@@ -2037,12 +2041,24 @@ function scrollToCardCenter(id){
   },120);
 }
 
+// ─── LAST SIGNATURE (remembered in browser) ──────────────────────────────────
+const LAST_SIG_KEY='kin_last_signature';
+function getLastSignature(){
+  try{return localStorage.getItem(LAST_SIG_KEY)||'';}catch(e){return '';}
+}
+function saveLastSignature(sig){
+  if(!sig||!sig.trim())return;
+  try{localStorage.setItem(LAST_SIG_KEY,sig.trim());}catch(e){}
+}
+
 // ─── TRUCKS ──────────────────────────────────────────────────────────────────
 function addTruck(){
   if(currentUser&&currentUser.readOnly){toast('⛔ Accesso in sola lettura',true);return;}
   truckCount++;
   const id='truck-'+Date.now()+'-'+truckCount,dKey=activeDay||todayKey();
-  trucks.push({id,ts:nowStamp(),firma:'',programat:'',bancal:false,nrBancale:'',cutii:false,nrCutii:'',comentariu:'',semnatura:'',arrivalTime:'',collapsed:false,editing:true,isDraft:true,dateKey:dKey});
+const lastSigT=getLastSignature();
+  trucks.push({id,ts:nowStamp(),firma:'',programat:'',bancal:false,nrBancale:'',cutii:false,nrCutii:'',comentariu:'',semnatura:lastSigT,arrivalTime:lastSigT?new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false}):'',collapsed:false,editing:true,isDraft:true,dateKey:dKey});
+
   renderTrucks();updateCounts();scrollToCardCenter(id);
 }
 const pendingDeleteConfirm=new Map();
@@ -2230,7 +2246,9 @@ function addResi(){
   if(currentUser&&currentUser.readOnly){toast('⛔ Accesso in sola lettura',true);return;}
   resiCount++;
   const id='resi-'+Date.now()+'-'+resiCount,dKey=activeDay||todayKey();
-  resis.push({id,ts:nowStamp(),descriere:'',autorizat:'',bancal:false,nrBancale:'',cutii:false,nrCutii:'',comentariu:'',semnatura:'',arrivalTime:'',collapsed:false,editing:true,isDraft:true,dateKey:dKey});
+const lastSigR=getLastSignature();
+  resis.push({id,ts:nowStamp(),descriere:'',autorizat:'',bancal:false,nrBancale:'',cutii:false,nrCutii:'',comentariu:'',semnatura:lastSigR,arrivalTime:lastSigR?new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',hour12:false}):'',collapsed:false,editing:true,isDraft:true,dateKey:dKey});
+
   renderResis();updateCounts();scrollToCardCenter(id);
 }
 async function removeResi(id,btnEl){
