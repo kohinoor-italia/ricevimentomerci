@@ -488,7 +488,34 @@
   }
 
 
+  /* Compact drawer helpers */
+  .pian-form-row-2 > *, .pian-form-row-3 > * { min-width: 0; }
+  .pian-range-chip {
+    display: inline-flex; align-items: center; gap: 9px; align-self: flex-start;
+    padding: 6px 12px 6px 7px; border-radius: 50px; cursor: pointer; user-select: none;
+    border: 1px solid rgba(255,255,255,0.10); background: rgba(255,255,255,0.03);
+    color: var(--text-secondary); font-size: 0.72rem; font-weight: 600;
+    transition: all 0.18s;
+  }
+  .pian-range-chip input { display: none; }
+  .pian-sw {
+    position: relative; width: 28px; height: 16px; border-radius: 20px; flex-shrink: 0;
+    background: rgba(255,255,255,0.12); transition: background 0.18s;
+  }
+  .pian-sw::after {
+    content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px;
+    border-radius: 50%; background: #fff; transition: transform 0.18s;
+  }
+  .pian-range-chip.on { border-color: rgba(167,139,250,0.5); background: rgba(167,139,250,0.10); color: var(--accent-violet); }
+  .pian-range-chip.on .pian-sw { background: var(--accent-violet); }
+  .pian-range-chip.on .pian-sw::after { transform: translateX(12px); }
+  .pian-btn-row { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 2px; }
+  .pian-btn-row.has-cancel { grid-template-columns: 1fr 1.6fr; }
+  .pian-btn-row.has-cancel .pian-btn-cancel { order: 1; }
+  .pian-btn-row.has-cancel .pian-btn-add.main { order: 2; }
+
   /* Refresh button */
+
   .btn-refresh {
     width: 30px; height: 30px; border-radius: 8px;
     border: 1px solid rgba(56,232,200,0.25); background: rgba(56,232,200,0.07);
@@ -1198,10 +1225,13 @@ button,.card,.day-header,.month-tab{touch-action:manipulation;-webkit-tap-highli
 
   /* butoanele plutitoare → bară jos */
   .fab-cal,.fab-day,.fab-pian,.fab-refresh{width:46px;height:46px;right:auto;bottom:calc(14px + env(safe-area-inset-bottom,0px));}
-  .fab-day{left:calc(50% - 104px);}
-  .fab-refresh{left:calc(50% - 50px);}
-  .fab-pian{left:calc(50% + 4px);}
-  .fab-cal{left:calc(50% + 58px);}
+  .fab-day{left:14px;right:auto;}
+  .fab-refresh{left:auto;right:122px;}
+  .fab-pian{left:auto;right:68px;}
+  .fab-cal{left:auto;right:14px;}
+
+
+
   .fab-refresh-tooltip{display:none;}
   #app.visible::after{content:'';position:fixed;left:0;right:0;bottom:0;height:calc(74px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,rgba(10,15,30,.92) 45%);pointer-events:none;z-index:99;}
   .toast{bottom:calc(84px + env(safe-area-inset-bottom,0px));}
@@ -1241,6 +1271,19 @@ button,.card,.day-header,.month-tab{touch-action:manipulation;-webkit-tap-highli
   .reminder-list{max-height:50dvh;}
   .modal-overlay-left{justify-content:center;}
   .modal-day{margin:12px !important;max-height:88dvh;}
+
+  /* drawer pianificazione compact */
+  .pian-drawer{gap:8px;padding:8px 14px calc(16px + env(safe-area-inset-bottom,0px));}
+  .pian-drawer-header{font-size:.85rem;}
+  .pian-drawer-body{gap:9px;}
+  .pian-form-row{gap:4px;}
+  .pian-form-label{font-size:.56rem;letter-spacing:.08em;}
+  .pian-form-input,.pian-form-input-dark{padding:0 11px;min-height:40px;border-radius:10px;}
+  .pian-form-input-dark{-webkit-appearance:none;appearance:none;}
+  textarea.pian-form-input{padding:9px 11px;min-height:44px !important;}
+  .pian-form-row-2{gap:8px;}
+  .pian-btn-add{padding:12px 14px;font-size:.84rem;border-radius:12px;}
+
 }
 </style>
 
@@ -2538,16 +2581,22 @@ function renderPianDrawerBody(){
   return `
     <div class="pian-form-row">
       <label class="pian-form-label required">Azienda / Fornitore</label>
-      <input type="text" class="pian-form-input" id="pianFirma" placeholder="es: KOH-I-NOOR, MARKIN…" value="${pianNewFirma}" oninput="pianNewFirma=this.value">
+      <input type="text" class="pian-form-input" id="pianFirma" placeholder="es: KOH-I-NOOR, MARKIN..." value="${pianNewFirma}" oninput="pianNewFirma=this.value">
     </div>
-    <div class="pian-form-row">
-      <label class="pian-form-label">N° Ordine / ORDMA</label>
-      <input type="text" class="pian-form-input" id="pianOrdma" placeholder="es: ORDMA-2026-001" value="${pianNewOrdma}" oninput="pianNewOrdma=this.value">
+    <div class="pian-form-row-2">
+      <div class="pian-form-row">
+        <label class="pian-form-label">N&deg; Ordine / ORDMA</label>
+        <input type="text" class="pian-form-input" id="pianOrdma" placeholder="ORDMA-2026-001" value="${pianNewOrdma}" oninput="pianNewOrdma=this.value">
+      </div>
+      <div class="pian-form-row">
+        <label class="pian-form-label required">Aggiunto da</label>
+        <input type="text" class="pian-form-input" id="pianCreatDe" placeholder="Il tuo nome" value="${pianNewCreatDe}" oninput="pianNewCreatDe=this.value">
+      </div>
     </div>
-    <label class="check-label bancal" style="align-self:flex-start">
+    <label class="pian-range-chip ${isRangeMode?'on':''}">
       <input type="checkbox" id="pianRangeToggle" ${isRangeMode?'checked':''} onchange="togglePianRangeMode(this.checked)">
-      <span class="check-box">${isRangeMode?'✓':''}</span>
-      <span>Intervallo di date (non un giorno preciso)</span>
+      <span class="pian-sw"></span>
+      <span>Intervallo di date</span>
     </label>
     <div class="pian-form-row-2">
       <div class="pian-form-row">
@@ -2563,20 +2612,19 @@ function renderPianDrawerBody(){
       </div>`}
     </div>
     <div class="pian-form-row">
-      <label class="pian-form-label">Informazioni supplementari</label>
-      <textarea class="pian-form-input" id="pianNote" placeholder="Note aggiuntive, dettagli, contatti…" style="min-height:52px;resize:vertical" oninput="pianNewNote=this.value">${pianNewNote}</textarea>
+      <label class="pian-form-label">Note / informazioni</label>
+      <textarea class="pian-form-input" id="pianNote" rows="2" placeholder="Dettagli, contatti..." style="resize:none" oninput="pianNewNote=this.value">${pianNewNote}</textarea>
     </div>
-    <div class="pian-form-row">
-      <label class="pian-form-label required">Aggiunto da</label>
-      <input type="text" class="pian-form-input" id="pianCreatDe" placeholder="Il tuo nome" value="${pianNewCreatDe}" oninput="pianNewCreatDe=this.value">
+    <div class="pian-btn-row ${pianEditingId?'has-cancel':''}">
+      ${pianEditingId?`<button class="pian-btn-add pian-btn-cancel" style="border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:var(--text-secondary)" onclick="cancelEditPian()">Annulla</button>`:''}
+      <button class="pian-btn-add main" onclick="savePian()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        ${pianEditingId?'Salva modifiche':'Aggiungi pianificazione'}
+      </button>
     </div>
-    <button class="pian-btn-add" onclick="savePian()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-      ${pianEditingId?'Salva modifiche':'Aggiungi pianificazione'}
-    </button>
-    ${pianEditingId?`<button class="pian-btn-add" style="border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:var(--text-secondary)" onclick="cancelEditPian()">Annulla modifica</button>`:''}
   `;
 }
+
 function togglePianRangeMode(checked){
   pianNewDataFine=checked?(pianNewDataFine||pianNewData||todayKey()):'';
   mountPianDrawerBody();
