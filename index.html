@@ -1661,9 +1661,24 @@ button,.card,.day-header,.month-tab{touch-action:manipulation;-webkit-tap-highli
 const SUPABASE_URL='https://fndjrfieitieqzafhyzz.supabase.co';
 const SUPABASE_KEY='sb_publishable_bHDKjiKAVHqW199ICw7i2g_O3olYMAr';
 const sbHeaders={'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`,'Prefer':'return=minimal'};
+const STATS_CACHE_KEY='kin_stats_cache_v1';
+const dayCache=new Map();let dpCache=null;
+function keyFromDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function invalidateCaches(dk){
+  dpCache=null;
+  if(dk){
+    dayCache.delete(dk);
+    const lim=new Date();lim.setDate(lim.getDate()-7);
+    if(dk<keyFromDate(lim)){try{localStorage.removeItem(STATS_CACHE_KEY);}catch(e){}}
+  }else{
+    dayCache.clear();
+    try{localStorage.removeItem(STATS_CACHE_KEY);}catch(e){}
+  }
+}
+
 async function sbGet(table,params=''){const res=await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`,{headers:{...sbHeaders,'Prefer':'return=representation'}});if(!res.ok)throw new Error(await res.text());return res.json();}
-async function sbUpsert(table,data){const res=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:{...sbHeaders,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(data)});if(!res.ok)throw new Error(await res.text());}
-async function sbDelete(table,id){const res=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`,{method:'DELETE',headers:sbHeaders});if(!res.ok)throw new Error(await res.text());}
+async function sbUpsert(table,data){invalidateCaches(data&&data.date_key);const res=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:{...sbHeaders,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify(data)});if(!res.ok)throw new Error(await res.text());}
+async function sbDelete(table,id){invalidateCaches(null);const res=await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`,{method:'DELETE',headers:sbHeaders});if(!res.ok)throw new Error(await res.text());}
 
 // ─── HEARTBEAT (mantine conexiunea Supabase "caldă") ─────────────────────────
 let heartbeatInterval=null;
@@ -1914,13 +1929,21 @@ function updateFabPianBadge(){
 
 
 // ─── LOAD DAY ────────────────────────────────────────────────────────────────
-async function loadDay(key){
+async function loadDay(key,force){
   setSyncStatus('syncing','Caricamento…');
   try{
-    const [tRows,rRows]=await Promise.all([
-      sbGet('trucks',`date_key=eq.${key}&programat=neq.pianificato&order=created_at.asc`),
-      sbGet('resi',`date_key=eq.${key}&order=created_at.asc`)
-    ]);
+    const isPast=key!==todayKey();
+    let c=(!force&&isPast)?dayCache.get(key):null;
+    if(!c){
+      const [t0,r0]=await Promise.all([
+        sbGet('trucks',`date_key=eq.${key}&programat=neq.pianificato&order=created_at.asc`),
+        sbGet('resi',`date_key=eq.${key}&order=created_at.asc`)
+      ]);
+      c={tRows:t0,rRows:r0};
+      if(isPast)dayCache.set(key,c);
+    }
+    const tRows=c.tRows,rRows=c.rRows;
+
 trucks=tRows.map(dbToTruck).map(t=>{t.collapsed=isTruckComplete(t);return t;});
 resis=rRows.map(dbToResi).map(r=>{r.collapsed=isResiComplete(r);return r;});
 sortByArrival(trucks);
@@ -1942,7 +1965,9 @@ sortByArrival(resis);
 
 async function loadPianificazioni(){
   try{
-    const rows=await sbGet('trucks','programat=eq.pianificato&order=date_key.asc,arrival_time.asc');
+const cd=new Date();cd.setDate(cd.getDate()-31);const ck=keyFromDate(cd);
+const rows=await sbGet('trucks',`select=id,date_key,date_key_end,firma,comentariu,arrival_time,note,creat_de,stare_sosire&programat=eq.pianificato&or=(date_key.gte.${ck},date_key_end.gte.${ck})&order=date_key.asc,arrival_time.asc`);
+
     pianificazioni=rows.map(dbToPian);
     updateTodayAlert();
     updateFabPianBadge();
@@ -1954,7 +1979,8 @@ async function globalRefresh(){
   const btn=document.getElementById('fabRefreshGlobal');
   btn.classList.add('spinning');
   try{
-    await Promise.all([loadDay(activeDay||todayKey()),loadPianificazioni()]);
+await Promise.all([loadDay(activeDay||todayKey(),true),loadPianificazioni()]);
+
     toast('🔄 Dati aggiornati!');
   }catch(e){toast('❌ Errore aggiornamento',true);}
   setTimeout(()=>btn.classList.remove('spinning'),800);
@@ -2918,14 +2944,19 @@ async function openDayPicker(){
 }
 function closeDayPicker(){document.getElementById('dayPickerModal').classList.remove('open');}
 async function buildAndShowDayPicker(){
-  let allDates={};
-  try{
-    const [tRows,rRows]=await Promise.all([sbGet('trucks','select=date_key&programat=neq.pianificato'),sbGet('resi','select=date_key')]);
-    tRows.forEach(r=>{const k=r.date_key;if(!allDates[k])allDates[k]={t:0,r:0};allDates[k].t++;});
-    rRows.forEach(r=>{const k=r.date_key;if(!allDates[k])allDates[k]={t:0,r:0};allDates[k].r++;});
-  }catch(e){console.error(e);}
+  let allDates=dpCache;
+  if(!allDates){
+    allDates={};
+    try{
+      const [tRows,rRows]=await Promise.all([sbGet('trucks','select=date_key&programat=neq.pianificato'),sbGet('resi','select=date_key')]);
+      tRows.forEach(r=>{const k=r.date_key;if(!allDates[k])allDates[k]={t:0,r:0};allDates[k].t++;});
+      rRows.forEach(r=>{const k=r.date_key;if(!allDates[k])allDates[k]={t:0,r:0};allDates[k].r++;});
+      dpCache=allDates;
+    }catch(e){console.error(e);}
+  }
   document.getElementById('dayPickerBody').innerHTML=buildDayPickerHTML(allDates);
 }
+
 function buildDayPickerHTML(allDates){
   const tk=todayKey(),isCurrentlyToday=activeDay===null,now=new Date(),todayY=now.getFullYear(),todayM=now.getMonth(),todayD=now.getDate();
   if(dpYear>todayY||(dpYear===todayY&&dpMonth>todayM)){dpYear=todayY;dpMonth=todayM;}
@@ -2979,7 +3010,21 @@ async function loadStatsData(){
   setSyncStatus('syncing','Caricamento statistiche…');
   let hist={};
   try{
-    const [tRows,rRows]=await Promise.all([sbGet('trucks','select=*&programat=neq.pianificato&order=date_key.asc,created_at.asc'),sbGet('resi','select=*&order=date_key.asc,created_at.asc')]);
+    const cols_t='id,date_key,ts,firma,programat,bancal,nr_bancale,cutii,nr_cutii,comentariu,semnatura,arrival_time';
+    const cols_r='id,date_key,ts,descriere,autorizat,bancal,nr_bancale,cutii,nr_cutii,comentariu,semnatura,arrival_time';
+    let cache=null;try{cache=JSON.parse(localStorage.getItem(STATS_CACHE_KEY)||'null');}catch(e){}
+    if(!cache||!cache.t||!cache.r||Date.now()-cache.at>7*864e5)cache=null;
+    const lim=new Date();lim.setDate(lim.getDate()-7);const limKey=keyFromDate(lim);
+    const from=cache?`&date_key=gte.${limKey}`:'';
+    const [tNew,rNew]=await Promise.all([
+      sbGet('trucks',`select=${cols_t}&programat=neq.pianificato${from}&order=date_key.asc,created_at.asc`),
+      sbGet('resi',`select=${cols_r}${from}&order=date_key.asc,created_at.asc`)
+    ]);
+    const merge=(old,fresh)=>{const m={};if(old)Object.keys(old).forEach(k=>{if(k<limKey)m[k]=old[k];});fresh.forEach(r=>{(m[r.date_key]=m[r.date_key]||[]).push(r);});return m;};
+    const tMap=merge(cache&&cache.t,tNew),rMap=merge(cache&&cache.r,rNew);
+    try{localStorage.setItem(STATS_CACHE_KEY,JSON.stringify({at:cache?cache.at:Date.now(),t:tMap,r:rMap}));}catch(e){}
+    const tRows=Object.values(tMap).flat(),rRows=Object.values(rMap).flat();
+
     tRows.forEach(r=>{const k=r.date_key;if(!hist[k])hist[k]={trucks:[],resis:[]};hist[k].trucks.push(dbToTruck(r));});
     rRows.forEach(r=>{const k=r.date_key;if(!hist[k])hist[k]={trucks:[],resis:[]};hist[k].resis.push(dbToResi(r));});
     setSyncStatus(activeDay&&activeDay!==todayKey()?'viewing-past':'synced','Statistiche aggiornate ✓');
