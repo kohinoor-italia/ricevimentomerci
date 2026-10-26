@@ -1979,7 +1979,9 @@ async function globalRefresh(){
   const btn=document.getElementById('fabRefreshGlobal');
   btn.classList.add('spinning');
   try{
+dpCache=null;
 await Promise.all([loadDay(activeDay||todayKey(),true),loadPianificazioni()]);
+
 
     toast('🔄 Dati aggiornati!');
   }catch(e){toast('❌ Errore aggiornamento',true);}
